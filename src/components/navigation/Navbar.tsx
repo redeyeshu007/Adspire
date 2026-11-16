@@ -7,7 +7,6 @@ import Link from "next/link";
 const NAV_ITEMS = [
   { label: "WORK", href: "#work" },
   { label: "SERVICES", href: "#services" },
-  { label: "INSIGHTS", href: "#insights" },
   { label: "CONTACT", href: "#contact" },
 ];
 
@@ -108,8 +107,8 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* RIGHT: Desktop Navigation (Exactly 4 Links: WORK, SERVICES, INSIGHTS, CONTACT) */}
-        <ul className="hidden md:flex items-center gap-[38px] lg:gap-[44px]">
+        {/* RIGHT: Desktop Navigation (Exactly 3 Links: WORK, SERVICES, CONTACT) */}
+        <ul className="hidden md:flex items-center gap-[42px] lg:gap-[50px]">
           {NAV_ITEMS.map((item) => (
             <li key={item.label}>
               <Link
