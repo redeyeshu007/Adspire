@@ -1,0 +1,40 @@
+import type { Metadata } from "next";
+import { Manrope, Inter } from "next/font/google";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import "./globals.css";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "Adspire — Independent Branding & Creative Agency",
+  description: "Strategy, identity and digital experiences for ambitious brands.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="en"
+      className={`${manrope.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
+      <body
+        className="bg-[#080808] text-white antialiased selection:bg-[#EE4530] selection:text-white"
+        suppressHydrationWarning
+      >
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+      </body>
+    </html>
+  );
+}
