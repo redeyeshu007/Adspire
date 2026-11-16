@@ -239,6 +239,7 @@ export interface CursorGridProps {
   autoPulse?: boolean;
   autoPulseInterval?: number;
   autoPulsePattern?: 'single' | 'double';
+  autoPulseDoubleDelay?: number;
   ambient?: number;
   edgeFade?: number;
   intro?: boolean;
@@ -256,8 +257,8 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
   radius = 140,
   falloff = 'smooth',
   highlight = 'area',
-  holdTime = 400,
-  fadeDuration = 800,
+  holdTime = 260,
+  fadeDuration = 550,
   lineWidth = 1,
   maxOpacity = 1,
   fillOpacity = 0.06,
@@ -267,10 +268,11 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
   cellGap = 0,
   spotlight = 0.6,
   clickPulse = true,
-  pulseSpeed = 600,
+  pulseSpeed = 780,
   autoPulse = true,
-  autoPulseInterval = 2500,
+  autoPulseInterval = 1600,
   autoPulsePattern = 'double',
+  autoPulseDoubleDelay = 130,
   ambient = 0,
   edgeFade = 0,
   intro = true,
@@ -306,6 +308,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     autoPulse,
     autoPulseInterval: Math.max(500, autoPulseInterval),
     autoPulsePattern,
+    autoPulseDoubleDelay: Math.max(40, autoPulseDoubleDelay),
     ambient: clamp(ambient, 0, 1),
     edgeFade: clamp(edgeFade, 0, 0.5),
     intro,
@@ -600,7 +603,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
           if (!visible || document.hidden) return;
           pulses.push({ x: cx, y: cy, t0: clock, strength: 0.85 });
           wake();
-        }, 180);
+        }, s.autoPulseDoubleDelay ?? 130);
       }
     };
 

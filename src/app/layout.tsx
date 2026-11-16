@@ -20,6 +20,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Adspire — Independent Branding & Creative Agency",
   description: "Strategy, identity and digital experiences for ambitious brands.",
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+      { url: "/assets/logo_2.png", type: "image/png" },
+      { url: "/logo_2.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

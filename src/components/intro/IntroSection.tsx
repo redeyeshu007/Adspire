@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CursorGrid } from "./CursorGrid";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -87,33 +86,11 @@ export function IntroSection() {
       ref={sectionRef}
       id="intro"
       aria-label="Brand Introduction"
-      className="relative z-10 w-full min-h-[100dvh] flex flex-col justify-between bg-[#000000] text-white selection:bg-[#EE4530] selection:text-white overflow-hidden"
+      className="relative z-10 w-full min-h-[100dvh] flex flex-col justify-between bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none"
     >
-      {/* Interactive Cursor Grid Background — Full Bleed Edge to Edge (Left to Right) */}
-      <div className="absolute inset-0 z-0 pointer-events-auto overflow-hidden w-full h-full">
-        <CursorGrid
-          cellSize={60}
-          color="#48250f"
-          highlight="area"
-          gridStyle="lines"
-          radius={140}
-          holdTime={400}
-          fadeDuration={800}
-          fillOpacity={0.06}
-          gridOpacity={0.15}
-          edgeFade={0}
-          spotlight={0.6}
-          clickPulse
-          autoPulse={true}
-          autoPulseInterval={2500}
-          autoPulsePattern="double"
-          className="w-full h-full"
-        />
-      </div>
-
       {/* Main Content Layout Container with Responsive Editorial Padding */}
       <div
-        className="relative z-10 w-full flex flex-col pt-[125px] sm:pt-[145px] lg:pt-[165px] pb-24 sm:pb-32 lg:pb-36"
+        className="relative z-10 w-full flex flex-col pt-[125px] sm:pt-[145px] lg:pt-[165px] pb-24 sm:pb-32 lg:pb-36 pointer-events-auto"
         style={{
           paddingLeft: "clamp(24px, 8.8vw, 160px)",
           paddingRight: "clamp(24px, 8.8vw, 160px)",

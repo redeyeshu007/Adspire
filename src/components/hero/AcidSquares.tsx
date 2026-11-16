@@ -611,7 +611,8 @@ export const AcidSquares: React.FC<AcidSquaresProps> = ({
       premultipliedAlpha: true,
       antialias: true,
       depth: true,
-      stencil: false
+      stencil: false,
+      preserveDrawingBuffer: true
     });
     if (!container || !canvas || !gl) return undefined;
 
