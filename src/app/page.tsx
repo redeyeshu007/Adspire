@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navigation/Navbar";
 import { PersistentBackground } from "@/components/hero/PersistentBackground";
 import { HeroSection } from "@/components/hero/HeroSection";
 import { IntroSection } from "@/components/intro/IntroSection";
+import { ServicesSection } from "@/components/services/ServicesSection";
 import { AdspirePreloader } from "@/components/preloader/AdspirePreloader";
 
 export default function Home() {
@@ -24,7 +25,10 @@ export default function Home() {
       {/* 4. Section 02: Cinematic Brand Introduction ("Hello") */}
       <IntroSection />
 
-      {/* 5. Pixel Scan Reveal Preloader (Dissolves smoothly into the Hero) */}
+      {/* 5. Section 03: Editorial Services ("WHAT WE DO") */}
+      <ServicesSection />
+
+      {/* 6. Pixel Scan Reveal Preloader (Dissolves smoothly into the Hero) */}
       <AdspirePreloader
         isPreview={false}
         onComplete={() => setPreloaderFinished(true)}
