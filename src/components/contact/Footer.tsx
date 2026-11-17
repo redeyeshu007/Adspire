@@ -125,7 +125,7 @@ export function Footer() {
               />
             </Link>
 
-            <p className="mt-4 text-xs font-mono uppercase tracking-[0.2em] text-[#EE4530] font-medium">
+            <p className="mt-4 text-[10px] sm:text-[11px] md:text-xs font-mono uppercase tracking-[0.12em] sm:tracking-[0.15em] text-[#EE4530] font-medium whitespace-nowrap">
               Strategy • Creative • Media • Technology
             </p>
 
