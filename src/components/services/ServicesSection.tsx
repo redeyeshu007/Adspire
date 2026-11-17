@@ -244,6 +244,9 @@ export function ServicesSection() {
       aria-label="What We Do — Everything Your Brand Needs to Grow Digitally"
       className="relative z-10 w-full min-h-screen bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
     >
+      {/* Target anchor for 'Our Work' navigation */}
+      <div id="work" className="absolute top-0 left-0 w-full h-0 pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]" />
+
       {/* Main Content Layout Container with Matching Editorial Padding */}
       <div
         className="relative z-10 w-full flex flex-col pt-12 sm:pt-18 lg:pt-24 pb-20 sm:pb-28 lg:pb-36 pointer-events-auto"
