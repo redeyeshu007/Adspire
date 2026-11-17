@@ -12,6 +12,22 @@ export interface ServiceItem {
   capabilities: string[];
 }
 
+export interface ServiceTheme {
+  id: string;
+  accent: string;
+  accentSecondary: string;
+  rgb: string;
+  glow: string;
+  fontFamily: string;
+  headingStyle?: "normal" | "italic";
+  headingWeight: number | string;
+  headingLetterSpacing: string;
+  taglineGradient: string;
+  categoryBadge: string;
+  badgeFont: string;
+  atmosphereGlow: string;
+}
+
 export const SERVICES_DATA: ServiceItem[] = [
   {
     id: "performance-marketing",
@@ -128,6 +144,99 @@ export const SERVICES_DATA: ServiceItem[] = [
   },
 ];
 
+export const SERVICE_THEMES: ServiceTheme[] = [
+  {
+    id: "performance-marketing",
+    accent: "#EE4530",
+    accentSecondary: "#FF7255",
+    rgb: "238, 69, 48",
+    glow: "rgba(238, 69, 48, 0.28)",
+    fontFamily: "var(--font-hero-1), var(--font-heading), sans-serif",
+    headingStyle: "normal",
+    headingWeight: 800,
+    headingLetterSpacing: "-0.045em",
+    taglineGradient: "from-[#EE4530] via-[#FF6247] to-[#FFA07A]",
+    categoryBadge: "01 // PERFORMANCE MARKETING",
+    badgeFont: "font-mono tracking-[0.24em]",
+    atmosphereGlow: "radial-gradient(circle, rgba(238, 69, 48, 0.16) 0%, transparent 70%)",
+  },
+  {
+    id: "social-media-marketing",
+    accent: "#FF3366",
+    accentSecondary: "#FB7185",
+    rgb: "255, 51, 102",
+    glow: "rgba(255, 51, 102, 0.30)",
+    fontFamily: "var(--font-syne), var(--font-heading), sans-serif",
+    headingStyle: "normal",
+    headingWeight: 700,
+    headingLetterSpacing: "-0.02em",
+    taglineGradient: "from-[#FF3366] via-[#FB7185] to-[#FDA4AF]",
+    categoryBadge: "02 // SOCIAL MEDIA & CULTURE",
+    badgeFont: "font-mono tracking-[0.22em]",
+    atmosphereGlow: "radial-gradient(circle, rgba(255, 51, 102, 0.16) 0%, transparent 70%)",
+  },
+  {
+    id: "branding-creative",
+    accent: "#F59E0B",
+    accentSecondary: "#FDE68A",
+    rgb: "245, 158, 11",
+    glow: "rgba(245, 158, 11, 0.28)",
+    fontFamily: "var(--font-hero-2), serif",
+    headingStyle: "italic",
+    headingWeight: 400,
+    headingLetterSpacing: "0.01em",
+    taglineGradient: "from-[#F59E0B] via-[#FBBF24] to-[#FDE68A]",
+    categoryBadge: "03 // BRANDING & CREATIVE DIRECTION",
+    badgeFont: "font-mono tracking-[0.26em]",
+    atmosphereGlow: "radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, transparent 70%)",
+  },
+  {
+    id: "website-technology",
+    accent: "#00F0FF",
+    accentSecondary: "#38BDF8",
+    rgb: "0, 240, 255",
+    glow: "rgba(0, 240, 255, 0.30)",
+    fontFamily: "var(--font-mono-tech), var(--font-hero-3), monospace",
+    headingStyle: "normal",
+    headingWeight: 700,
+    headingLetterSpacing: "-0.035em",
+    taglineGradient: "from-[#00F0FF] via-[#38BDF8] to-[#93C5FD]",
+    categoryBadge: "04 // DIGITAL ARCHITECTURE & WEBGL",
+    badgeFont: "font-mono tracking-[0.24em]",
+    atmosphereGlow: "radial-gradient(circle, rgba(0, 240, 255, 0.16) 0%, transparent 70%)",
+  },
+  {
+    id: "seo-local-growth",
+    accent: "#10B981",
+    accentSecondary: "#34D399",
+    rgb: "16, 185, 129",
+    glow: "rgba(16, 185, 129, 0.28)",
+    fontFamily: "var(--font-hero-3), var(--font-heading), sans-serif",
+    headingStyle: "normal",
+    headingWeight: 700,
+    headingLetterSpacing: "-0.03em",
+    taglineGradient: "from-[#10B981] via-[#34D399] to-[#6EE7B7]",
+    categoryBadge: "05 // ALGORITHMIC VISIBILITY & SEARCH",
+    badgeFont: "font-mono tracking-[0.24em]",
+    atmosphereGlow: "radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, transparent 70%)",
+  },
+  {
+    id: "ai-automation",
+    accent: "#A855F7",
+    accentSecondary: "#C084FC",
+    rgb: "168, 85, 247",
+    glow: "rgba(168, 85, 247, 0.32)",
+    fontFamily: "var(--font-syne), var(--font-hero-1), sans-serif",
+    headingStyle: "normal",
+    headingWeight: 800,
+    headingLetterSpacing: "-0.025em",
+    taglineGradient: "from-[#A855F7] via-[#C084FC] to-[#E9D5FF]",
+    categoryBadge: "06 // ARTIFICIAL INTELLIGENCE & AUTOMATION",
+    badgeFont: "font-mono tracking-[0.24em]",
+    atmosphereGlow: "radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, transparent 70%)",
+  },
+];
+
 export function ServicesSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
@@ -151,6 +260,68 @@ export function ServicesSection() {
 
   // Active service index highlighted during scroll
   const [activeNodeIndex, setActiveNodeIndex] = useState<number>(0);
+
+  // Current active theme
+  const currentTheme = SERVICE_THEMES[activeNodeIndex] || SERVICE_THEMES[0];
+
+  // Dynamic Theme Synchronization: Update :root variables for the entire website
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    root.style.setProperty("--theme-accent", currentTheme.accent);
+    root.style.setProperty("--theme-accent-rgb", currentTheme.rgb);
+    root.style.setProperty("--theme-accent-glow", currentTheme.glow);
+    root.style.setProperty("--theme-accent-secondary", currentTheme.accentSecondary);
+    root.style.setProperty("--theme-heading-font", currentTheme.fontFamily);
+  }, [currentTheme]);
+
+  // When leaving the Services section, revert smoothly to the brand flame color
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const trigger = ScrollTrigger.create({
+      trigger: section,
+      start: "top 70%",
+      end: "bottom 30%",
+      onLeave: () => {
+        const root = document.documentElement;
+        root.style.setProperty("--theme-accent", "#EE4530");
+        root.style.setProperty("--theme-accent-rgb", "238, 69, 48");
+        root.style.setProperty("--theme-accent-glow", "rgba(238, 69, 48, 0.25)");
+        root.style.setProperty("--theme-accent-secondary", "#FF6B4A");
+        root.style.setProperty("--theme-heading-font", "var(--font-heading)");
+      },
+      onLeaveBack: () => {
+        const root = document.documentElement;
+        root.style.setProperty("--theme-accent", "#EE4530");
+        root.style.setProperty("--theme-accent-rgb", "238, 69, 48");
+        root.style.setProperty("--theme-accent-glow", "rgba(238, 69, 48, 0.25)");
+        root.style.setProperty("--theme-accent-secondary", "#FF6B4A");
+        root.style.setProperty("--theme-heading-font", "var(--font-heading)");
+      },
+      onEnter: () => {
+        const root = document.documentElement;
+        root.style.setProperty("--theme-accent", currentTheme.accent);
+        root.style.setProperty("--theme-accent-rgb", currentTheme.rgb);
+        root.style.setProperty("--theme-accent-glow", currentTheme.glow);
+        root.style.setProperty("--theme-accent-secondary", currentTheme.accentSecondary);
+        root.style.setProperty("--theme-heading-font", currentTheme.fontFamily);
+      },
+      onEnterBack: () => {
+        const root = document.documentElement;
+        root.style.setProperty("--theme-accent", currentTheme.accent);
+        root.style.setProperty("--theme-accent-rgb", currentTheme.rgb);
+        root.style.setProperty("--theme-accent-glow", currentTheme.glow);
+        root.style.setProperty("--theme-accent-secondary", currentTheme.accentSecondary);
+        root.style.setProperty("--theme-heading-font", currentTheme.fontFamily);
+      },
+    });
+
+    return () => {
+      trigger.kill();
+    };
+  }, [currentTheme]);
 
   // Dynamically compute curved SVG path intersecting all timeline nodes
   const updateTimelinePath = useCallback(() => {
@@ -199,22 +370,22 @@ export function ServicesSection() {
       const waveOffset = isDesktop ? (isEven ? 38 : -38) : (isEven ? 6 : -6);
 
       const cp1x = pCurrent.x + waveOffset;
-      const cp1y = pCurrent.y + dy * 0.38;
+      const cp1y = pCurrent.y + dy * 0.35;
       const cp2x = pNext.x - waveOffset;
-      const cp2y = pCurrent.y + dy * 0.62;
+      const cp2y = pNext.y - dy * 0.35;
 
       pathStr += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pNext.x} ${pNext.y}`;
     }
 
-    // Extend line smoothly past the last node to the bottom
+    // Gentle runout curve from last node downwards to bottom of timeline container
     const lastPoint = points[points.length - 1];
     const endY = cHeight;
-    pathStr += ` C ${lastPoint.x} ${lastPoint.y + (endY - lastPoint.y) * 0.5}, ${lastPoint.x} ${endY * 0.9}, ${lastPoint.x} ${endY}`;
+    pathStr += ` C ${lastPoint.x} ${lastPoint.y + (endY - lastPoint.y) * 0.4}, ${lastPoint.x} ${endY * 0.95}, ${lastPoint.x} ${endY}`;
 
     setSvgPathData(pathStr);
   }, []);
 
-  // Update path on mount and resize
+  // Recalculate SVG path on mount, resize, and DOM layout changes
   useEffect(() => {
     updateTimelinePath();
 
@@ -306,7 +477,6 @@ export function ServicesSection() {
 
         const card = cardsRef.current[idx];
         const connector = connectorsRef.current[idx];
-        const node = nodesRef.current[idx];
         const isLeft = idx % 2 === 0;
 
         // Card initial state: slide in subtly from its side
@@ -358,6 +528,15 @@ export function ServicesSection() {
             connector ? "-=0.25" : 0
           );
         }
+
+        // Dedicated viewport center observer for smooth theme transitions during active reading
+        ScrollTrigger.create({
+          trigger: row,
+          start: "top 62%",
+          end: "bottom 38%",
+          onEnter: () => setActiveNodeIndex(idx),
+          onEnterBack: () => setActiveNodeIndex(idx),
+        });
       });
 
       ScrollTrigger.refresh();
@@ -373,13 +552,28 @@ export function ServicesSection() {
       ref={sectionRef}
       id="services"
       aria-label="What We Do — Interactive Curved Timeline Experience"
-      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
+      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[var(--theme-accent)] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px] transition-colors duration-700"
     >
       {/* Target anchor for 'Our Work' navigation */}
       <div
         id="work"
         className="absolute top-0 left-0 w-full h-0 pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
       />
+
+      {/* Dynamic Ambient Color Aura floating behind the active service */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0 overflow-hidden transition-opacity duration-700"
+        aria-hidden="true"
+      >
+        <div
+          className="absolute w-[600px] sm:w-[900px] h-[600px] sm:h-[900px] rounded-full blur-[160px] sm:blur-[220px] pointer-events-none transition-all duration-700 ease-out -translate-x-1/2 -translate-y-1/2"
+          style={{
+            left: "50%",
+            top: `${(activeNodeIndex + 0.6) * (100 / SERVICES_DATA.length)}%`,
+            background: currentTheme.atmosphereGlow,
+          }}
+        />
+      </div>
 
       {/* Main Content Layout Container */}
       <div
@@ -389,30 +583,54 @@ export function ServicesSection() {
           paddingRight: "clamp(20px, 6vw, 140px)",
         }}
       >
-        {/* 1. SECTION HEADING: "WHAT WE DO" */}
+        {/* 1. SECTION HEADING: "WHAT WE DO" with Dynamic Typography & Color */}
         <div className="mb-14 sm:mb-20 lg:mb-24 select-none will-change-transform max-w-[1200px] mx-auto w-full">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="w-2 h-2 rounded-full bg-[#EE4530] animate-pulse" />
-            <span className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.24em] text-white/50">
-              03 // Services & Capabilities
+          {/* Active Category Pill */}
+          <div className="flex items-center gap-3 mb-4 transition-all duration-500">
+            <span
+              className="w-2.5 h-2.5 rounded-full animate-pulse transition-all duration-500"
+              style={{
+                backgroundColor: currentTheme.accent,
+                boxShadow: `0 0 16px ${currentTheme.accent}`,
+              }}
+            />
+            <span
+              className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.24em] transition-colors duration-500"
+              style={{ color: "rgba(255, 255, 255, 0.75)" }}
+            >
+              {currentTheme.categoryBadge}
             </span>
           </div>
 
+          {/* Morphing "WHAT WE DO" Title */}
           <h2
             ref={headingRef}
-            className="font-bold tracking-[-0.04em] leading-[0.92] text-[#EE4530]"
+            className="leading-[0.92] transition-all duration-500 will-change-transform"
             style={{
-              fontSize: "clamp(64px, 10.5vw, 180px)",
+              fontSize: "clamp(60px, 10vw, 175px)",
+              color: currentTheme.accent,
+              fontFamily: currentTheme.fontFamily,
+              fontStyle: currentTheme.headingStyle || "normal",
+              fontWeight: currentTheme.headingWeight,
+              letterSpacing: currentTheme.headingLetterSpacing,
+              textShadow: `0 0 40px ${currentTheme.glow}`,
             }}
           >
             WHAT WE DO
           </h2>
 
+          {/* Subtitle with dynamic accent highlight */}
           <p
             ref={subheadingRef}
-            className="mt-4 sm:mt-6 text-white/80 font-normal tracking-[-0.02em] text-[20px] sm:text-[28px] lg:text-[34px] leading-[1.25] max-w-[840px]"
+            className="mt-4 sm:mt-6 text-white/80 font-normal tracking-[-0.02em] text-[20px] sm:text-[28px] lg:text-[34px] leading-[1.25] max-w-[840px] transition-colors duration-500"
           >
-            Everything Your Brand Needs to Grow Digitally.
+            Everything Your Brand Needs to{" "}
+            <span
+              className="font-medium transition-colors duration-500"
+              style={{ color: currentTheme.accent }}
+            >
+              Grow Digitally.
+            </span>
           </p>
         </div>
 
@@ -431,8 +649,8 @@ export function ServicesSection() {
             aria-hidden="true"
           >
             <defs>
-              {/* Subtle Glowing filter for active timeline path */}
-              <filter id="orangeGlow" x="-20%" y="-20%" width="140%" height="140%">
+              {/* Dynamic Glowing filter for active timeline path */}
+              <filter id="activeTimelineGlow" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation="3.5" result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
@@ -453,16 +671,19 @@ export function ServicesSection() {
               />
             )}
 
-            {/* Active Scroll-Driven Curved Timeline (Glowing Orange) */}
+            {/* Active Scroll-Driven Curved Timeline with Dynamic Color */}
             {svgPathData && (
               <path
                 ref={activeCurveRef}
                 d={svgPathData}
-                stroke="#EE4530"
+                stroke={currentTheme.accent}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 fill="none"
-                filter="url(#orangeGlow)"
+                filter="url(#activeTimelineGlow)"
+                style={{
+                  transition: "stroke 0.5s ease",
+                }}
               />
             )}
           </svg>
@@ -473,6 +694,7 @@ export function ServicesSection() {
               const isEven = index % 2 === 0; // Even = Left on desktop, Odd = Right
               const isActive = activeNodeIndex === index;
               const isPast = activeNodeIndex > index;
+              const theme = SERVICE_THEMES[index] || SERVICE_THEMES[0];
 
               return (
                 <div
@@ -485,61 +707,80 @@ export function ServicesSection() {
                     "lg:justify-between flex-row"
                   }`}
                 >
-                  {/* DESKTOP TIMELINE CENTER NODE */}
+                  {/* DESKTOP & MOBILE TIMELINE NODE */}
                   <div
                     ref={(el) => {
                       nodesRef.current[index] = el;
                     }}
-                    className={`absolute z-30 transition-all duration-400 ease-out flex items-center justify-center ${
-                      /* Position: left: 28px on mobile, left: 50% - 14px on desktop */
+                    className={`absolute z-30 transition-all duration-500 ease-out flex items-center justify-center ${
+                      /* Position: left: 20px on mobile, left: 50% on desktop */
                       "left-[20px] sm:left-[32px] lg:left-1/2 -translate-x-1/2"
                     }`}
                   >
-                    {/* Outer Node Halo Ring */}
+                    {/* Outer Node Halo Ring with Dynamic Color */}
                     <div
-                      className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                        isActive
-                          ? "bg-[#EE4530]/20 border border-[#EE4530] scale-125 shadow-[0_0_24px_rgba(238,69,48,0.7)]"
-                          : isPast
-                          ? "bg-[#EE4530]/10 border border-[#EE4530]/40"
-                          : "bg-[#0c0c0c] border border-white/20"
+                      className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
+                        isActive ? "scale-125" : ""
                       }`}
+                      style={{
+                        backgroundColor: isActive
+                          ? `rgba(${theme.rgb}, 0.22)`
+                          : isPast
+                          ? `rgba(${theme.rgb}, 0.10)`
+                          : "#0c0c0c",
+                        borderColor: isActive
+                          ? theme.accent
+                          : isPast
+                          ? `rgba(${theme.rgb}, 0.40)`
+                          : "rgba(255, 255, 255, 0.2)",
+                        borderWidth: "1px",
+                        borderStyle: "solid",
+                        boxShadow: isActive
+                          ? `0 0 24px ${theme.accent}, 0 0 48px ${theme.glow}`
+                          : "none",
+                      }}
                     >
                       {/* Inner Node Core */}
                       <span
-                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
-                          isActive
-                            ? "bg-[#EE4530] animate-pulse"
-                            : isPast
-                            ? "bg-[#EE4530]/60"
-                            : "bg-white/40"
+                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-500 ${
+                          isActive ? "animate-pulse" : ""
                         }`}
+                        style={{
+                          backgroundColor: isActive
+                            ? theme.accent
+                            : isPast
+                            ? `rgba(${theme.rgb}, 0.65)`
+                            : "rgba(255, 255, 255, 0.4)",
+                        }}
                       />
                     </div>
                   </div>
 
-                  {/* HORIZONTAL CONNECTOR LINE */}
-                  {/* Desktop: Connects node at 50% to card. Mobile: Connects node at left track to card */}
+                  {/* HORIZONTAL CONNECTOR LINE (Desktop) */}
                   <div
                     ref={(el) => {
                       connectorsRef.current[index] = el;
                     }}
-                    className={`hidden lg:block absolute top-1/2 -translate-y-1/2 h-[1px] z-20 pointer-events-none transition-colors duration-300 ${
-                      isActive
-                        ? "bg-[#EE4530] shadow-[0_0_10px_rgba(238,69,48,0.5)]"
-                        : "bg-white/15"
-                    } ${
+                    className={`hidden lg:block absolute top-1/2 -translate-y-1/2 h-[1px] z-20 pointer-events-none transition-all duration-500 ${
                       isEven
                         ? "right-1/2 w-[48px] xl:w-[64px]"
                         : "left-1/2 w-[48px] xl:w-[64px]"
                     }`}
+                    style={{
+                      background: isActive
+                        ? `linear-gradient(to ${isEven ? "left" : "right"}, ${theme.accent}, ${theme.accentSecondary})`
+                        : "rgba(255, 255, 255, 0.15)",
+                      boxShadow: isActive ? `0 0 12px ${theme.glow}` : "none",
+                    }}
                   />
 
-                  {/* Mobile Connector Line */}
+                  {/* Horizontal Connector Line (Mobile) */}
                   <div
-                    className={`lg:hidden absolute top-1/2 -translate-y-1/2 left-[32px] sm:left-[44px] w-[20px] sm:w-[28px] h-[1px] z-20 pointer-events-none ${
-                      isActive ? "bg-[#EE4530]" : "bg-white/15"
-                    }`}
+                    className="lg:hidden absolute top-1/2 -translate-y-1/2 left-[32px] sm:left-[44px] w-[20px] sm:w-[28px] h-[1px] z-20 pointer-events-none transition-all duration-500"
+                    style={{
+                      background: isActive ? theme.accent : "rgba(255, 255, 255, 0.15)",
+                      boxShadow: isActive ? `0 0 8px ${theme.glow}` : "none",
+                    }}
                   />
 
                   {/* SERVICE CARD CONTAINER */}
@@ -556,26 +797,74 @@ export function ServicesSection() {
                         : "lg:ml-auto lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]")
                     }`}
                   >
-                    {/* Modern Editorial Card Shell */}
+                    {/* Modern Editorial Card Shell with Custom Theme & Typography */}
                     <div
-                      className={`group relative rounded-2xl p-6 sm:p-8 lg:p-9 transition-all duration-300 backdrop-blur-xl border ${
-                        isActive
-                          ? "bg-[#0e0e0e]/95 border-[#EE4530]/35 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_24px_rgba(238,69,48,0.12)]"
-                          : "bg-[#0a0a0a]/80 border-white/[0.08] hover:border-white/20 hover:bg-[#0d0d0d]/90 shadow-xl"
-                      }`}
+                      className="group relative rounded-2xl p-6 sm:p-8 lg:p-9 transition-all duration-500 backdrop-blur-xl border overflow-hidden"
+                      style={{
+                        backgroundColor: isActive ? "#0e0e0e" : "rgba(10, 10, 10, 0.8)",
+                        borderColor: isActive
+                          ? `rgba(${theme.rgb}, 0.45)`
+                          : "rgba(255, 255, 255, 0.08)",
+                        boxShadow: isActive
+                          ? `0 16px 48px rgba(0,0,0,0.85), 0 0 32px ${theme.glow}`
+                          : "0 10px 30px rgba(0,0,0,0.5)",
+                      }}
                     >
-                      {/* Main Service Title */}
+                      {/* Ambient radial inner aura on active card */}
+                      {isActive && (
+                        <div
+                          className="absolute -top-[30%] -right-[30%] w-[320px] h-[320px] rounded-full pointer-events-none blur-[90px] opacity-35 transition-opacity duration-700"
+                          style={{
+                            background: theme.accent,
+                          }}
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      {/* Service Category & Number Badge */}
+                      <div className="flex items-center gap-2.5 mb-3.5">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full transition-colors duration-500"
+                          style={{
+                            backgroundColor: theme.accent,
+                            boxShadow: `0 0 8px ${theme.accent}`,
+                          }}
+                        />
+                        <span
+                          className="text-[10px] sm:text-[11px] font-mono tracking-[0.22em] uppercase transition-colors duration-500"
+                          style={{
+                            color: isActive ? theme.accent : "rgba(255, 255, 255, 0.5)",
+                          }}
+                        >
+                          {theme.categoryBadge}
+                        </span>
+                      </div>
+
+                      {/* Main Service Title with Bespoke Typography */}
                       <h3
-                        className="text-white font-bold tracking-[-0.03em] leading-[1.08] transition-transform duration-300 group-hover:translate-x-1"
+                        className="text-white leading-[1.08] transition-transform duration-300 group-hover:translate-x-1"
                         style={{
-                          fontSize: "clamp(24px, 2.5vw, 42px)",
+                          fontFamily: theme.fontFamily,
+                          fontStyle: theme.headingStyle || "normal",
+                          fontWeight: theme.headingWeight,
+                          letterSpacing: theme.headingLetterSpacing,
+                          fontSize:
+                            theme.id === "branding-creative"
+                              ? "clamp(28px, 3.2vw, 50px)"
+                              : "clamp(24px, 2.5vw, 42px)",
                         }}
                       >
                         {service.title}
                       </h3>
 
-                      {/* Orange Service Tagline */}
-                      <p className="mt-2.5 text-[#EE4530] font-medium tracking-[-0.01em] text-[15px] sm:text-[17px] lg:text-[18px] leading-snug">
+                      {/* Dynamic Gradient Service Tagline */}
+                      <p
+                        className={`mt-2.5 font-medium tracking-[-0.01em] text-[15px] sm:text-[17px] lg:text-[18px] leading-snug transition-all duration-500 ${
+                          isActive
+                            ? `bg-gradient-to-r ${theme.taglineGradient} bg-clip-text text-transparent`
+                            : "text-white/80"
+                        }`}
+                      >
                         {service.tagline}
                       </p>
 

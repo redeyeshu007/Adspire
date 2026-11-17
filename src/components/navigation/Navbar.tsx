@@ -144,8 +144,11 @@ export function Navbar() {
                 className="relative text-[15px] xl:text-[16px] 2xl:text-[17px] font-medium tracking-[0.06em] uppercase text-white/90 hover:text-white transition-colors duration-200 py-1 group focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40 whitespace-nowrap"
               >
                 {item.label}
-                {/* Subtle animated coral-red underline on hover */}
-                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#EE4530] transition-all duration-300 ease-out group-hover:w-full" />
+                {/* Subtle animated dynamic accent underline on hover */}
+                <span
+                  className="absolute bottom-0 left-0 w-0 h-[1.5px] transition-all duration-300 ease-out group-hover:w-full"
+                  style={{ backgroundColor: "var(--theme-accent, #EE4530)" }}
+                />
               </Link>
             </li>
           ))}

@@ -5,6 +5,8 @@ import {
   Plus_Jakarta_Sans,
   Instrument_Serif,
   Space_Grotesk,
+  Syne,
+  JetBrains_Mono,
 } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import "./globals.css";
@@ -45,6 +47,20 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  weight: ["500", "700", "800"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-tech",
+  weight: ["400", "500", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Adspire — Independent Branding & Creative Agency",
   description: "Strategy, identity and digital experiences for ambitious brands.",
@@ -63,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable}`}
+      className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable} ${syne.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body

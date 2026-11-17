@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+:root {
+  --theme-accent: #EE4530;
+  --theme-accent-rgb: 238, 69, 48;
+  --theme-accent-glow: rgba(238, 69, 48, 0.25);
+  --theme-accent-secondary: #FF6B4A;
+  --theme-heading-font: var(--font-heading);
+}
+
+::selection {
+  background-color: var(--theme-accent, #EE4530);
+  color: #ffffff;
+}
+
 html {
   /* Lenis handles smooth scrolling via JavaScript interpolation */
   scroll-behavior: auto !important;
