@@ -166,6 +166,11 @@ const HWF_CSS = `
   border-top: 0.5px solid rgba(255, 255, 255, 0.1);
   font-family: var(--hwf-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
 }
+.hwf-rule--standalone {
+  margin: 0;
+  padding: clamp(24px, 3.5vw, 40px) clamp(24px, 5.5vw, 110px) 0;
+  border-top: none;
+}
 .hwf-copy { opacity: .55; font-size: 11px; text-transform: none; letter-spacing: .04em; }
 .hwf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 840px) {
@@ -458,6 +463,8 @@ export function HalftoneWordmarkFooter({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const hasTop = Boolean(label || meta || (columns && columns.length > 0));
+
   return (
     <footer
       ref={rootRef}
@@ -475,36 +482,38 @@ export function HalftoneWordmarkFooter({
       <style>{HWF_CSS}</style>
       <canvas ref={canvasRef} aria-hidden="true" />
       <span className="hwf-sr">{wordmark}</span>
-      <div className="hwf-top">
-        <div className="hwf-brand">
-          {typeof label === "string" ? <strong>{label}</strong> : label}
-          {typeof meta === "string" ? <span>{meta}</span> : meta}
+      {hasTop && (
+        <div className="hwf-top">
+          <div className="hwf-brand">
+            {typeof label === "string" ? <strong>{label}</strong> : label}
+            {typeof meta === "string" ? <span>{meta}</span> : meta}
+          </div>
+          {columns.map((col) => (
+            <nav className="hwf-col" key={col.title} aria-label={col.title}>
+              <h3>{col.title}</h3>
+              {col.customContent ? (
+                col.customContent
+              ) : (
+                <ul>
+                  {col.links?.map((l) => (
+                    <li key={typeof l.label === "string" ? l.label : String(l.href)}>
+                      <a
+                        href={l.href || "#"}
+                        {...(l.href?.startsWith("http")
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                      >
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </nav>
+          ))}
         </div>
-        {columns.map((col) => (
-          <nav className="hwf-col" key={col.title} aria-label={col.title}>
-            <h3>{col.title}</h3>
-            {col.customContent ? (
-              col.customContent
-            ) : (
-              <ul>
-                {col.links?.map((l) => (
-                  <li key={typeof l.label === "string" ? l.label : String(l.href)}>
-                    <a
-                      href={l.href || "#"}
-                      {...(l.href?.startsWith("http")
-                        ? { target: "_blank", rel: "noopener noreferrer" }
-                        : {})}
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </nav>
-        ))}
-      </div>
-      <div className="hwf-rule">
+      )}
+      <div className={`hwf-rule ${!hasTop ? "hwf-rule--standalone" : ""}`}>
         <div className="hwf-copy">
           {copyright || <span>© 2026 Adspire Media. All rights reserved.</span>}
         </div>
