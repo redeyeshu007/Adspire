@@ -26,6 +26,7 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
   const headlineLine1Ref = useRef<HTMLSpanElement | null>(null);
   const headlineLine2Ref = useRef<HTMLSpanElement | null>(null);
   const headlineLine3Ref = useRef<HTMLSpanElement | null>(null);
+  const subtextRef = useRef<HTMLParagraphElement | null>(null);
   const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
       headlineLine1Ref.current,
       headlineLine2Ref.current,
       headlineLine3Ref.current,
+      subtextRef.current,
     ].filter(Boolean);
 
     // Initial hidden state if waiting for preloader
@@ -96,13 +98,13 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
   return (
     <div
       ref={containerRef}
-      className="relative z-20 flex flex-col justify-start min-h-[100dvh] w-full pt-[48vh] sm:pt-[52vh] lg:pt-[54vh] pb-12 sm:pb-16 pointer-events-none"
+      className="relative z-20 flex flex-col justify-end min-h-[100dvh] w-full pt-[36vh] sm:pt-[40vh] pb-16 sm:pb-20 lg:pb-24 pointer-events-none"
       style={{
         paddingLeft: "clamp(24px, 8.8vw, 160px)",
         paddingRight: "clamp(24px, 8.8vw, 160px)",
       }}
     >
-      <div className="max-w-[880px] text-left pointer-events-auto">
+      <div className="max-w-[920px] text-left pointer-events-auto">
         {/* Exactly 3 Intentional Lines — clamp(68px, 6vw, 100px) */}
         <h1 className="font-bold text-white tracking-[-0.05em] leading-[0.98] sm:leading-[0.96] select-none text-[38px] sm:text-6xl md:text-7xl lg:text-[clamp(68px,6vw,100px)] pl-0.5">
           <span ref={headlineLine1Ref} className="block">
@@ -115,6 +117,16 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
             blend in<span className="text-[#EE4530]">.</span>
           </span>
         </h1>
+
+        {/* Agency Positioning Statement */}
+        <p
+          ref={subtextRef}
+          className="mt-6 sm:mt-8 max-w-[680px] text-white/75 text-[15px] sm:text-[17px] md:text-[19px] leading-[1.65] font-normal"
+        >
+          Adspire Media is a dynamic digital growth agency combining strategy,
+          creativity, performance marketing and technology to help businesses
+          build stronger brands and grow in the digital world.
+        </p>
       </div>
     </div>
   );
