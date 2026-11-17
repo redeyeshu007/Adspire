@@ -114,20 +114,24 @@ export function IntroSection() {
         </div>
 
         {/* 2. MIDDLE LEFT: Main Editorial Heading with refined scale and spacing */}
-        <div className="max-w-[1280px] will-change-transform">
+        <div className="max-w-[1340px] will-change-transform">
           <h2
             ref={headingRef}
             className="text-white font-bold tracking-[-0.04em] leading-[1.04]"
           >
-            <span className="block mb-5 sm:mb-7 lg:mb-8 text-[clamp(26px,3.4vw,56px)] text-white/90">
+            <span className="block mb-5 sm:mb-6 lg:mb-7 text-[clamp(24px,3.0vw,50px)] text-white/90">
               More Than a Digital Marketing Agency.
             </span>
-            <span className="block text-[clamp(30px,4.2vw,68px)] leading-[1.06] tracking-[-0.045em] text-white">
-              We bring creativity, marketing and technology
-              <br className="hidden md:inline" />{" "}
-              together to build digital experiences
-              <br className="hidden md:inline" />{" "}
-              that move businesses forward.
+            <span className="block text-[clamp(26px,3.3vw,54px)] leading-[1.14] tracking-[-0.035em] text-white">
+              <span className="block lg:whitespace-nowrap">
+                We bring creativity, marketing and technology
+              </span>
+              <span className="block">
+                together to build digital experiences
+              </span>
+              <span className="block">
+                that move businesses forward.
+              </span>
             </span>
           </h2>
         </div>
