@@ -71,6 +71,18 @@ export function AdspirePreloader({
 
   const webGLAvailable = isClient && isWebGLSupported() && !hasWebGLError;
 
+  // Fallback auto-dismiss when WebGL is unavailable
+  React.useEffect(() => {
+    if (isClient && !webGLAvailable && !isPreview) {
+      const timer = setTimeout(() => {
+        setIsExiting(true);
+        onComplete?.();
+        setTimeout(() => setIsRemoved(true), 850);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isClient, webGLAvailable, isPreview, onComplete]);
+
   const handleSequenceComplete = () => {
     if (isPreview) {
       onComplete?.();

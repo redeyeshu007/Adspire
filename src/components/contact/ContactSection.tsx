@@ -80,10 +80,10 @@ export function ContactSection() {
         <div className="contact-reveal">
           <ContactClosingCTA />
         </div>
-
-        {/* 4. Official Site Footer */}
-        <Footer />
       </div>
+
+      {/* 4. Official Halftone Wordmark Site Footer */}
+      <Footer />
     </section>
   );
 }
