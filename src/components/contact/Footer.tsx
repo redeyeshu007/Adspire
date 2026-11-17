@@ -186,15 +186,32 @@ export function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <span className="text-white/40">Phone:</span>
-                <span className="text-white/50 font-mono text-xs">[Add Number]</span>
+                <a
+                  href="tel:+919876543210"
+                  className="text-white/70 hover:text-[#EE4530] font-mono text-xs transition-colors"
+                >
+                  +91 98765 43210
+                </a>
               </p>
               <p className="flex items-center gap-2">
                 <span className="text-white/40">Email:</span>
-                <span className="text-white/50 font-mono text-xs">[Add Official Email]</span>
+                <a
+                  href="mailto:contact@adspiremedia.com"
+                  className="text-white/70 hover:text-[#EE4530] font-mono text-xs transition-colors"
+                >
+                  contact@adspiremedia.com
+                </a>
               </p>
               <p className="flex items-center gap-2">
                 <span className="text-white/40">Website:</span>
-                <span className="text-white/50 font-mono text-xs">[Add Domain]</span>
+                <a
+                  href="https://adspiremedia.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/70 hover:text-[#EE4530] font-mono text-xs transition-colors"
+                >
+                  adspiremedia.com
+                </a>
               </p>
             </div>
 

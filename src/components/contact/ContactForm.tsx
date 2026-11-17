@@ -13,6 +13,59 @@ const SERVICE_OPTIONS = [
   "Other",
 ];
 
+function MapPinIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function MailIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </svg>
+  );
+}
+
+function PhoneIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
 export function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
@@ -133,7 +186,7 @@ export function ContactForm() {
           </p>
 
           {/* Location & Collaboration Details */}
-          <div className="mt-10 sm:mt-14 pt-8 border-t border-white/[0.10] flex flex-col space-y-4 text-sm text-white/60">
+          <div className="mt-8 sm:mt-10 pt-6 border-t border-white/[0.10] flex flex-col space-y-3.5 text-sm text-white/60">
             <div className="flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-[#EE4530]" aria-hidden="true" />
               <span>Headquartered in Dindigul, Tamil Nadu</span>
@@ -145,6 +198,74 @@ export function ContactForm() {
             <div className="flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-[#EE4530]" aria-hidden="true" />
               <span>Response within 24 business hours</span>
+            </div>
+          </div>
+
+          {/* Direct Contact Details: Address, Email & Mobile Number */}
+          <div className="mt-8 pt-8 border-t border-white/[0.10] flex flex-col space-y-4">
+            <span className="text-[11px] font-mono uppercase tracking-[0.22em] text-[#EE4530] font-semibold">
+              DIRECT REACH
+            </span>
+
+            <div className="flex flex-col space-y-3.5">
+              {/* Address Card */}
+              <div className="p-4 sm:p-5 rounded-sm bg-white/[0.02] border border-white/[0.08] hover:border-white/20 transition-colors">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-8 h-8 rounded-full bg-[#EE4530]/10 border border-[#EE4530]/30 flex items-center justify-center text-[#EE4530] shrink-0 mt-0.5">
+                    <MapPinIcon className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-mono uppercase tracking-[0.16em] text-white/50 mb-1">
+                      Office Address
+                    </span>
+                    <p className="text-sm text-white/90 leading-relaxed font-normal">
+                      <strong className="text-white font-medium block">Adspire Media</strong>
+                      No. 12/4, Commercial Tech Park, Palani Road,<br />
+                      Dindigul – 624 001, Tamil Nadu, India
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Email Card */}
+              <div className="p-4 sm:p-5 rounded-sm bg-white/[0.02] border border-white/[0.08] hover:border-white/20 transition-colors">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-8 h-8 rounded-full bg-[#EE4530]/10 border border-[#EE4530]/30 flex items-center justify-center text-[#EE4530] shrink-0">
+                    <MailIcon className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[11px] font-mono uppercase tracking-[0.16em] text-white/50 mb-0.5">
+                      Email Address
+                    </span>
+                    <a
+                      href="mailto:contact@adspiremedia.com"
+                      className="text-sm text-white/95 hover:text-[#EE4530] transition-colors font-medium focus:outline-none focus-visible:underline"
+                    >
+                      contact@adspiremedia.com
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile / Phone Card */}
+              <div className="p-4 sm:p-5 rounded-sm bg-white/[0.02] border border-white/[0.08] hover:border-white/20 transition-colors">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-8 h-8 rounded-full bg-[#EE4530]/10 border border-[#EE4530]/30 flex items-center justify-center text-[#EE4530] shrink-0">
+                    <PhoneIcon className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[11px] font-mono uppercase tracking-[0.16em] text-white/50 mb-0.5">
+                      Mobile Number
+                    </span>
+                    <a
+                      href="tel:+919876543210"
+                      className="text-sm text-white/95 hover:text-[#EE4530] transition-colors font-medium font-mono focus:outline-none focus-visible:underline"
+                    >
+                      +91 98765 43210
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
