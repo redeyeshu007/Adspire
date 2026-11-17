@@ -252,6 +252,7 @@ export function ServicesSection() {
   // SVG path refs
   const baseCurveRef = useRef<SVGPathElement | null>(null);
   const activeCurveRef = useRef<SVGPathElement | null>(null);
+  const activeGlowCurveRef = useRef<SVGPathElement | null>(null);
   const [svgPathData, setSvgPathData] = useState<string>("");
   const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
     width: 1200,
@@ -350,37 +351,39 @@ export function ServicesSection() {
 
     if (points.length < 2) return;
 
-    // Build organic curved SVG path: starts slightly above first node, passes through all nodes, and extends to bottom
+    // Build organic curved SVG path with luxurious flowing S-bends
     const startY = 0;
     const startX = points[0].x;
     let pathStr = `M ${startX} ${startY}`;
 
-    // Curve from top to first node
-    pathStr += ` C ${startX} ${points[0].y * 0.4}, ${points[0].x} ${points[0].y * 0.7}, ${points[0].x} ${points[0].y}`;
+    // Soft blended entrance curve approaching the first node with a gentle reverse bend
+    const introWave = isDesktop ? -45 : -10;
+    pathStr += ` C ${startX + introWave} ${points[0].y * 0.35}, ${points[0].x + introWave * 0.5} ${points[0].y * 0.72}, ${points[0].x} ${points[0].y}`;
 
-    // Graceful alternating undulating curves between consecutive nodes
+    // Graceful alternating undulating curves between consecutive nodes with pronounced organic bends
     for (let i = 0; i < points.length - 1; i++) {
       const pCurrent = points[i];
       const pNext = points[i + 1];
       const dy = pNext.y - pCurrent.y;
       const isEven = i % 2 === 0;
 
-      // On desktop: curve swings gently left and right between alternating cards
-      // On mobile: subtle organic micro-wave along the left track
-      const waveOffset = isDesktop ? (isEven ? 38 : -38) : (isEven ? 6 : -6);
+      // Generous organic bend swinging harmoniously towards each card
+      // Desktop: 92px pronounced flowing wave. Mobile: 24px clean wave.
+      const waveOffset = isDesktop ? (isEven ? 92 : -92) : (isEven ? 24 : -24);
 
       const cp1x = pCurrent.x + waveOffset;
-      const cp1y = pCurrent.y + dy * 0.35;
+      const cp1y = pCurrent.y + dy * 0.44;
       const cp2x = pNext.x - waveOffset;
-      const cp2y = pNext.y - dy * 0.35;
+      const cp2y = pNext.y - dy * 0.44;
 
       pathStr += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pNext.x} ${pNext.y}`;
     }
 
-    // Gentle runout curve from last node downwards to bottom of timeline container
+    // Elegant runout curve from last node downwards with a soft matching blend
     const lastPoint = points[points.length - 1];
     const endY = cHeight;
-    pathStr += ` C ${lastPoint.x} ${lastPoint.y + (endY - lastPoint.y) * 0.4}, ${lastPoint.x} ${endY * 0.95}, ${lastPoint.x} ${endY}`;
+    const exitWave = isDesktop ? 50 : 12;
+    pathStr += ` C ${lastPoint.x + exitWave} ${lastPoint.y + (endY - lastPoint.y) * 0.42}, ${lastPoint.x} ${endY * 0.96}, ${lastPoint.x} ${endY}`;
 
     setSvgPathData(pathStr);
   }, []);
@@ -451,15 +454,19 @@ export function ServicesSection() {
         }
       );
 
-      // 2. SCROLL-DRIVEN TIMELINE PATH PROGRESS DRAWING
+      // 2. SCROLL-DRIVEN TIMELINE PATH PROGRESS DRAWING (Both Core & Blended Aura Curves)
       if (activeCurve && svgPathData) {
         const totalLen = activeCurve.getTotalLength() || 2500;
-        gsap.set(activeCurve, {
-          strokeDasharray: totalLen,
-          strokeDashoffset: totalLen,
+        const curvesToAnimate = [activeCurve, activeGlowCurveRef.current].filter(Boolean) as SVGPathElement[];
+
+        curvesToAnimate.forEach((c) => {
+          gsap.set(c, {
+            strokeDasharray: totalLen,
+            strokeDashoffset: totalLen,
+          });
         });
 
-        gsap.to(activeCurve, {
+        gsap.to(curvesToAnimate, {
           strokeDashoffset: 0,
           ease: "none",
           scrollTrigger: {
@@ -649,8 +656,46 @@ export function ServicesSection() {
             aria-hidden="true"
           >
             <defs>
-              {/* Dynamic Glowing filter for active timeline path */}
-              <filter id="activeTimelineGlow" x="-20%" y="-20%" width="140%" height="140%">
+              {/* Seamless Full-Spectrum Gradient Blending across all 6 services */}
+              <linearGradient
+                id="timelineColorBlend"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="#EE4530" stopOpacity="0" />
+                <stop offset="4%" stopColor="#EE4530" stopOpacity="0.8" />
+                <stop offset="14%" stopColor="#EE4530" stopOpacity="1" />
+                <stop offset="31%" stopColor="#FF3366" stopOpacity="1" />
+                <stop offset="48%" stopColor="#F59E0B" stopOpacity="1" />
+                <stop offset="65%" stopColor="#00F0FF" stopOpacity="1" />
+                <stop offset="82%" stopColor="#10B981" stopOpacity="1" />
+                <stop offset="94%" stopColor="#A855F7" stopOpacity="1" />
+                <stop offset="100%" stopColor="#A855F7" stopOpacity="0" />
+              </linearGradient>
+
+              {/* Inactive Base Gradient: Soft dark neutral blend with transparent ends */}
+              <linearGradient
+                id="baseTimelineBlend"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                <stop offset="5%" stopColor="rgba(255,255,255,0.08)" />
+                <stop offset="92%" stopColor="rgba(255,255,255,0.08)" />
+                <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+              </linearGradient>
+
+              {/* Ultra-Soft Atmospheric Diffusion Filter */}
+              <filter id="ultraSoftGlow" x="-50%" y="-20%" width="200%" height="140%">
+                <feGaussianBlur stdDeviation="9" result="blur" />
+              </filter>
+
+              {/* Core Luminous Bloom Filter */}
+              <filter id="activeTimelineGlow" x="-30%" y="-20%" width="160%" height="140%">
                 <feGaussianBlur stdDeviation="3.5" result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
@@ -659,31 +704,42 @@ export function ServicesSection() {
               </filter>
             </defs>
 
-            {/* Base Inactive Curved Timeline (Neutral Dark) */}
+            {/* Base Inactive Curved Timeline (Neutral Dark with Soft Fade Ends) */}
             {svgPathData && (
               <path
                 ref={baseCurveRef}
                 d={svgPathData}
-                stroke="rgba(255, 255, 255, 0.12)"
+                stroke="url(#baseTimelineBlend)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 fill="none"
               />
             )}
 
-            {/* Active Scroll-Driven Curved Timeline with Dynamic Color */}
+            {/* LAYER 1: Ultra-Soft Blended Atmospheric Aura Curve (Wide Feathered Glow) */}
+            {svgPathData && (
+              <path
+                ref={activeGlowCurveRef}
+                d={svgPathData}
+                stroke="url(#timelineColorBlend)"
+                strokeWidth="14"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.32"
+                filter="url(#ultraSoftGlow)"
+              />
+            )}
+
+            {/* LAYER 2: Active Scroll-Driven Core Curved Timeline (Vibrant Blended Ribbon) */}
             {svgPathData && (
               <path
                 ref={activeCurveRef}
                 d={svgPathData}
-                stroke={currentTheme.accent}
-                strokeWidth="2.5"
+                stroke="url(#timelineColorBlend)"
+                strokeWidth="2.8"
                 strokeLinecap="round"
                 fill="none"
                 filter="url(#activeTimelineGlow)"
-                style={{
-                  transition: "stroke 0.5s ease",
-                }}
               />
             )}
           </svg>
@@ -768,9 +824,9 @@ export function ServicesSection() {
                     }`}
                     style={{
                       background: isActive
-                        ? `linear-gradient(to ${isEven ? "left" : "right"}, ${theme.accent}, ${theme.accentSecondary})`
-                        : "rgba(255, 255, 255, 0.15)",
-                      boxShadow: isActive ? `0 0 12px ${theme.glow}` : "none",
+                        ? `linear-gradient(to ${isEven ? "left" : "right"}, ${theme.accent}, rgba(${theme.rgb}, 0.25))`
+                        : "rgba(255, 255, 255, 0.12)",
+                      boxShadow: isActive ? `0 0 16px ${theme.glow}` : "none",
                     }}
                   />
 
