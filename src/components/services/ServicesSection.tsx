@@ -473,7 +473,6 @@ export function ServicesSection() {
               const isEven = index % 2 === 0; // Even = Left on desktop, Odd = Right
               const isActive = activeNodeIndex === index;
               const isPast = activeNodeIndex > index;
-              const serviceNum = `0${index + 1}`;
 
               return (
                 <div
@@ -565,26 +564,9 @@ export function ServicesSection() {
                           : "bg-[#0a0a0a]/80 border-white/[0.08] hover:border-white/20 hover:bg-[#0d0d0d]/90 shadow-xl"
                       }`}
                     >
-                      {/* Top Meta: Number + Category Badge */}
-                      <div className="flex items-center pb-4 border-b border-white/[0.07]">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`font-mono text-xs sm:text-sm font-semibold tracking-wider transition-colors duration-300 ${
-                              isActive ? "text-[#EE4530]" : "text-white/40"
-                            }`}
-                          >
-                            {serviceNum}
-                          </span>
-                          <span className="text-white/20">/</span>
-                          <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-white/50">
-                            {service.itemsLabel}
-                          </span>
-                        </div>
-                      </div>
-
                       {/* Main Service Title */}
                       <h3
-                        className="text-white font-bold tracking-[-0.03em] leading-[1.08] mt-5 transition-transform duration-300 group-hover:translate-x-1"
+                        className="text-white font-bold tracking-[-0.03em] leading-[1.08] transition-transform duration-300 group-hover:translate-x-1"
                         style={{
                           fontSize: "clamp(24px, 2.5vw, 42px)",
                         }}
