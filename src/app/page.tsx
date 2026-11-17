@@ -17,7 +17,7 @@ export default function Home() {
       {/* 1. Global Persistent 3D Background with Scroll-Driven Dissolve */}
       <PersistentBackground />
 
-      {/* 2. Persistent Navigation Bar (Home, About, Services, Our Work, Careers, Contact) */}
+      {/* 2. Persistent Navigation Bar (Home, About, Services, Our Work, Contact) */}
       <Navbar />
 
       {/* 3. Section 01: Master Homepage Hero Section */}
