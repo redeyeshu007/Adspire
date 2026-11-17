@@ -108,13 +108,13 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
         {/* Exactly 3 Intentional Lines — clamp(68px, 6vw, 100px) */}
         <h1 className="font-bold text-white tracking-[-0.05em] leading-[0.98] sm:leading-[0.96] select-none text-[38px] sm:text-6xl md:text-7xl lg:text-[clamp(68px,6vw,100px)] pl-0.5">
           <span ref={headlineLine1Ref} className="block">
-            We create brands
+            Build Better.
           </span>
           <span ref={headlineLine2Ref} className="block">
-            that refuse to
+            Reach Further.
           </span>
           <span ref={headlineLine3Ref} className="block">
-            blend in<span className="text-[#EE4530]">.</span>
+            Grow Smarter<span className="text-[#EE4530]">.</span>
           </span>
         </h1>
 
