@@ -56,7 +56,7 @@ export function ContactSection() {
       ref={sectionRef}
       id="contact"
       aria-label="Contact Adspire — Start a Conversation"
-      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[#EE4530] selection:text-white overflow-hidden scroll-mt-[100px] sm:scroll-mt-[120px]"
+      className="relative z-10 w-full min-h-screen bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden scroll-mt-[100px] sm:scroll-mt-[120px]"
     >
       {/* Editorial Content Container */}
       <div

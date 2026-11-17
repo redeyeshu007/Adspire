@@ -30,8 +30,6 @@ export function PersistentBackground() {
   const morphWrapperRef = useRef<HTMLDivElement | null>(null);
   const cursorGridWrapperRef = useRef<HTMLDivElement | null>(null);
   const morphRef = useRef<PixelMorphTransitionRef | null>(null);
-  const gridToBlackWrapperRef = useRef<HTMLDivElement | null>(null);
-  const gridToBlackMorphRef = useRef<PixelMorphTransitionRef | null>(null);
 
   const [acidCanvas, setAcidCanvas] = useState<HTMLCanvasElement | null>(null);
 
@@ -121,55 +119,12 @@ export function PersistentBackground() {
       },
     });
 
-    // Master ScrollTrigger 2: Services -> Contact (CursorGrid -> Pixel Disintegration -> Pure Black)
-    const gridToBlackWrapper = gridToBlackWrapperRef.current;
-    const triggerContact = ScrollTrigger.create({
-      trigger: "#contact",
-      start: "top bottom",
-      end: "top 35%",
-      scrub: prefersReducedMotion ? false : 0.35,
-      onUpdate: (self) => {
-        const p = self.progress; // 0.0 in Services -> 1.0 at entrance of Contact
-
-        if (prefersReducedMotion) {
-          gsap.set(cursorGridWrapper, { opacity: Math.max(0, 1 - p * 1.5) });
-          if (gridToBlackWrapper) gsap.set(gridToBlackWrapper, { opacity: 0 });
-          container.style.pointerEvents = p > 0.5 ? "none" : "auto";
-          return;
-        }
-
-        gridToBlackMorphRef.current?.setProgress(p);
-
-        // Stage A: Services Active (p <= 0.01)
-        if (p <= 0.01) {
-          gsap.set(cursorGridWrapper, { opacity: 1 });
-          if (gridToBlackWrapper) gsap.set(gridToBlackWrapper, { opacity: 0 });
-          container.style.pointerEvents = "auto";
-        }
-        // Stage B: Pixel Disintegration into Pure Black (0.01 < p < 0.98)
-        else if (p < 0.98) {
-          if (gridToBlackWrapper) gsap.set(gridToBlackWrapper, { opacity: 1 });
-          // As disintegration begins, underlying grid lines fade out
-          const gridFade = Math.max(0, 1 - smoothstep(0.02, 0.30, p));
-          gsap.set(cursorGridWrapper, { opacity: gridFade });
-          container.style.pointerEvents = "none";
-        }
-        // Stage C: Pure Black Active for Contact (p >= 0.98)
-        else {
-          gsap.set(cursorGridWrapper, { opacity: 0 });
-          if (gridToBlackWrapper) gsap.set(gridToBlackWrapper, { opacity: 0 });
-          container.style.pointerEvents = "none";
-        }
-      },
-    });
-
     const refreshTimer = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 400);
 
     return () => {
       trigger.kill();
-      triggerContact.kill();
       clearTimeout(refreshTimer);
     };
   }, []);
@@ -268,23 +223,7 @@ export function PersistentBackground() {
         />
       </div>
 
-      {/* 4. Cinematic Pixel Disintegration WebGL2 Transition Layer (Section 03 -> Section 04: Grid to Black) */}
-      <div
-        ref={gridToBlackWrapperRef}
-        className="absolute inset-0 w-full h-full opacity-0 pointer-events-none z-22 will-change-opacity"
-      >
-        <PixelMorphTransition
-          ref={gridToBlackMorphRef}
-          mode="grid-to-black"
-          pixelSize={10}
-          gridSize={60}
-          gridColor="#48250f"
-          copperColor="#671702"
-          className="w-full h-full"
-        />
-      </div>
-
-      {/* 5. Delicate Atmospheric Ambient Shadow Overlay */}
+      {/* 4. Delicate Atmospheric Ambient Shadow Overlay */}
       <div
         className="absolute inset-0 pointer-events-none z-30 bg-[radial-gradient(ellipse_at_center,rgba(8,8,8,0.12)_0%,rgba(8,8,8,0.40)_100%)]"
         aria-hidden="true"
