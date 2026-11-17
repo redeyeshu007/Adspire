@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
 import { ServiceVisualPreview } from "./ServiceVisualPreview";
+import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
 
 export interface ServiceItem {
   id: string;
@@ -133,91 +134,140 @@ export function ServicesSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const subheadingRef = useRef<HTMLParagraphElement | null>(null);
+  const timelineContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Per-row refs for cards, connectors, and nodes
   const rowsRef = useRef<Array<HTMLDivElement | null>>([]);
-  const closingDividerRef = useRef<HTMLDivElement | null>(null);
+  const nodesRef = useRef<Array<HTMLDivElement | null>>([]);
+  const connectorsRef = useRef<Array<HTMLDivElement | null>>([]);
+  const cardsRef = useRef<Array<HTMLDivElement | null>>([]);
 
-  // Interactive Visual Preview States
-  const [activePreviewId, setActivePreviewId] = useState<string | null>(null);
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [expandedMobileId, setExpandedMobileId] = useState<string | null>(null);
+  // SVG path refs
+  const baseCurveRef = useRef<SVGPathElement | null>(null);
+  const activeCurveRef = useRef<SVGPathElement | null>(null);
+  const [svgPathData, setSvgPathData] = useState<string>("");
+  const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
+    width: 1200,
+    height: 3000,
+  });
 
-  // Mouse move handler with intelligent boundary placement to never obscure text
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    const previewWidth = 380;
-    const previewHeight = 260;
-    const padding = 24;
+  // Active service index highlighted during scroll
+  const [activeNodeIndex, setActiveNodeIndex] = useState<number>(0);
+  const [expandedPreviewIndex, setExpandedPreviewIndex] = useState<number | null>(null);
 
-    if (typeof window === "undefined") return;
+  const { scrollTo } = useSmoothScroll();
 
-    const winW = window.innerWidth;
-    const winH = window.innerHeight;
+  // Dynamically compute curved SVG path intersecting all timeline nodes
+  const updateTimelinePath = useCallback(() => {
+    const container = timelineContainerRef.current;
+    if (!container) return;
 
-    // Intelligent positioning:
-    // If cursor is on the left half of the screen (hovering title/tagline/description),
-    // position preview into the right zone so it NEVER obscures the editorial typography.
-    let targetX: number;
-    if (e.clientX < winW * 0.5) {
-      targetX = Math.max(e.clientX + 48, winW * 0.52);
-      if (targetX + previewWidth > winW - padding) {
-        targetX = winW - previewWidth - padding;
+    const containerRect = container.getBoundingClientRect();
+    const cWidth = containerRect.width;
+    const cHeight = containerRect.height;
+    if (cWidth <= 0 || cHeight <= 0) return;
+
+    setContainerDimensions({ width: cWidth, height: cHeight });
+
+    const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
+    const points: Array<{ x: number; y: number }> = [];
+
+    // Collect center position of each node relative to timelineContainer
+    nodesRef.current.forEach((node) => {
+      if (node) {
+        const nRect = node.getBoundingClientRect();
+        const nx = nRect.left - containerRect.left + nRect.width / 2;
+        const ny = nRect.top - containerRect.top + nRect.height / 2;
+        points.push({ x: nx, y: ny });
       }
-    } else {
-      // If cursor is on the right half, position to the left of the cursor
-      targetX = e.clientX - previewWidth - 48;
-      if (targetX < padding) {
-        targetX = padding;
-      }
+    });
+
+    if (points.length < 2) return;
+
+    // Build organic curved SVG path: starts slightly above first node, passes through all nodes, and extends to bottom
+    const startY = 0;
+    const startX = points[0].x;
+    let pathStr = `M ${startX} ${startY}`;
+
+    // Curve from top to first node
+    pathStr += ` C ${startX} ${points[0].y * 0.4}, ${points[0].x} ${points[0].y * 0.7}, ${points[0].x} ${points[0].y}`;
+
+    // Graceful alternating undulating curves between consecutive nodes
+    for (let i = 0; i < points.length - 1; i++) {
+      const pCurrent = points[i];
+      const pNext = points[i + 1];
+      const dy = pNext.y - pCurrent.y;
+      const isEven = i % 2 === 0;
+
+      // On desktop: curve swings gently left and right between alternating cards
+      // On mobile: subtle organic micro-wave along the left track
+      const waveOffset = isDesktop ? (isEven ? 38 : -38) : (isEven ? 6 : -6);
+
+      const cp1x = pCurrent.x + waveOffset;
+      const cp1y = pCurrent.y + dy * 0.38;
+      const cp2x = pNext.x - waveOffset;
+      const cp2y = pCurrent.y + dy * 0.62;
+
+      pathStr += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pNext.x} ${pNext.y}`;
     }
 
-    // Vertical positioning: smoothly follow cursor Y, clamped within viewport bounds
-    let targetY = e.clientY - previewHeight / 2;
-    if (targetY < padding) {
-      targetY = padding;
-    } else if (targetY + previewHeight > winH - padding) {
-      targetY = winH - previewHeight - padding;
-    }
+    // Extend line smoothly past the last node to the bottom
+    const lastPoint = points[points.length - 1];
+    const endY = cHeight;
+    pathStr += ` C ${lastPoint.x} ${lastPoint.y + (endY - lastPoint.y) * 0.5}, ${lastPoint.x} ${endY * 0.9}, ${lastPoint.x} ${endY}`;
 
-    setCursorPos({ x: targetX, y: targetY });
+    setSvgPathData(pathStr);
   }, []);
 
+  // Update path on mount and resize
+  useEffect(() => {
+    updateTimelinePath();
+
+    const container = timelineContainerRef.current;
+    if (!container || typeof ResizeObserver === "undefined") return;
+
+    const observer = new ResizeObserver(() => {
+      updateTimelinePath();
+    });
+    observer.observe(container);
+
+    window.addEventListener("resize", updateTimelinePath);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateTimelinePath);
+    };
+  }, [updateTimelinePath]);
+
+  // GSAP ScrollTrigger Animations
   useEffect(() => {
     const section = sectionRef.current;
     const heading = headingRef.current;
     const subheading = subheadingRef.current;
-    const closingDivider = closingDividerRef.current;
-    if (!section || !heading) return;
+    const container = timelineContainerRef.current;
+    const activeCurve = activeCurveRef.current;
+    if (!section || !heading || !container) return;
 
-    // Respect user's motion preferences
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (prefersReducedMotion) {
-      gsap.set([heading, subheading], { opacity: 1, y: 0 });
-      rowsRef.current.forEach((row) => {
-        if (row) {
-          gsap.set(
-            row.querySelectorAll(
-              ".service-divider, .service-title, .service-tagline, .service-desc, .service-label, .service-capability"
-            ),
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              scaleX: 1,
-            }
-          );
-        }
-      });
-      if (closingDivider) {
-        gsap.set(closingDivider, { scaleX: 1 });
+      gsap.set([heading, subheading].filter(Boolean), { opacity: 1, y: 0 });
+      if (activeCurve) {
+        gsap.set(activeCurve, { strokeDashoffset: 0 });
       }
+      cardsRef.current.forEach((card) => {
+        if (card) gsap.set(card, { opacity: 1, x: 0, y: 0 });
+      });
+      connectorsRef.current.forEach((conn) => {
+        if (conn) gsap.set(conn, { scaleX: 1 });
+      });
       return;
     }
 
     const ctx = gsap.context(() => {
-      // 1. SECTION HEADING & SUBTITLE REVEAL (Supports Reverse Scroll)
+      // 1. SECTION HEADING & SUBTITLE REVEAL
       gsap.fromTo(
         [heading, subheading].filter(Boolean),
         { opacity: 0, y: 36 },
@@ -235,154 +285,118 @@ export function ServicesSection() {
         }
       );
 
-      // 2. SEQUENTIAL SERVICE ROWS: CENTER-OUTWARD DIVIDER + INWARD CONTENT REVEALS
-      rowsRef.current.forEach((row) => {
-        if (!row) return;
-
-        const divider = row.querySelector<HTMLElement>(".service-divider");
-        const title = row.querySelector<HTMLElement>(".service-title");
-        const tagline = row.querySelector<HTMLElement>(".service-tagline");
-        const desc = row.querySelector<HTMLElement>(".service-desc");
-        const rightLabel = row.querySelector<HTMLElement>(".service-label");
-        const capabilities = row.querySelectorAll<HTMLElement>(".service-capability");
-
-        // Initial setup for refined editorial entrance
-        if (divider) {
-          gsap.set(divider, { scaleX: 0, transformOrigin: "center center" });
-        }
-        if (title) {
-          gsap.set(title, { x: -36, opacity: 0 });
-        }
-        if (tagline) {
-          gsap.set(tagline, { x: -28, opacity: 0 });
-        }
-        if (desc) {
-          gsap.set(desc, { y: 24, opacity: 0 });
-        }
-        if (rightLabel) {
-          gsap.set(rightLabel, { x: 20, opacity: 0 });
-        }
-        if (capabilities.length > 0) {
-          gsap.set(capabilities, { x: 28, opacity: 0 });
-        }
-
-        // Timeline triggered when service row enters the viewport
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: row,
-            start: "top 85%",
-            toggleActions: "play reverse play reverse",
-          },
+      // 2. SCROLL-DRIVEN TIMELINE PATH PROGRESS DRAWING
+      if (activeCurve && svgPathData) {
+        const totalLen = activeCurve.getTotalLength() || 2500;
+        gsap.set(activeCurve, {
+          strokeDasharray: totalLen,
+          strokeDashoffset: totalLen,
         });
 
-        // Step 1: Animated divider draws outward simultaneously from center to edges
-        if (divider) {
-          tl.to(divider, {
-            scaleX: 1,
-            duration: 0.65,
-            ease: "power2.inOut",
-          });
-        }
-
-        // Step 2: Left column reveals gently inward from left
-        if (title) {
-          tl.to(
-            title,
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.7,
-              ease: "power3.out",
-            },
-            divider ? "-=0.25" : 0
-          );
-        }
-
-        if (tagline) {
-          tl.to(
-            tagline,
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.6,
-              ease: "power3.out",
-            },
-            "-=0.5"
-          );
-        }
-
-        if (desc) {
-          tl.to(
-            desc,
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.7,
-              ease: "power3.out",
-            },
-            "-=0.45"
-          );
-        }
-
-        // Step 3: Right column reveals gently inward from right
-        if (rightLabel) {
-          tl.to(
-            rightLabel,
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.5,
-              ease: "power2.out",
-            },
-            "-=0.6"
-          );
-        }
-
-        // Step 4: Capabilities appear sequentially with refined stagger
-        if (capabilities.length > 0) {
-          tl.to(
-            capabilities,
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.45,
-              stagger: 0.08,
-              ease: "power2.out",
-            },
-            "-=0.4"
-          );
-        }
-      });
-
-      // 3. FINAL CLOSING DIVIDER LINE ANIMATION (Center-Outward)
-      if (closingDivider) {
-        gsap.set(closingDivider, { scaleX: 0, transformOrigin: "center center" });
-        gsap.to(closingDivider, {
-          scaleX: 1,
-          duration: 0.65,
-          ease: "power2.inOut",
+        gsap.to(activeCurve, {
+          strokeDashoffset: 0,
+          ease: "none",
           scrollTrigger: {
-            trigger: closingDivider,
-            start: "top 90%",
-            toggleActions: "play reverse play reverse",
+            trigger: container,
+            start: "top 72%",
+            end: "bottom 82%",
+            scrub: 0.4,
           },
         });
       }
 
-      // Synchronize ScrollTrigger
+      // 3. PER-SERVICE CARD & CONNECTOR REVEAL WITH NODE ACTIVATION
+      rowsRef.current.forEach((row, idx) => {
+        if (!row) return;
+
+        const card = cardsRef.current[idx];
+        const connector = connectorsRef.current[idx];
+        const node = nodesRef.current[idx];
+        const isLeft = idx % 2 === 0;
+
+        // Card initial state: slide in subtly from its side
+        if (card) {
+          gsap.set(card, {
+            opacity: 0,
+            x: isLeft ? -40 : 40,
+          });
+        }
+
+        // Connector initial state
+        if (connector) {
+          gsap.set(connector, {
+            scaleX: 0,
+            transformOrigin: isLeft ? "right center" : "left center",
+          });
+        }
+
+        // Timeline for the card entrance
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: row,
+            start: "top 78%",
+            toggleActions: "play reverse play reverse",
+            onEnter: () => setActiveNodeIndex(idx),
+            onEnterBack: () => setActiveNodeIndex(idx),
+          },
+        });
+
+        // Connector expands
+        if (connector) {
+          tl.to(connector, {
+            scaleX: 1,
+            duration: 0.45,
+            ease: "power2.out",
+          });
+        }
+
+        // Card reveals with staggered content
+        if (card) {
+          tl.to(
+            card,
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.7,
+              ease: "power3.out",
+            },
+            connector ? "-=0.25" : 0
+          );
+        }
+
+        // Stagger inner capability tags
+        if (card) {
+          const tags = card.querySelectorAll(".capability-pill");
+          if (tags.length > 0) {
+            tl.fromTo(
+              tags,
+              { opacity: 0, y: 12 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                stagger: 0.05,
+                ease: "power2.out",
+              },
+              "-=0.4"
+            );
+          }
+        }
+      });
+
       ScrollTrigger.refresh();
     }, section);
 
     return () => {
       ctx.revert();
     };
-  }, []);
+  }, [svgPathData]);
 
   return (
     <section
       ref={sectionRef}
       id="services"
-      aria-label="What We Do — Everything Your Brand Needs to Grow Digitally"
+      aria-label="What We Do — Interactive Curved Timeline Experience"
       className="relative z-10 w-full min-h-screen bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
     >
       {/* Target anchor for 'Our Work' navigation */}
@@ -391,38 +405,23 @@ export function ServicesSection() {
         className="absolute top-0 left-0 w-full h-0 pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
       />
 
-      {/* Floating Interactive Visual Preview for Desktop */}
-      <div
-        className="fixed pointer-events-none z-50 transition-opacity duration-300 ease-out hidden lg:block"
-        style={{
-          top: 0,
-          left: 0,
-          opacity: activePreviewId ? 1 : 0,
-          transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) scale(${activePreviewId ? 1 : 0.94})`,
-          transition: "opacity 0.22s ease, transform 0.1s ease-out",
-          width: "380px",
-          height: "260px",
-        }}
-        aria-hidden="true"
-      >
-        {activePreviewId && (
-          <ServiceVisualPreview
-            serviceId={activePreviewId}
-            className="shadow-2xl shadow-black/90 ring-1 ring-white/20"
-          />
-        )}
-      </div>
-
-      {/* Main Content Layout Container with Matching Editorial Padding */}
+      {/* Main Content Layout Container */}
       <div
         className="relative z-10 w-full flex flex-col pt-12 sm:pt-18 lg:pt-24 pb-20 sm:pb-28 lg:pb-36 pointer-events-auto"
         style={{
-          paddingLeft: "clamp(24px, 8.8vw, 160px)",
-          paddingRight: "clamp(24px, 8.8vw, 160px)",
+          paddingLeft: "clamp(20px, 6vw, 140px)",
+          paddingRight: "clamp(20px, 6vw, 140px)",
         }}
       >
-        {/* 1. SECTION HEADING: "WHAT WE DO" in Global Orange Accent + Subtitle */}
-        <div className="mb-14 sm:mb-20 lg:mb-24 select-none will-change-transform">
+        {/* 1. SECTION HEADING: "WHAT WE DO" */}
+        <div className="mb-14 sm:mb-20 lg:mb-24 select-none will-change-transform max-w-[1200px] mx-auto w-full">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-2 h-2 rounded-full bg-[#EE4530] animate-pulse" />
+            <span className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.24em] text-white/50">
+              03 // Services & Capabilities
+            </span>
+          </div>
+
           <h2
             ref={headingRef}
             className="font-bold tracking-[-0.04em] leading-[0.92] text-[#EE4530]"
@@ -432,6 +431,7 @@ export function ServicesSection() {
           >
             WHAT WE DO
           </h2>
+
           <p
             ref={subheadingRef}
             className="mt-4 sm:mt-6 text-white/80 font-normal tracking-[-0.02em] text-[20px] sm:text-[28px] lg:text-[34px] leading-[1.25] max-w-[840px]"
@@ -440,149 +440,273 @@ export function ServicesSection() {
           </p>
         </div>
 
-        {/* 2. EDITORIAL SERVICE LIST (Two-Column Layout: Left ~60%, Right ~40%) */}
-        <div className="flex flex-col w-full">
-          {SERVICES_DATA.map((service, index) => {
-            const indexFormatted = `0${index + 1}`;
-            const isHovered = activePreviewId === service.id;
-            const isMobileExpanded = expandedMobileId === service.id;
+        {/* 2. CURVED VERTICAL TIMELINE CONTAINER */}
+        <div
+          ref={timelineContainerRef}
+          className="relative w-full max-w-[1320px] mx-auto flex flex-col"
+        >
+          {/* SVG Canvas for Background & Animated Curved Paths */}
+          <svg
+            className="absolute top-0 left-0 w-full h-full pointer-events-none z-10 overflow-visible"
+            width={containerDimensions.width}
+            height={containerDimensions.height}
+            viewBox={`0 0 ${containerDimensions.width} ${containerDimensions.height}`}
+            fill="none"
+            aria-hidden="true"
+          >
+            <defs>
+              {/* Subtle Glowing filter for active timeline path */}
+              <filter id="orangeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
 
-            return (
-              <div
-                key={service.id}
-                ref={(el) => {
-                  rowsRef.current[index] = el;
-                }}
-                className="relative w-full group transition-colors duration-300"
-                onMouseEnter={() => setActivePreviewId(service.id)}
-                onMouseLeave={() => setActivePreviewId(null)}
-                onMouseMove={handleMouseMove}
-              >
-                {/* Centre-Outward Animated Divider Line */}
+            {/* Base Inactive Curved Timeline (Neutral Dark) */}
+            {svgPathData && (
+              <path
+                ref={baseCurveRef}
+                d={svgPathData}
+                stroke="rgba(255, 255, 255, 0.12)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                fill="none"
+              />
+            )}
+
+            {/* Active Scroll-Driven Curved Timeline (Glowing Orange) */}
+            {svgPathData && (
+              <path
+                ref={activeCurveRef}
+                d={svgPathData}
+                stroke="#EE4530"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                fill="none"
+                filter="url(#orangeGlow)"
+              />
+            )}
+          </svg>
+
+          {/* 3. ALTERNATING SERVICE TIMELINE ROWS */}
+          <div className="relative z-20 flex flex-col space-y-16 sm:space-y-24 lg:space-y-32">
+            {SERVICES_DATA.map((service, index) => {
+              const isEven = index % 2 === 0; // Even = Left on desktop, Odd = Right
+              const isActive = activeNodeIndex === index;
+              const isPast = activeNodeIndex > index;
+              const isExpanded = expandedPreviewIndex === index;
+              const serviceNum = `0${index + 1}`;
+
+              return (
                 <div
-                  className="service-divider w-full h-[1px] bg-white/[0.14] transition-colors duration-300 group-hover:bg-white/[0.32]"
-                  aria-hidden="true"
-                />
+                  key={service.id}
+                  ref={(el) => {
+                    rowsRef.current[index] = el;
+                  }}
+                  className={`relative w-full flex items-center ${
+                    /* Desktop: alternating left/right grid; Mobile: single-sided on right of track */
+                    "lg:justify-between flex-row"
+                  }`}
+                >
+                  {/* DESKTOP TIMELINE CENTER NODE */}
+                  <div
+                    ref={(el) => {
+                      nodesRef.current[index] = el;
+                    }}
+                    className={`absolute z-30 transition-all duration-400 ease-out flex items-center justify-center ${
+                      /* Position: left: 28px on mobile, left: 50% - 14px on desktop */
+                      "left-[20px] sm:left-[32px] lg:left-1/2 -translate-x-1/2"
+                    }`}
+                  >
+                    {/* Outer Node Halo Ring */}
+                    <div
+                      className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        isActive
+                          ? "bg-[#EE4530]/20 border border-[#EE4530] scale-125 shadow-[0_0_24px_rgba(238,69,48,0.7)]"
+                          : isPast
+                          ? "bg-[#EE4530]/10 border border-[#EE4530]/40"
+                          : "bg-[#0c0c0c] border border-white/20"
+                      }`}
+                    >
+                      {/* Inner Node Core */}
+                      <span
+                        className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+                          isActive
+                            ? "bg-[#EE4530] animate-pulse"
+                            : isPast
+                            ? "bg-[#EE4530]/60"
+                            : "bg-white/40"
+                        }`}
+                      />
+                    </div>
+                  </div>
 
-                {/* Service Row Content Container — Balanced Editorial Spacing */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start pt-10 sm:pt-12 lg:pt-14 pb-12 sm:pb-16 lg:pb-20">
-                  {/* LEFT COLUMN: Numbering, Title, Tagline & Description */}
-                  <div className="service-left lg:col-span-7 flex flex-col will-change-transform">
-                    {/* Index + Title Row */}
-                    <div className="flex items-baseline gap-3 sm:gap-4">
-                      <span className="font-mono text-white/30 text-base sm:text-lg lg:text-xl font-medium select-none">
-                        {indexFormatted}
-                      </span>
+                  {/* HORIZONTAL CONNECTOR LINE */}
+                  {/* Desktop: Connects node at 50% to card. Mobile: Connects node at left track to card */}
+                  <div
+                    ref={(el) => {
+                      connectorsRef.current[index] = el;
+                    }}
+                    className={`hidden lg:block absolute top-1/2 -translate-y-1/2 h-[1px] z-20 pointer-events-none transition-colors duration-300 ${
+                      isActive
+                        ? "bg-[#EE4530] shadow-[0_0_10px_rgba(238,69,48,0.5)]"
+                        : "bg-white/15"
+                    } ${
+                      isEven
+                        ? "right-1/2 w-[48px] xl:w-[64px]"
+                        : "left-1/2 w-[48px] xl:w-[64px]"
+                    }`}
+                  />
 
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3
-                          className="service-title text-white font-bold tracking-[-0.04em] leading-[1.02] transition-transform duration-300 group-hover:translate-x-1"
-                          style={{
-                            fontSize: "clamp(30px, 3.8vw, 60px)",
-                          }}
-                        >
-                          {service.title}
-                        </h3>
+                  {/* Mobile Connector Line */}
+                  <div
+                    className={`lg:hidden absolute top-1/2 -translate-y-1/2 left-[32px] sm:left-[44px] w-[20px] sm:w-[28px] h-[1px] z-20 pointer-events-none ${
+                      isActive ? "bg-[#EE4530]" : "bg-white/15"
+                    }`}
+                  />
 
-                        {/* Interactive Preview Badge Indicator on Desktop */}
-                        <span
-                          className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider transition-all duration-300 ${
-                            isHovered
-                              ? "bg-[#EE4530]/20 text-[#EE4530] border border-[#EE4530]/40 opacity-100"
-                              : "bg-white/5 text-white/40 border border-white/10 opacity-60 group-hover:opacity-100 group-hover:text-white/80"
+                  {/* SERVICE CARD CONTAINER */}
+                  <div
+                    ref={(el) => {
+                      cardsRef.current[index] = el;
+                    }}
+                    className={`relative z-20 w-full transition-all duration-300 ${
+                      /* Mobile: pushed to right with margin */
+                      "pl-14 sm:pl-20 lg:pl-0 " +
+                      /* Desktop: Left card takes left half, Right card takes right half */
+                      (isEven
+                        ? "lg:mr-auto lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]"
+                        : "lg:ml-auto lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]")
+                    }`}
+                  >
+                    {/* Modern Editorial Card Shell */}
+                    <div
+                      className={`group relative rounded-2xl p-6 sm:p-8 lg:p-9 transition-all duration-300 backdrop-blur-xl border ${
+                        isActive
+                          ? "bg-[#0e0e0e]/95 border-[#EE4530]/35 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_24px_rgba(238,69,48,0.12)]"
+                          : "bg-[#0a0a0a]/80 border-white/[0.08] hover:border-white/20 hover:bg-[#0d0d0d]/90 shadow-xl"
+                      }`}
+                    >
+                      {/* Top Meta: Number + Category Badge */}
+                      <div className="flex items-center justify-between pb-4 border-b border-white/[0.07]">
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`font-mono text-xs sm:text-sm font-semibold tracking-wider transition-colors duration-300 ${
+                              isActive ? "text-[#EE4530]" : "text-white/40"
+                            }`}
+                          >
+                            {serviceNum}
+                          </span>
+                          <span className="text-white/20">/</span>
+                          <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-white/50">
+                            {service.itemsLabel}
+                          </span>
+                        </div>
+
+                        {/* Interactive Visual Preview Pill Badge */}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedPreviewIndex(isExpanded ? null : index)
+                          }
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider transition-all duration-200 ${
+                            isExpanded
+                              ? "bg-[#EE4530]/20 text-[#EE4530] border border-[#EE4530]/40"
+                              : "bg-white/5 text-white/50 border border-white/10 hover:text-white hover:border-white/30"
                           }`}
+                          aria-expanded={isExpanded}
+                          aria-label={`Toggle visual preview for ${service.title}`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${
-                              isHovered ? "bg-[#EE4530] animate-pulse" : "bg-white/40"
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              isExpanded
+                                ? "bg-[#EE4530] animate-pulse"
+                                : "bg-white/40"
                             }`}
                           />
-                          Preview
-                        </span>
+                          <span>{isExpanded ? "Close" : "Preview"}</span>
+                        </button>
                       </div>
-                    </div>
 
-                    <p className="service-tagline mt-3 sm:mt-4 text-[#EE4530] font-medium tracking-[-0.01em] text-[17px] sm:text-[20px] lg:text-[22px] leading-snug">
-                      {service.tagline}
-                    </p>
-
-                    <p className="service-desc mt-3.5 sm:mt-4 text-white/70 font-normal leading-[1.65] text-[15px] sm:text-[17px] max-w-[620px]">
-                      {service.description}
-                    </p>
-
-                    {/* Mobile & Tablet Interactive Preview Toggle Button */}
-                    <div className="lg:hidden mt-5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setExpandedMobileId(isMobileExpanded ? null : service.id);
+                      {/* Main Service Title */}
+                      <h3
+                        className="text-white font-bold tracking-[-0.03em] leading-[1.08] mt-5 transition-transform duration-300 group-hover:translate-x-1"
+                        style={{
+                          fontSize: "clamp(24px, 2.5vw, 42px)",
                         }}
-                        className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-mono uppercase tracking-wider transition-all duration-200 ${
-                          isMobileExpanded
-                            ? "bg-[#EE4530]/20 border-[#EE4530]/40 text-[#EE4530]"
-                            : "bg-white/5 border-white/20 text-white/80 active:bg-white/10"
-                        }`}
-                        aria-expanded={isMobileExpanded}
                       >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            isMobileExpanded ? "bg-[#EE4530] animate-pulse" : "bg-white/40"
-                          }`}
-                        />
-                        <span>{isMobileExpanded ? "Hide Visual Preview" : "View Visual Preview"}</span>
-                        <span className="text-[10px] opacity-70">
-                          {isMobileExpanded ? "▲" : "▼"}
-                        </span>
-                      </button>
+                        {service.title}
+                      </h3>
 
-                      {/* Expandable preview container on mobile */}
-                      {isMobileExpanded && (
-                        <div className="mt-4 w-full h-[250px] transition-all duration-300">
+                      {/* Orange Service Tagline */}
+                      <p className="mt-2.5 text-[#EE4530] font-medium tracking-[-0.01em] text-[15px] sm:text-[17px] lg:text-[18px] leading-snug">
+                        {service.tagline}
+                      </p>
+
+                      {/* Service Description */}
+                      <p className="mt-3.5 text-white/70 font-normal leading-[1.6] text-[14px] sm:text-[15px] max-w-[560px]">
+                        {service.description}
+                      </p>
+
+                      {/* Expandable Visual Preview Panel */}
+                      {isExpanded && (
+                        <div className="mt-6 w-full h-[250px] sm:h-[270px] rounded-xl overflow-hidden border border-white/15 animate-fadeIn">
                           <ServiceVisualPreview
                             serviceId={service.id}
-                            className="shadow-xl ring-1 ring-white/20"
+                            className="shadow-2xl"
                           />
                         </div>
                       )}
-                    </div>
-                  </div>
 
-                  {/* RIGHT COLUMN: Capabilities/Solutions in Responsive 2-Col Grid */}
-                  <div className="service-right lg:col-span-5 flex flex-col pt-4 lg:pt-2 will-change-transform">
-                    <div className="service-label text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.22em] text-white/40 mb-4 sm:mb-5 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#EE4530]" aria-hidden="true" />
-                      <span>{service.itemsLabel}</span>
-                    </div>
+                      {/* Capabilities Tag Cloud */}
+                      <div className="mt-6 pt-5 border-t border-white/[0.07]">
+                        <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 mb-3">
+                          Key Capabilities
+                        </span>
 
-                    <ul
-                      className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-3.5 list-none m-0 p-0"
-                      aria-label={`${service.title} ${service.itemsLabel.toLowerCase()}`}
-                    >
-                      {service.capabilities.map((cap, capIdx) => (
-                        <li
-                          key={capIdx}
-                          className="service-capability flex items-start gap-2.5 text-white/75 group-hover:text-white/95 text-[14px] sm:text-[15px] lg:text-[15px] leading-[1.4] transition-colors duration-200"
+                        <div className="flex flex-wrap gap-2">
+                          {service.capabilities.map((cap, capIdx) => (
+                            <span
+                              key={capIdx}
+                              className="capability-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-white/75 bg-white/[0.04] border border-white/[0.08] hover:border-[#EE4530]/50 hover:bg-[#EE4530]/10 hover:text-white transition-all duration-200 cursor-default"
+                            >
+                              <span className="text-[#EE4530] text-[10px] font-bold">•</span>
+                              <span>{cap}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Explore Service / Let's Discuss Action */}
+                      <div className="mt-6 pt-4 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            scrollTo("#contact", { offset: -50, duration: 1.4 })
+                          }
+                          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-wider uppercase text-white/70 group-hover:text-white transition-colors duration-200 group/btn"
                         >
-                          <span className="text-[#EE4530] text-sm leading-none font-bold select-none mt-0.5">
-                            •
+                          <span className="group-hover/btn:text-[#EE4530] transition-colors">
+                            Explore Service
                           </span>
-                          <span>{cap}</span>
-                        </li>
-                      ))}
-                    </ul>
+                          <span className="text-[#EE4530] transition-transform duration-200 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-0.5">
+                            ↗
+                          </span>
+                        </button>
+
+                        <span className="text-[11px] font-mono text-white/30 tracking-widest hidden sm:inline">
+                          ADSPIRE MEDIA
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-
-          {/* Final closing subtle divider line with center-outward animation */}
-          <div
-            ref={closingDividerRef}
-            className="w-full h-[1px] bg-white/[0.14]"
-            aria-hidden="true"
-          />
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
