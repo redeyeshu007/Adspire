@@ -373,7 +373,7 @@ export function ServicesSection() {
       ref={sectionRef}
       id="services"
       aria-label="What We Do — Interactive Curved Timeline Experience"
-      className="relative z-10 w-full min-h-screen bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
+      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
     >
       {/* Target anchor for 'Our Work' navigation */}
       <div
