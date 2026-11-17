@@ -5,9 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 const NAV_ITEMS = [
-  { label: "SERVICES", href: "#services" },
-  { label: "WORK", href: "#work" },
-  { label: "CONTACT", href: "#contact" },
+  { label: "Home", href: "#hero" },
+  { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Our Work", href: "#work" },
+  { label: "Careers", href: "#careers" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export function Navbar() {
@@ -107,13 +110,13 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* RIGHT: Desktop Navigation (SERVICES, WORK, CONTACT) */}
-        <ul className="hidden md:flex items-center gap-[42px] lg:gap-[50px]">
+        {/* RIGHT: Desktop Navigation (Home, About, Services, Our Work, Careers, Contact) */}
+        <ul className="hidden lg:flex items-center gap-[22px] xl:gap-[32px] 2xl:gap-[40px]">
           {NAV_ITEMS.map((item) => (
             <li key={item.label}>
               <Link
                 href={item.href}
-                className="relative text-[17px] md:text-[18px] lg:text-[19px] font-medium tracking-[0.08em] uppercase text-white/90 hover:text-white transition-colors duration-200 py-1 group focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+                className="relative text-[15px] xl:text-[16px] 2xl:text-[17px] font-medium tracking-[0.06em] uppercase text-white/90 hover:text-white transition-colors duration-200 py-1 group focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40 whitespace-nowrap"
               >
                 {item.label}
                 {/* Subtle animated coral-red underline on hover */}
@@ -127,7 +130,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
-          className="md:hidden flex flex-col items-center justify-center w-10 h-10 space-y-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-md p-2 z-50 text-white"
+          className="lg:hidden flex flex-col items-center justify-center w-10 h-10 space-y-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-md p-2 z-50 text-white"
           aria-expanded={mobileMenuOpen}
           aria-label="Toggle navigation menu"
         >
@@ -145,7 +148,7 @@ export function Navbar() {
 
         {/* Mobile Fullscreen Navigation Overlay */}
         <div
-          className={`fixed inset-0 bg-[#080808]/96 backdrop-blur-md flex flex-col justify-center px-8 transition-all duration-300 md:hidden z-40 ${
+          className={`fixed inset-0 bg-[#080808]/96 backdrop-blur-md flex flex-col justify-center px-8 transition-all duration-300 lg:hidden z-40 ${
             mobileMenuOpen
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"

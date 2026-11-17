@@ -88,6 +88,8 @@ export function IntroSection() {
       aria-label="Brand Introduction"
       className="relative z-10 w-full min-h-[100dvh] flex flex-col justify-between bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none"
     >
+      {/* Anchor for navigation */}
+      <div id="about" className="absolute top-0 left-0 w-full h-0 pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]" />
       {/* Main Content Layout Container with Responsive Editorial Padding */}
       <div
         className="relative z-10 w-full flex flex-col pt-[125px] sm:pt-[145px] lg:pt-[165px] pb-24 sm:pb-32 lg:pb-36 pointer-events-auto"
