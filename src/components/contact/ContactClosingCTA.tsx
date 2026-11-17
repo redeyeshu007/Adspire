@@ -12,12 +12,12 @@ export function ContactClosingCTA() {
 
   return (
     <div className="w-full pt-16 sm:pt-24 pb-20 sm:pb-28 border-t border-white/[0.12] select-none will-change-transform">
-      <div className="max-w-[960px] flex flex-col items-start">
+      <div className="w-full flex flex-col items-start">
         {/* Main Heading */}
         <h3
-          className="font-bold tracking-[-0.04em] leading-[0.98] text-white"
+          className="font-bold tracking-[-0.04em] leading-[0.98] text-white max-w-[1100px]"
           style={{
-            fontSize: "clamp(36px, 5.2vw, 80px)",
+            fontSize: "clamp(38px, 5.6vw, 86px)",
           }}
         >
           <span>Your Next Stage of Growth </span>
@@ -25,7 +25,7 @@ export function ContactClosingCTA() {
         </h3>
 
         {/* Supporting Paragraph */}
-        <p className="mt-5 sm:mt-7 text-white/75 font-normal leading-[1.65] text-[17px] sm:text-[20px] lg:text-[22px] max-w-[720px]">
+        <p className="mt-5 sm:mt-7 text-white/75 font-normal leading-[1.65] text-[17px] sm:text-[20px] lg:text-[22px] max-w-[840px]">
           Let&apos;s turn your ideas into stronger brands, smarter digital
           experiences and measurable growth.
         </p>

@@ -62,8 +62,8 @@ export function ContactSection() {
       <div
         className="relative z-10 w-full flex flex-col pt-16 sm:pt-24 lg:pt-32"
         style={{
-          paddingLeft: "clamp(24px, 8.8vw, 160px)",
-          paddingRight: "clamp(24px, 8.8vw, 160px)",
+          paddingLeft: "clamp(24px, 5.5vw, 110px)",
+          paddingRight: "clamp(24px, 5.5vw, 110px)",
         }}
       >
         {/* 1. Contact Hero Opening Statement */}
