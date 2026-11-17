@@ -117,17 +117,17 @@ export function IntroSection() {
         <div className="max-w-[1280px] will-change-transform">
           <h2
             ref={headingRef}
-            className="text-white font-bold tracking-[-0.04em] leading-[1.02] text-[clamp(32px,4.5vw,72px)]"
+            className="text-white font-bold tracking-[-0.04em] leading-[1.04]"
           >
-            <span className="block mb-4 sm:mb-6 lg:mb-7 text-[clamp(28px,3.8vw,62px)] text-white/95">
+            <span className="block mb-5 sm:mb-7 lg:mb-8 text-[clamp(26px,3.4vw,56px)] text-white/90">
               More Than a Digital Marketing Agency.
             </span>
-            <span className="block">
-              A branding agency building
-              <br />
-              identities that make brands
-              <br />
-              unforgettable.
+            <span className="block text-[clamp(30px,4.2vw,68px)] leading-[1.06] tracking-[-0.045em] text-white">
+              We bring creativity, marketing and technology
+              <br className="hidden md:inline" />{" "}
+              together to build digital experiences
+              <br className="hidden md:inline" />{" "}
+              that move businesses forward.
             </span>
           </h2>
         </div>
