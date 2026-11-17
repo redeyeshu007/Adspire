@@ -460,7 +460,16 @@ export function HalftoneWordmarkFooter({
   }, [key]);
 
   const toTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __lenis?: { scrollTo: (target: number, opts?: unknown) => void } }).__lenis
+    ) {
+      (
+        window as unknown as { __lenis: { scrollTo: (target: number, opts?: unknown) => void } }
+      ).__lenis.scrollTo(0, { duration: 1.5 });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const hasTop = Boolean(label || meta || (columns && columns.length > 0));

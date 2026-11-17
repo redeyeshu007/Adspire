@@ -62,12 +62,22 @@ export function SmoothScrollProvider({
     const lenis = new Lenis({
       autoRaf: false, // Prevents duplicate requestAnimationFrame loops
       smoothWheel: true,
+      syncTouch: false,
+      lerp: 0.085, // Silky smooth linear interpolation
+      wheelMultiplier: 0.95, // Refined mouse wheel responsiveness
+      touchMultiplier: 1.5,
       anchors: true, // Native anchor link scrolling support
       respectReducedMotion: true, // Automatically disables smoothing when prefers-reduced-motion is active
+      autoResize: true,
       ...options,
     });
 
     lenisRef.current = lenis;
+
+    // Expose lenis instance globally for helper access
+    if (typeof window !== "undefined") {
+      (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+    }
 
     // 2. Synchronize ScrollTrigger with Lenis scroll positions
     const handleScroll = () => {
@@ -93,6 +103,9 @@ export function SmoothScrollProvider({
       lenis.off("scroll", handleScroll);
       lenis.destroy();
       lenisRef.current = null;
+      if (typeof window !== "undefined") {
+        delete (window as unknown as { __lenis?: Lenis }).__lenis;
+      }
     };
   }, [options]);
 
@@ -102,7 +115,11 @@ export function SmoothScrollProvider({
         return lenisRef.current;
       },
       scrollTo: (target, scrollOptions) =>
-        lenisRef.current?.scrollTo(target, scrollOptions),
+        lenisRef.current?.scrollTo(target, {
+          offset: -60,
+          duration: 1.3,
+          ...scrollOptions,
+        }),
       stop: () => lenisRef.current?.stop(),
       start: () => lenisRef.current?.start(),
     }),

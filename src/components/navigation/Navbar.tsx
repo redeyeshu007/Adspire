@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
 
 const NAV_ITEMS = [
   { label: "Home", href: "#hero" },
@@ -16,6 +17,29 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const scrolledRef = React.useRef(false);
+  const { scrollTo } = useSmoothScroll();
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (typeof window !== "undefined" && window.location.pathname === "/") {
+      e.preventDefault();
+      scrollTo(0, { duration: 1.3 });
+      window.history.pushState(null, "", "/");
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    }
+  };
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      scrollTo(href, { offset: -50, duration: 1.3 });
+      window.history.pushState(null, "", href);
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    }
+  };
 
   React.useEffect(() => {
     let ticking = false;
@@ -63,6 +87,7 @@ export function Navbar() {
         {/* LEFT: Dynamic Scroll-Switched Adspire Logo */}
         <Link
           href="/"
+          onClick={handleLogoClick}
           className="group relative inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-sm"
           aria-label="Adspire Homepage"
         >
@@ -115,6 +140,7 @@ export function Navbar() {
             <li key={item.label}>
               <Link
                 href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
                 className="relative text-[15px] xl:text-[16px] 2xl:text-[17px] font-medium tracking-[0.06em] uppercase text-white/90 hover:text-white transition-colors duration-200 py-1 group focus:outline-none focus-visible:ring-1 focus-visible:ring-white/40 whitespace-nowrap"
               >
                 {item.label}
@@ -159,7 +185,7 @@ export function Navbar() {
               <li key={item.label}>
                 <Link
                   href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="text-2xl font-medium tracking-[0.08em] uppercase text-white hover:text-[#EE4530] transition-colors duration-200"
                 >
                   {item.label}
