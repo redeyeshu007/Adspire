@@ -105,9 +105,9 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
       }}
     >
       <div className="max-w-[920px] text-left pointer-events-auto">
-        {/* Exactly 3 Intentional Lines — clamp(68px, 6vw, 96px) */}
+        {/* Exactly 3 Intentional Lines — clamp(72px, 6.8vw, 108px) */}
         <h1
-          className="font-extrabold text-white tracking-[-0.03em] leading-[0.98] sm:leading-[0.96] select-none text-[clamp(28px,7.8vw,42px)] sm:text-6xl md:text-7xl lg:text-[clamp(68px,6vw,96px)] pl-0.5"
+          className="font-extrabold text-white tracking-[-0.04em] leading-[0.96] sm:leading-[0.94] select-none text-[clamp(32px,8.5vw,48px)] sm:text-6xl md:text-7xl lg:text-[clamp(72px,6.8vw,108px)] pl-0.5"
           style={{ fontFamily: "var(--font-hero), var(--font-heading), sans-serif" }}
         >
           <span ref={headlineLine1Ref} className="block whitespace-nowrap">

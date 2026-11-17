@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Inter, Syne } from "next/font/google";
+import { Manrope, Inter, Bricolage_Grotesque } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import "./globals.css";
 
@@ -17,7 +17,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const syne = Syne({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-hero",
   weight: ["700", "800"],
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} ${syne.variable}`}
+      className={`${manrope.variable} ${inter.variable} ${bricolage.variable}`}
       suppressHydrationWarning
     >
       <body
