@@ -19,26 +19,18 @@ export function ContactForm() {
     company: "",
     phone: "",
     email: "",
+    service: "",
     requirement: "",
   });
 
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
     type: "success" | "error" | null;
     text: string;
   }>({ type: null, text: "" });
 
-  const toggleService = (service: string) => {
-    setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service]
-    );
-  };
-
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -81,7 +73,7 @@ export function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          services: selectedServices,
+          services: formData.service ? [formData.service] : [],
         }),
       });
 
@@ -99,9 +91,9 @@ export function ContactForm() {
           company: "",
           phone: "",
           email: "",
+          service: "",
           requirement: "",
         });
-        setSelectedServices([]);
       } else {
         setStatusMessage({
           type: "error",
@@ -244,40 +236,51 @@ export function ContactForm() {
                 />
               </div>
 
-              {/* Field 05 — What Can We Help With? (Multi-select) */}
-              <div className="flex flex-col space-y-3 pt-2">
-                <label className="text-xs font-mono uppercase tracking-[0.16em] text-white/60">
+              {/* Field 05 — What Can We Help With? (Select Field) */}
+              <div className="flex flex-col space-y-2 pt-2">
+                <label
+                  htmlFor="contact-service"
+                  className="text-xs font-mono uppercase tracking-[0.16em] text-white/60"
+                >
                   What Can We Help With?
                 </label>
-                <div
-                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5"
-                  role="group"
-                  aria-label="Select services you need"
-                >
-                  {SERVICE_OPTIONS.map((service) => {
-                    const isSelected = selectedServices.includes(service);
-                    return (
-                      <button
+                <div className="relative">
+                  <select
+                    id="contact-service"
+                    name="service"
+                    value={formData.service}
+                    onChange={handleChange}
+                    className="w-full bg-[#121212] border border-white/[0.14] rounded-none px-4 py-3.5 text-white placeholder-white/35 text-[15px] focus:outline-none focus:border-[#EE4530] focus:ring-1 focus:ring-[#EE4530] transition-colors appearance-none cursor-pointer pr-10"
+                  >
+                    <option value="" className="bg-[#121212] text-white/40">
+                      Select a service...
+                    </option>
+                    {SERVICE_OPTIONS.map((service) => (
+                      <option
                         key={service}
-                        type="button"
-                        onClick={() => toggleService(service)}
-                        role="checkbox"
-                        aria-checked={isSelected}
-                        className={`px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-200 border rounded-none flex items-center justify-between select-none ${
-                          isSelected
-                            ? "bg-[#EE4530]/15 border-[#EE4530] text-white shadow-[0_0_12px_rgba(238,69,48,0.25)]"
-                            : "bg-[#141414] border-white/[0.12] text-white/70 hover:border-white/35 hover:text-white"
-                        }`}
+                        value={service}
+                        className="bg-[#181818] text-white py-2"
                       >
-                        <span className="truncate">{service}</span>
-                        {isSelected && (
-                          <span className="text-[#EE4530] font-bold ml-1.5 text-xs">
-                            ✓
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
+                        {service}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/50">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
 
