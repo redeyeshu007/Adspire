@@ -5,7 +5,6 @@ import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
 
 export interface ServiceItem {
   id: string;
-  number: string;
   title: string;
   tagline: string;
   description: string;
@@ -16,7 +15,6 @@ export interface ServiceItem {
 export const SERVICES_DATA: ServiceItem[] = [
   {
     id: "performance-marketing",
-    number: "01",
     title: "Performance Marketing",
     tagline: "Turn advertising budgets into business opportunities.",
     description:
@@ -35,7 +33,6 @@ export const SERVICES_DATA: ServiceItem[] = [
   },
   {
     id: "social-media-marketing",
-    number: "02",
     title: "Social Media Marketing",
     tagline: "Build a digital presence people remember.",
     description:
@@ -55,7 +52,6 @@ export const SERVICES_DATA: ServiceItem[] = [
   },
   {
     id: "branding-creative",
-    number: "03",
     title: "Branding & Creative",
     tagline: "Make Your Brand Impossible to Ignore.",
     description:
@@ -77,7 +73,6 @@ export const SERVICES_DATA: ServiceItem[] = [
   },
   {
     id: "website-technology",
-    number: "04",
     title: "Website & Technology",
     tagline: "Your Digital Presence Should Work as Good as It Looks.",
     description:
@@ -98,7 +93,6 @@ export const SERVICES_DATA: ServiceItem[] = [
   },
   {
     id: "seo-local-growth",
-    number: "05",
     title: "SEO & Local Growth",
     tagline: "Be Found When Your Customers Are Searching.",
     description:
@@ -117,7 +111,6 @@ export const SERVICES_DATA: ServiceItem[] = [
   },
   {
     id: "ai-automation",
-    number: "06",
     title: "AI & Automation",
     tagline: "Work Smarter. Respond Faster. Scale Better.",
     description:
@@ -296,15 +289,8 @@ export function ServicesSection() {
 
               {/* Service Row Content Container — Balanced Editorial Spacing */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start pt-10 sm:pt-12 lg:pt-14 pb-12 sm:pb-16 lg:pb-20">
-                {/* LEFT COLUMN: Number, Title, Tagline & Description */}
+                {/* LEFT COLUMN: Title, Tagline & Description */}
                 <div className="service-left lg:col-span-7 flex flex-col will-change-transform">
-                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                    <span className="text-xs sm:text-[13px] font-mono tracking-[0.2em] text-[#EE4530] font-semibold">
-                      {service.number}
-                    </span>
-                    <span className="w-8 h-[1px] bg-[#EE4530]/40" aria-hidden="true" />
-                  </div>
-
                   <h3
                     className="text-white font-bold tracking-[-0.04em] leading-[1.02] transition-transform duration-300 group-hover:translate-x-1.5"
                     style={{
