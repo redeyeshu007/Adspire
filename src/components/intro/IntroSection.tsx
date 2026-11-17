@@ -113,13 +113,15 @@ export function IntroSection() {
           </span>
         </div>
 
-        {/* 2. MIDDLE LEFT: Main Editorial Heading with increased scale and spacing */}
+        {/* 2. MIDDLE LEFT: Main Editorial Heading with refined scale and spacing */}
         <div className="max-w-[1280px] will-change-transform">
           <h2
             ref={headingRef}
-            className="text-white font-bold tracking-[-0.045em] leading-[0.98] text-[clamp(38px,5.4vw,88px)]"
+            className="text-white font-bold tracking-[-0.04em] leading-[1.02] text-[clamp(32px,4.5vw,72px)]"
           >
-            <span className="block mb-5 sm:mb-7 lg:mb-8">We&apos;re Adspire.</span>
+            <span className="block mb-4 sm:mb-6 lg:mb-7 text-[clamp(28px,3.8vw,62px)] text-white/95">
+              More Than a Digital Marketing Agency.
+            </span>
             <span className="block">
               A branding agency building
               <br />
