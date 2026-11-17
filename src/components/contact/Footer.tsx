@@ -174,70 +174,28 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Connect & Location (~3 cols) */}
-          <div className="lg:col-span-3 flex flex-col space-y-4">
+          {/* Column 4: Follow Us (~3 cols) */}
+          <div className="lg:col-span-3 flex flex-col space-y-3">
             <span className="text-xs font-mono uppercase tracking-[0.2em] text-white/40 mb-1">
-              CONNECT
+              FOLLOW US
             </span>
-            <div className="flex flex-col space-y-2 text-sm text-white/70">
-              <p className="flex items-center gap-2">
-                <span className="text-white/40">Location:</span>
-                <span>Dindigul, Tamil Nadu</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-white/40">Phone:</span>
-                <a
-                  href="tel:+919876543210"
-                  className="text-white/70 hover:text-[#EE4530] font-mono text-xs transition-colors"
-                >
-                  +91 98765 43210
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-white/40">Email:</span>
-                <a
-                  href="mailto:contact@adspiremedia.com"
-                  className="text-white/70 hover:text-[#EE4530] font-mono text-xs transition-colors"
-                >
-                  contact@adspiremedia.com
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-white/40">Website:</span>
-                <a
-                  href="https://adspiremedia.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/70 hover:text-[#EE4530] font-mono text-xs transition-colors"
-                >
-                  adspiremedia.com
-                </a>
-              </p>
-            </div>
-
-            {/* Social links with official brand logos */}
-            <div className="pt-2 flex flex-col space-y-2.5">
-              <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/40">
-                FOLLOW US
-              </span>
-              <div className="flex items-center gap-3">
-                {SOCIAL_LINKS.map((s) => {
-                  const Icon = s.icon;
-                  return (
-                    <a
-                      key={s.name}
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={s.name}
-                      title={s.name}
-                      className="group w-10 h-10 rounded-full border border-white/15 bg-white/[0.04] hover:border-[#EE4530] hover:bg-[#EE4530]/15 flex items-center justify-center text-white/70 hover:text-[#EE4530] transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#EE4530]"
-                    >
-                      <Icon className="w-[18px] h-[18px] transition-transform duration-200 group-hover:scale-110" />
-                    </a>
-                  );
-                })}
-              </div>
+            <div className="flex items-center gap-3 pt-1">
+              {SOCIAL_LINKS.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <a
+                    key={s.name}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.name}
+                    title={s.name}
+                    className="group w-10 h-10 rounded-full border border-white/15 bg-white/[0.04] hover:border-[#EE4530] hover:bg-[#EE4530]/15 flex items-center justify-center text-white/70 hover:text-[#EE4530] transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#EE4530]"
+                  >
+                    <Icon className="w-[18px] h-[18px] transition-transform duration-200 group-hover:scale-110" />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
