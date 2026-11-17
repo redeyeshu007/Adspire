@@ -8,6 +8,7 @@ export interface PixelMorphTransitionRef {
 }
 
 export interface PixelMorphTransitionProps {
+  mode?: "acid-to-grid" | "grid-to-black";
   progress?: number;
   sourceCanvas?: HTMLCanvasElement | null;
   pixelSize?: number;
@@ -43,6 +44,7 @@ uniform vec3 uGridColor;
 uniform vec3 uCopperColor;
 uniform sampler2D uSourceTexture;
 uniform int uHasTexture;
+uniform int uMode;
 
 // Stable deterministic pseudo-random hash functions
 float hash1(vec2 p) {
@@ -82,6 +84,54 @@ void main() {
   vec2 pos = vec2(gl_FragCoord.x, uResolution.y - gl_FragCoord.y);
   vec2 uv = gl_FragCoord.xy / uResolution;
   float p = clamp(uProgress, 0.0, 1.0);
+
+  // MODE 1: Grid to Pure Black Disintegration (Services -> Contact)
+  if (uMode == 1) {
+    if (p <= 0.001) {
+      float lineAlpha = getCursorGridLine(pos, 1.0) * 0.15;
+      outColor = vec4(uGridColor * lineAlpha, lineAlpha);
+      return;
+    }
+    if (p >= 0.98) {
+      outColor = vec4(0.0);
+      return;
+    }
+
+    float wave = (uv.x * 0.55 + (1.0 - uv.y) * 0.45);
+    float localP = clamp((p - wave * 0.22) / 0.78, 0.0, 1.0);
+
+    float actP = smoothstep(0.0, 0.22, localP);
+    float pixelSize = mix(1.0, uPixelSize, actP);
+
+    vec2 blockId = floor(pos / pixelSize);
+    vec2 blockCenter = (blockId + 0.5) * pixelSize;
+
+    float h1 = hash1(blockId);
+    vec2 h2 = hash2(blockId);
+
+    float gridSample = getCursorGridLine(blockCenter, 1.4);
+    if (gridSample < 0.02) {
+      outColor = vec4(0.0);
+      return;
+    }
+
+    float disP = smoothstep(0.18, 0.65, localP);
+    vec2 driftAngle = vec2(cos(h1 * 6.28318), sin(h1 * 6.28318));
+    vec2 driftOffset = vec2(1.0, 1.2) * 24.0 * disP + driftAngle * 20.0 * (h2.x - 0.5) * disP;
+
+    float dissolveTime = h1 * 0.40 + 0.20;
+    float blockDissolve = 1.0 - smoothstep(dissolveTime, dissolveTime + 0.35, localP);
+
+    vec2 cellFrac = fract(pos / pixelSize);
+    float cellBorder = step(0.06, cellFrac.x) * step(0.06, cellFrac.y) * 
+                       step(cellFrac.x, 0.94) * step(cellFrac.y, 0.94);
+
+    vec3 pixelColor = mix(uGridColor * 1.8, uCopperColor * 1.5, h1 * 0.5);
+    float pixelAlpha = gridSample * 0.25 * blockDissolve * cellBorder * (1.0 - smoothstep(0.70, 0.98, localP));
+
+    outColor = vec4(pixelColor * pixelAlpha, pixelAlpha);
+    return;
+  }
 
   // STAGE 01: p <= 0.001 (Pure AcidSquares)
   if (p <= 0.001) {
@@ -190,6 +240,7 @@ function hexToRgb(hex: string): [number, number, number] {
 export const PixelMorphTransition = forwardRef<PixelMorphTransitionRef, PixelMorphTransitionProps>(
   (
     {
+      mode = "acid-to-grid",
       progress = 0,
       sourceCanvas,
       pixelSize = 10,
@@ -282,6 +333,7 @@ export const PixelMorphTransition = forwardRef<PixelMorphTransitionRef, PixelMor
         uCopperColor: gl.getUniformLocation(program, "uCopperColor"),
         uSourceTexture: gl.getUniformLocation(program, "uSourceTexture"),
         uHasTexture: gl.getUniformLocation(program, "uHasTexture"),
+        uMode: gl.getUniformLocation(program, "uMode"),
       };
 
       // Fullscreen Quad Buffer
@@ -356,6 +408,7 @@ export const PixelMorphTransition = forwardRef<PixelMorphTransitionRef, PixelMor
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, textureRef.current);
         gl.uniform1i(u.uSourceTexture, 0);
+        if (u.uMode) gl.uniform1i(u.uMode, mode === "grid-to-black" ? 1 : 0);
 
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -376,7 +429,7 @@ export const PixelMorphTransition = forwardRef<PixelMorphTransitionRef, PixelMor
         gl.deleteBuffer(posBuffer);
         gl.deleteVertexArray(vao);
       };
-    }, [gridColor, copperColor, pixelSize, gridSize]);
+    }, [gridColor, copperColor, pixelSize, gridSize, mode]);
 
     return (
       <div className={`w-full h-full relative overflow-hidden ${className}`} style={style}>

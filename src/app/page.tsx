@@ -6,6 +6,7 @@ import { PersistentBackground } from "@/components/hero/PersistentBackground";
 import { HeroSection } from "@/components/hero/HeroSection";
 import { IntroSection } from "@/components/intro/IntroSection";
 import { ServicesSection } from "@/components/services/ServicesSection";
+import { ContactSection } from "@/components/contact/ContactSection";
 import { AdspirePreloader } from "@/components/preloader/AdspirePreloader";
 
 export default function Home() {
@@ -28,7 +29,10 @@ export default function Home() {
       {/* 5. Section 03: Editorial Services ("WHAT WE DO") */}
       <ServicesSection />
 
-      {/* 6. Pixel Scan Reveal Preloader (Dissolves smoothly into the Hero) */}
+      {/* 6. Section 04: Editorial Contact Experience & Site Footer */}
+      <ContactSection />
+
+      {/* 7. Pixel Scan Reveal Preloader (Dissolves smoothly into the Hero) */}
       <AdspirePreloader
         isPreview={false}
         onComplete={() => setPreloaderFinished(true)}
