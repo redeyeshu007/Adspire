@@ -2,8 +2,6 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
-import { ServiceVisualPreview } from "./ServiceVisualPreview";
-import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
 
 export interface ServiceItem {
   id: string;
@@ -153,9 +151,6 @@ export function ServicesSection() {
 
   // Active service index highlighted during scroll
   const [activeNodeIndex, setActiveNodeIndex] = useState<number>(0);
-  const [expandedPreviewIndex, setExpandedPreviewIndex] = useState<number | null>(null);
-
-  const { scrollTo } = useSmoothScroll();
 
   // Dynamically compute curved SVG path intersecting all timeline nodes
   const updateTimelinePath = useCallback(() => {
@@ -350,7 +345,7 @@ export function ServicesSection() {
           });
         }
 
-        // Card reveals with staggered content
+        // Card reveals smoothly
         if (card) {
           tl.to(
             card,
@@ -362,25 +357,6 @@ export function ServicesSection() {
             },
             connector ? "-=0.25" : 0
           );
-        }
-
-        // Stagger inner capability tags
-        if (card) {
-          const tags = card.querySelectorAll(".capability-pill");
-          if (tags.length > 0) {
-            tl.fromTo(
-              tags,
-              { opacity: 0, y: 12 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.4,
-                stagger: 0.05,
-                ease: "power2.out",
-              },
-              "-=0.4"
-            );
-          }
         }
       });
 
@@ -497,7 +473,6 @@ export function ServicesSection() {
               const isEven = index % 2 === 0; // Even = Left on desktop, Odd = Right
               const isActive = activeNodeIndex === index;
               const isPast = activeNodeIndex > index;
-              const isExpanded = expandedPreviewIndex === index;
               const serviceNum = `0${index + 1}`;
 
               return (
@@ -591,7 +566,7 @@ export function ServicesSection() {
                       }`}
                     >
                       {/* Top Meta: Number + Category Badge */}
-                      <div className="flex items-center justify-between pb-4 border-b border-white/[0.07]">
+                      <div className="flex items-center pb-4 border-b border-white/[0.07]">
                         <div className="flex items-center gap-3">
                           <span
                             className={`font-mono text-xs sm:text-sm font-semibold tracking-wider transition-colors duration-300 ${
@@ -605,30 +580,6 @@ export function ServicesSection() {
                             {service.itemsLabel}
                           </span>
                         </div>
-
-                        {/* Interactive Visual Preview Pill Badge */}
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExpandedPreviewIndex(isExpanded ? null : index)
-                          }
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider transition-all duration-200 ${
-                            isExpanded
-                              ? "bg-[#EE4530]/20 text-[#EE4530] border border-[#EE4530]/40"
-                              : "bg-white/5 text-white/50 border border-white/10 hover:text-white hover:border-white/30"
-                          }`}
-                          aria-expanded={isExpanded}
-                          aria-label={`Toggle visual preview for ${service.title}`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              isExpanded
-                                ? "bg-[#EE4530] animate-pulse"
-                                : "bg-white/40"
-                            }`}
-                          />
-                          <span>{isExpanded ? "Close" : "Preview"}</span>
-                        </button>
                       </div>
 
                       {/* Main Service Title */}
@@ -647,60 +598,9 @@ export function ServicesSection() {
                       </p>
 
                       {/* Service Description */}
-                      <p className="mt-3.5 text-white/70 font-normal leading-[1.6] text-[14px] sm:text-[15px] max-w-[560px]">
+                      <p className="mt-3.5 text-white/70 font-normal leading-[1.65] text-[14px] sm:text-[15px] max-w-[560px]">
                         {service.description}
                       </p>
-
-                      {/* Expandable Visual Preview Panel */}
-                      {isExpanded && (
-                        <div className="mt-6 w-full h-[250px] sm:h-[270px] rounded-xl overflow-hidden border border-white/15 animate-fadeIn">
-                          <ServiceVisualPreview
-                            serviceId={service.id}
-                            className="shadow-2xl"
-                          />
-                        </div>
-                      )}
-
-                      {/* Capabilities Tag Cloud */}
-                      <div className="mt-6 pt-5 border-t border-white/[0.07]">
-                        <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 mb-3">
-                          Key Capabilities
-                        </span>
-
-                        <div className="flex flex-wrap gap-2">
-                          {service.capabilities.map((cap, capIdx) => (
-                            <span
-                              key={capIdx}
-                              className="capability-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-white/75 bg-white/[0.04] border border-white/[0.08] hover:border-[#EE4530]/50 hover:bg-[#EE4530]/10 hover:text-white transition-all duration-200 cursor-default"
-                            >
-                              <span className="text-[#EE4530] text-[10px] font-bold">•</span>
-                              <span>{cap}</span>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Explore Service / Let's Discuss Action */}
-                      <div className="mt-6 pt-4 flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            scrollTo("#contact", { offset: -50, duration: 1.4 })
-                          }
-                          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-wider uppercase text-white/70 group-hover:text-white transition-colors duration-200 group/btn"
-                        >
-                          <span className="group-hover/btn:text-[#EE4530] transition-colors">
-                            Explore Service
-                          </span>
-                          <span className="text-[#EE4530] transition-transform duration-200 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-0.5">
-                            ↗
-                          </span>
-                        </button>
-
-                        <span className="text-[11px] font-mono text-white/30 tracking-widest hidden sm:inline">
-                          ADSPIRE MEDIA
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>
