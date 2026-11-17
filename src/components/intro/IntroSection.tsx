@@ -136,15 +136,15 @@ export function IntroSection() {
           </h2>
         </div>
 
-        {/* 3. LOWER LEFT: Supporting Paragraph with increased size and spacing */}
-        <div className="mt-14 sm:mt-18 lg:mt-20 max-w-[680px] will-change-transform">
+        {/* 3. LOWER LEFT: Supporting Paragraph with refined size and spacing */}
+        <div className="mt-14 sm:mt-18 lg:mt-20 max-w-[760px] will-change-transform">
           <p
             ref={paragraphRef}
             className="text-white/70 font-normal leading-[1.7] text-[18px] sm:text-[21px] lg:text-[23px]"
           >
-            We bring strategy, creativity and design together to shape meaningful
-            brands. From defining a brand&apos;s purpose to creating its visual identity
-            and digital presence, we turn ideas into identities that stand apart.
+            Through performance marketing and building high-performing websites, we
+            provide businesses with one integrated digital partner. Strategy.
+            Creative. Media. Technology. Growth. All working together.
           </p>
         </div>
       </div>
