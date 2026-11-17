@@ -105,19 +105,33 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
       }}
     >
       <div className="max-w-[920px] text-left pointer-events-auto">
-        {/* Exactly 3 Intentional Lines — clamp(72px, 6.8vw, 108px) */}
-        <h1
-          className="font-extrabold text-white tracking-[-0.04em] leading-[0.96] sm:leading-[0.94] select-none text-[clamp(32px,8.5vw,48px)] sm:text-6xl md:text-7xl lg:text-[clamp(72px,6.8vw,108px)] pl-0.5"
-          style={{ fontFamily: "var(--font-hero), var(--font-heading), sans-serif" }}
-        >
-          <span ref={headlineLine1Ref} className="block whitespace-nowrap">
+        {/* Exactly 3 Intentional Lines — Each line with a distinct, trendy & funky typography personality */}
+        <h1 className="text-white select-none leading-[1.02] sm:leading-[1.0] pl-0.5 text-[clamp(32px,8.2vw,48px)] sm:text-6xl md:text-7xl lg:text-[clamp(72px,6.8vw,104px)]">
+          {/* Line 1: Syne — Bold, geometric, avant-garde display */}
+          <span
+            ref={headlineLine1Ref}
+            className="block whitespace-nowrap font-extrabold tracking-[-0.03em]"
+            style={{ fontFamily: "var(--font-hero-1), sans-serif" }}
+          >
             Build Better.
           </span>
-          <span ref={headlineLine2Ref} className="block whitespace-nowrap">
+
+          {/* Line 2: Instrument Serif — Fluid, chic, artistic, forward-leaning italic */}
+          <span
+            ref={headlineLine2Ref}
+            className="block whitespace-nowrap italic font-normal tracking-[-0.01em] text-[1.06em] text-white/95"
+            style={{ fontFamily: "var(--font-hero-2), serif" }}
+          >
             Reach Further.
           </span>
-          <span ref={headlineLine3Ref} className="block whitespace-nowrap">
-            Grow Smarter<span className="text-[#EE4530]">.</span>
+
+          {/* Line 3: Bricolage Grotesque — Modern, expressive, quirky ink-traps with coral period */}
+          <span
+            ref={headlineLine3Ref}
+            className="block whitespace-nowrap font-extrabold tracking-[-0.04em]"
+            style={{ fontFamily: "var(--font-hero-3), sans-serif" }}
+          >
+            Grow Smarter<span className="text-[#EE4530] font-sans font-bold">.</span>
           </span>
         </h1>
 
