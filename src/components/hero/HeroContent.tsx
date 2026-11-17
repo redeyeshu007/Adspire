@@ -105,15 +105,18 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
       }}
     >
       <div className="max-w-[920px] text-left pointer-events-auto">
-        {/* Exactly 3 Intentional Lines — clamp(68px, 6vw, 100px) */}
-        <h1 className="font-bold text-white tracking-[-0.05em] leading-[0.98] sm:leading-[0.96] select-none text-[38px] sm:text-6xl md:text-7xl lg:text-[clamp(68px,6vw,100px)] pl-0.5">
-          <span ref={headlineLine1Ref} className="block">
+        {/* Exactly 3 Intentional Lines — clamp(68px, 6vw, 96px) */}
+        <h1
+          className="font-extrabold text-white tracking-[-0.03em] leading-[0.98] sm:leading-[0.96] select-none text-[clamp(28px,7.8vw,42px)] sm:text-6xl md:text-7xl lg:text-[clamp(68px,6vw,96px)] pl-0.5"
+          style={{ fontFamily: "var(--font-hero), var(--font-heading), sans-serif" }}
+        >
+          <span ref={headlineLine1Ref} className="block whitespace-nowrap">
             Build Better.
           </span>
-          <span ref={headlineLine2Ref} className="block">
+          <span ref={headlineLine2Ref} className="block whitespace-nowrap">
             Reach Further.
           </span>
-          <span ref={headlineLine3Ref} className="block">
+          <span ref={headlineLine3Ref} className="block whitespace-nowrap">
             Grow Smarter<span className="text-[#EE4530]">.</span>
           </span>
         </h1>
