@@ -105,30 +105,30 @@ export function HeroContent({ delay = 0.1, autoPlay = true }: HeroContentProps) 
       }}
     >
       <div className="max-w-[920px] text-left pointer-events-auto">
-        {/* Exactly 3 Intentional Lines — Each line with a distinct, trendy & funky typography personality */}
-        <h1 className="text-white select-none leading-[1.02] sm:leading-[1.0] pl-0.5 text-[clamp(32px,8.2vw,48px)] sm:text-6xl md:text-7xl lg:text-[clamp(72px,6.8vw,104px)]">
-          {/* Line 1: Syne — Bold, geometric, avant-garde display */}
+        {/* Exactly 3 Intentional Lines — Each line with a distinct, trendy typography personality */}
+        <h1 className="text-white select-none leading-[0.98] sm:leading-[0.96] pl-0.5 text-[clamp(32px,8.2vw,48px)] sm:text-6xl md:text-7xl lg:text-[clamp(72px,6.8vw,104px)]">
+          {/* Line 1: Plus Jakarta Sans — Bold, crisp, contemporary geometric agency display */}
           <span
             ref={headlineLine1Ref}
-            className="block whitespace-nowrap font-extrabold tracking-[-0.03em]"
+            className="block whitespace-nowrap font-extrabold tracking-[-0.04em]"
             style={{ fontFamily: "var(--font-hero-1), sans-serif" }}
           >
             Build Better.
           </span>
 
-          {/* Line 2: Instrument Serif — Fluid, chic, artistic, forward-leaning italic */}
+          {/* Line 2: Instrument Serif — Fluid, chic, artistic, forward-leaning italic (User Approved) */}
           <span
             ref={headlineLine2Ref}
-            className="block whitespace-nowrap italic font-normal tracking-[-0.01em] text-[1.06em] text-white/95"
+            className="block whitespace-nowrap italic font-normal tracking-[-0.01em] text-[1.05em] text-white/95 my-0.5 sm:my-1"
             style={{ fontFamily: "var(--font-hero-2), serif" }}
           >
             Reach Further.
           </span>
 
-          {/* Line 3: Bricolage Grotesque — Modern, expressive, quirky ink-traps with coral period */}
+          {/* Line 3: Space Grotesk — Distinctive, funky geometric tech-grotesk with coral square period */}
           <span
             ref={headlineLine3Ref}
-            className="block whitespace-nowrap font-extrabold tracking-[-0.04em]"
+            className="block whitespace-nowrap font-bold tracking-[-0.03em]"
             style={{ fontFamily: "var(--font-hero-3), sans-serif" }}
           >
             Grow Smarter<span className="text-[#EE4530] font-sans font-bold">.</span>

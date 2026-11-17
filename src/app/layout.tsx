@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import {
   Manrope,
   Inter,
-  Syne,
+  Plus_Jakarta_Sans,
   Instrument_Serif,
-  Bricolage_Grotesque,
+  Space_Grotesk,
 } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import "./globals.css";
@@ -23,7 +23,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const syne = Syne({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-hero-1",
   weight: ["700", "800"],
@@ -38,10 +38,10 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-const bricolage = Bricolage_Grotesque({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-hero-3",
-  weight: ["700", "800"],
+  weight: ["700"],
   display: "swap",
 });
 
@@ -63,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} ${syne.variable} ${instrumentSerif.variable} ${bricolage.variable}`}
+      className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable}`}
       suppressHydrationWarning
     >
       <body
