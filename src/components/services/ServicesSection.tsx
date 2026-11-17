@@ -5,87 +5,132 @@ import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
 
 export interface ServiceItem {
   id: string;
+  number: string;
   title: string;
+  tagline: string;
   description: string;
+  itemsLabel: string;
   capabilities: string[];
 }
 
 export const SERVICES_DATA: ServiceItem[] = [
   {
-    id: "brand-strategy",
-    title: "Brand Strategy",
+    id: "performance-marketing",
+    number: "01",
+    title: "Performance Marketing",
+    tagline: "Turn advertising budgets into business opportunities.",
     description:
-      "We build clear brand foundations through research, positioning and strategic thinking, helping businesses define who they are, who they serve and why they matter.",
+      "Our performance marketing solutions are focused on reaching the right audience, generating quality enquiries and continuously improving campaign performance.",
+    itemsLabel: "Services",
     capabilities: [
-      "Brand Positioning",
-      "Audience & Competitor Research",
-      "Brand Architecture",
+      "Google Ads",
+      "Meta Ads",
+      "Lead Generation Campaigns",
+      "Campaign Strategy",
+      "Audience Targeting",
+      "Remarketing",
+      "Campaign Optimisation",
+      "Performance Reporting",
     ],
   },
   {
-    id: "brand-identity-design",
-    title: "Brand Identity & Design",
+    id: "social-media-marketing",
+    number: "02",
+    title: "Social Media Marketing",
+    tagline: "Build a digital presence people remember.",
     description:
-      "We create distinctive visual identities that give brands a recognisable voice, look and personality across every customer touchpoint.",
+      "We develop social media strategies and creative content that help brands stay relevant, communicate consistently and build stronger relationships with their audiences.",
+    itemsLabel: "Services",
     capabilities: [
-      "Logo & Identity Systems",
-      "Typography & Colour Systems",
-      "Creative Art Direction",
+      "Social Media Strategy",
+      "Instagram Management",
+      "Facebook Management",
+      "LinkedIn Management",
+      "Content Planning",
+      "Monthly Content Calendars",
+      "Post & Reel Creatives",
+      "Campaign Planning",
+      "Social Media Advertising",
     ],
   },
   {
-    id: "brand-naming-messaging",
-    title: "Brand Naming & Messaging",
+    id: "branding-creative",
+    number: "03",
+    title: "Branding & Creative",
+    tagline: "Make Your Brand Impossible to Ignore.",
     description:
-      "We shape meaningful brand names, stories and messaging that communicate your purpose and make your brand memorable.",
+      "We create strong visual identities and marketing creatives that help businesses communicate professionally and consistently.",
+    itemsLabel: "Services",
     capabilities: [
-      "Brand Naming",
-      "Taglines & Brand Voice",
-      "Brand Storytelling",
-    ],
-  },
-  {
-    id: "brand-guidelines-systems",
-    title: "Brand Guidelines & Systems",
-    description:
-      "We build flexible brand systems and clear guidelines that help teams maintain consistency as their business grows.",
-    capabilities: [
+      "Logo Design",
+      "Brand Identity",
       "Brand Guidelines",
-      "Visual Design Systems",
-      "Brand Asset Management",
-    ],
-  },
-  {
-    id: "packaging-print-design",
-    title: "Packaging & Print Design",
-    description:
-      "We translate brand identity into tangible experiences through thoughtful packaging, print materials and physical brand touchpoints.",
-    capabilities: [
+      "Marketing Creatives",
+      "Social Media Designs",
+      "Advertisement Creatives",
+      "Brochures",
+      "Company Profiles",
       "Packaging Design",
-      "Print & Editorial Design",
-      "Labels & Stationery",
+      "Print Designs",
+      "Campaign Creatives",
     ],
   },
   {
-    id: "digital-brand-experiences",
-    title: "Digital Brand Experiences",
+    id: "website-technology",
+    number: "04",
+    title: "Website & Technology",
+    tagline: "Your Digital Presence Should Work as Good as It Looks.",
     description:
-      "We bring brand identities into the digital world through considered websites, digital interfaces and engaging online experiences.",
+      "We design and develop modern, responsive and business-focused digital experiences. Whether you need a company website, landing page or customised digital solution, we combine design and technology to create experiences built around your business goals.",
+    itemsLabel: "Services",
     capabilities: [
-      "Website Art Direction",
-      "Digital Identity",
-      "UI & Experience Design",
+      "Business Websites",
+      "Corporate Websites",
+      "Landing Pages",
+      "E-commerce Websites",
+      "UI/UX Design",
+      "Custom Web Development",
+      "Website Redesign",
+      "Website Maintenance",
+      "Hosting Support",
+      "Business Automation Solutions",
     ],
   },
   {
-    id: "campaigns-creative-direction",
-    title: "Campaigns & Creative Direction",
+    id: "seo-local-growth",
+    number: "05",
+    title: "SEO & Local Growth",
+    tagline: "Be Found When Your Customers Are Searching.",
     description:
-      "We develop compelling creative concepts and brand campaigns that bring ideas to life and connect with the right audience.",
+      "We help businesses strengthen their visibility across search engines and local search.",
+    itemsLabel: "Services",
     capabilities: [
-      "Campaign Concepts",
-      "Social & Digital Creative",
-      "Launch Art Direction",
+      "Search Engine Optimisation",
+      "Local SEO",
+      "Google Business Profile Optimisation",
+      "Keyword Strategy",
+      "On-page SEO",
+      "Technical SEO",
+      "Content Optimisation",
+      "Website Performance Monitoring",
+    ],
+  },
+  {
+    id: "ai-automation",
+    number: "06",
+    title: "AI & Automation",
+    tagline: "Work Smarter. Respond Faster. Scale Better.",
+    description:
+      "We help businesses explore practical automation solutions that reduce repetitive work and improve digital workflows.",
+    itemsLabel: "Solutions",
+    capabilities: [
+      "Business Workflow Automation",
+      "Lead Management Automation",
+      "WhatsApp Integration",
+      "AI-assisted Content Workflows",
+      "Customer Enquiry Automation",
+      "Internal Process Automation",
+      "Custom Digital Solutions",
     ],
   },
 ];
@@ -93,11 +138,13 @@ export const SERVICES_DATA: ServiceItem[] = [
 export function ServicesSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const subheadingRef = useRef<HTMLParagraphElement | null>(null);
   const rowsRef = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
     const section = sectionRef.current;
     const heading = headingRef.current;
+    const subheading = subheadingRef.current;
     if (!section || !heading) return;
 
     // Respect user's motion preferences
@@ -107,27 +154,32 @@ export function ServicesSection() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (prefersReducedMotion) {
-      gsap.set(heading, { opacity: 1, y: 0 });
+      gsap.set([heading, subheading], { opacity: 1, y: 0 });
       rowsRef.current.forEach((row) => {
         if (row) {
-          gsap.set(row.querySelectorAll(".service-animate"), {
-            opacity: 1,
-            y: 0,
-          });
+          gsap.set(
+            row.querySelectorAll(".service-left, .service-right, .service-divider"),
+            {
+              opacity: 1,
+              y: 0,
+              scaleX: 1,
+            }
+          );
         }
       });
       return;
     }
 
     const ctx = gsap.context(() => {
-      // 1. Main Heading Reveal
+      // 1. Main Heading & Subtitle Reveal
       gsap.fromTo(
-        heading,
+        [heading, subheading].filter(Boolean),
         { opacity: 0, y: 32 },
         {
           opacity: 1,
           y: 0,
           duration: 0.8,
+          stagger: 0.12,
           ease: "power3.out",
           scrollTrigger: {
             trigger: heading,
@@ -162,7 +214,7 @@ export function ServicesSection() {
           );
         }
 
-        // Title and Description reveal
+        // Title, Tagline and Description reveal
         if (leftCol) {
           tl.fromTo(
             leftCol,
@@ -196,31 +248,37 @@ export function ServicesSection() {
     <section
       ref={sectionRef}
       id="services"
-      aria-label="What We Do — Branding & Creative Services"
+      aria-label="What We Do — Everything Your Brand Needs to Grow Digitally"
       className="relative z-10 w-full min-h-screen bg-transparent text-white selection:bg-[#EE4530] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
     >
       {/* Main Content Layout Container with Matching Editorial Padding */}
       <div
-        className="relative z-10 w-full flex flex-col pt-10 sm:pt-16 lg:pt-20 pb-20 sm:pb-28 lg:pb-36 pointer-events-auto"
+        className="relative z-10 w-full flex flex-col pt-12 sm:pt-18 lg:pt-24 pb-20 sm:pb-28 lg:pb-36 pointer-events-auto"
         style={{
           paddingLeft: "clamp(24px, 8.8vw, 160px)",
           paddingRight: "clamp(24px, 8.8vw, 160px)",
         }}
       >
-        {/* 1. SECTION HEADING: "WHAT WE DO" in Global Orange Accent */}
-        <div className="mb-12 sm:mb-16 lg:mb-20 select-none will-change-transform">
+        {/* 1. SECTION HEADING: "WHAT WE DO" in Global Orange Accent + Subtitle */}
+        <div className="mb-14 sm:mb-20 lg:mb-24 select-none will-change-transform">
           <h2
             ref={headingRef}
             className="font-bold tracking-[-0.04em] leading-[0.92] text-[#EE4530]"
             style={{
-              fontSize: "clamp(80px, 11vw, 190px)",
+              fontSize: "clamp(64px, 10.5vw, 180px)",
             }}
           >
             WHAT WE DO
           </h2>
+          <p
+            ref={subheadingRef}
+            className="mt-4 sm:mt-6 text-white/80 font-normal tracking-[-0.02em] text-[20px] sm:text-[28px] lg:text-[34px] leading-[1.25] max-w-[840px]"
+          >
+            Everything Your Brand Needs to Grow Digitally.
+          </p>
         </div>
 
-        {/* 2. EDITORIAL SERVICE LIST (Two-Column Layout: Left ~65%, Right ~35%) */}
+        {/* 2. EDITORIAL SERVICE LIST (Two-Column Layout: Left ~60%, Right ~40%) */}
         <div className="flex flex-col w-full">
           {SERVICES_DATA.map((service, index) => (
             <div
@@ -237,34 +295,52 @@ export function ServicesSection() {
               />
 
               {/* Service Row Content Container — Balanced Editorial Spacing */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start pt-8 sm:pt-10 lg:pt-12 pb-10 sm:pb-14 lg:pb-16">
-                {/* LEFT COLUMN: Large White Service Title & Description (~65% width) */}
-                <div className="service-left lg:col-span-8 flex flex-col will-change-transform">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start pt-10 sm:pt-12 lg:pt-14 pb-12 sm:pb-16 lg:pb-20">
+                {/* LEFT COLUMN: Number, Title, Tagline & Description */}
+                <div className="service-left lg:col-span-7 flex flex-col will-change-transform">
+                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                    <span className="text-xs sm:text-[13px] font-mono tracking-[0.2em] text-[#EE4530] font-semibold">
+                      {service.number}
+                    </span>
+                    <span className="w-8 h-[1px] bg-[#EE4530]/40" aria-hidden="true" />
+                  </div>
+
                   <h3
-                    className="text-white font-bold tracking-[-0.04em] leading-[0.98] transition-transform duration-300 group-hover:translate-x-1.5"
+                    className="text-white font-bold tracking-[-0.04em] leading-[1.02] transition-transform duration-300 group-hover:translate-x-1.5"
                     style={{
-                      fontSize: "clamp(34px, 4.4vw, 76px)",
+                      fontSize: "clamp(30px, 3.8vw, 60px)",
                     }}
                   >
                     {service.title}
                   </h3>
-                  <p className="mt-4 sm:mt-5 text-white/75 font-normal leading-[1.6] text-[clamp(15px,1.15vw,20px)] max-w-[660px]">
+
+                  <p className="mt-3 sm:mt-4 text-[#EE4530] font-medium tracking-[-0.01em] text-[17px] sm:text-[20px] lg:text-[22px] leading-snug">
+                    {service.tagline}
+                  </p>
+
+                  <p className="mt-3.5 sm:mt-4 text-white/70 font-normal leading-[1.65] text-[15px] sm:text-[17px] max-w-[620px]">
                     {service.description}
                   </p>
                 </div>
 
-                {/* RIGHT COLUMN: Three Capabilities in Global Orange Accent (~35% width) */}
-                <div className="service-right lg:col-span-4 flex flex-col pt-6 sm:pt-8 lg:pt-2.5 will-change-transform">
+                {/* RIGHT COLUMN: Capabilities/Solutions in Responsive 2-Col Grid */}
+                <div className="service-right lg:col-span-5 flex flex-col pt-4 lg:pt-2 will-change-transform">
+                  <div className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.22em] text-white/40 mb-4 sm:mb-5 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#EE4530]" aria-hidden="true" />
+                    <span>{service.itemsLabel}</span>
+                  </div>
+
                   <ul
-                    className="flex flex-col space-y-4 sm:space-y-5 lg:space-y-6 list-none m-0 p-0"
-                    aria-label={`${service.title} key capabilities`}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 sm:gap-y-3.5 list-none m-0 p-0"
+                    aria-label={`${service.title} ${service.itemsLabel.toLowerCase()}`}
                   >
                     {service.capabilities.map((cap, capIdx) => (
                       <li
                         key={capIdx}
-                        className="service-capability text-[#EE4530] font-medium leading-[1.6] text-[clamp(15px,1.15vw,19px)] tracking-[-0.01em] transition-opacity duration-200 group-hover:opacity-95 will-change-transform"
+                        className="service-capability flex items-start gap-2.5 text-white/75 group-hover:text-white/95 text-[14px] sm:text-[15px] lg:text-[15px] leading-[1.4] transition-colors duration-200"
                       >
-                        {cap}
+                        <span className="text-[#EE4530] text-sm leading-none font-bold select-none mt-0.5">•</span>
+                        <span>{cap}</span>
                       </li>
                     ))}
                   </ul>
