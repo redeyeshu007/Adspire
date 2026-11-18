@@ -144,10 +144,10 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
           </h1>
         </div>
 
-        {/* Upper-Right Space: 3D Interactive Branding Agency Kinetic Sculpture */}
+        {/* Upper-Right Space: 3D Floating Broadcast TV Screen Showing Brand Promotions */}
         <div
           ref={sculptureRef}
-          className="absolute right-0 sm:right-4 md:right-8 lg:right-12 top-0 sm:-top-4 md:-top-8 w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] lg:w-[400px] lg:h-[400px] pointer-events-auto z-10 hidden sm:block"
+          className="absolute right-0 sm:right-2 md:right-6 lg:right-10 top-0 sm:-top-2 md:-top-4 w-[280px] h-[210px] sm:w-[360px] sm:h-[270px] md:w-[440px] md:h-[320px] lg:w-[500px] lg:h-[360px] pointer-events-auto z-10 hidden sm:block"
         >
           <BrandSculpture3D />
         </div>
