@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Mail,
   Phone,
-  MapPin,
   Headphones,
   CheckCircle2,
   AlertCircle,
@@ -39,25 +38,10 @@ const CONTACT_LINKS = [
     href: "tel:+919876543210",
   },
   {
-    icon: MapPin,
-    label: "Dindigul, Tamil Nadu, India",
-    href: "#",
-  },
-  {
     icon: Headphones,
-    label: "hello@adspiremedia.com",
-    href: "mailto:hello@adspiremedia.com",
+    label: "support@adspiremedia.com",
+    href: "mailto:support@adspiremedia.com",
   },
-];
-
-const SERVICE_OPTIONS = [
-  "Performance Marketing",
-  "Social Media Marketing",
-  "Branding & Creative",
-  "Website & Technology",
-  "SEO & Local Growth",
-  "AI & Automation",
-  "Other Consultation",
 ];
 
 export interface GlobeWireframeProps {
@@ -105,16 +89,18 @@ interface CustomProjection extends d3.GeoProjection {
 }
 
 const cityCoordinates: Record<string, [number, number]> = {
-  dindigul: [10.3673, 77.9803],
-  chennai: [13.0827, 80.2707],
-  mumbai: [19.076, 72.8777],
+  "san francisco": [37.7749, -122.4194],
+  "new york": [40.7128, -74.006],
+  london: [51.5074, -0.1278],
+  tokyo: [35.6762, 139.6503],
+  paris: [48.8566, 2.3522],
+  moscow: [55.7558, 37.6176],
   dubai: [25.2048, 55.2708],
   singapore: [1.3521, 103.8198],
-  london: [51.5074, -0.1278],
-  "new york": [40.7128, -74.006],
-  "san francisco": [37.7749, -122.4194],
-  tokyo: [35.6762, 139.6503],
   sydney: [-33.8688, 151.2093],
+  mumbai: [19.076, 72.8777],
+  "los angeles": [34.0522, -118.2437],
+  chicago: [41.8781, -87.6298],
 };
 
 function orthographicRaw(x: number, y: number): [number, number] {
@@ -128,12 +114,12 @@ function equirectangularRaw(lambda: number, phi: number): [number, number] {
 
 function interpolateProjection(
   raw0: (lambda: number, phi: number) => [number, number],
-  raw1: (lambda: number, phi: number) => [number, number]
+  raw1: (lambda: number, phi: number) => [number, number],
 ): CustomProjection {
   let t = 0;
 
   const createRawProjection = (
-    alpha: number
+    alpha: number,
   ): ((lambda: number, phi: number) => [number, number]) => {
     return (lambda: number, phi: number): [number, number] => {
       const [x0, y0] = raw0(lambda, phi);
@@ -143,14 +129,14 @@ function interpolateProjection(
   };
 
   const projection = d3.geoProjection(
-    createRawProjection(t)
+    createRawProjection(t),
   ) as unknown as CustomProjection;
 
   const alphaMethod = ((value?: number): CustomProjection | number => {
     if (value !== undefined) {
       t = +value;
       const newProjection = d3.geoProjection(
-        createRawProjection(t)
+        createRawProjection(t),
       ) as unknown as CustomProjection;
 
       if (projection.scale()) newProjection.scale(projection.scale());
@@ -177,17 +163,17 @@ export function GlobeWireframe({
   height,
   className = "aspect-square w-full max-w-150",
   strokeColor = "#EE4530",
-  strokeWidth = 0.8,
-  graticuleColor = "rgba(238, 69, 48, 0.3)",
-  graticuleOpacity = 0.18,
+  strokeWidth = 0.6,
+  graticuleColor = "rgba(238, 69, 48, 0.4)",
+  graticuleOpacity = 0.12,
   sphereOutlineColor = "#EE4530",
-  sphereOutlineWidth = 1.2,
+  sphereOutlineWidth = 1,
   autoRotate = true,
   autoRotateSpeed = 0.45,
   rotateToLocation,
-  rotateCities = ["dindigul", "singapore", "dubai", "london", "new york", "san francisco"],
-  rotationSpeed = 3400,
-  initialRotation = [-78, -10],
+  rotateCities = [],
+  rotationSpeed = 3000,
+  initialRotation = [0, 0],
   enableInteraction = true,
   showGraticule = true,
   animationDuration = 2000,
@@ -225,9 +211,9 @@ export function GlobeWireframe({
   const finalWidth = useResponsive ? dimensions.width : width || 800;
   const finalHeight = useResponsive ? dimensions.height : height || 500;
 
-  const defaultStrokeColor = strokeColor || "#EE4530";
-  const defaultGraticuleColor = graticuleColor || "rgba(238, 69, 48, 0.3)";
-  const defaultSphereOutlineColor = sphereOutlineColor || "#EE4530";
+  const defaultStrokeColor = strokeColor || "currentColor";
+  const defaultGraticuleColor = graticuleColor || "currentColor";
+  const defaultSphereOutlineColor = sphereOutlineColor || "currentColor";
   const defaultCountryFillColor =
     countryFillColor || (variant === "solid" ? "currentColor" : "none");
   const defaultBackgroundColor = backgroundColor || "transparent";
@@ -256,7 +242,7 @@ export function GlobeWireframe({
         const [entry] = entries;
         setIsVisible(entry.isIntersecting);
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     observer.observe(container);
@@ -274,7 +260,7 @@ export function GlobeWireframe({
     const loadWorldData = async () => {
       try {
         const response = await fetch(
-          "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+          "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
         );
         const world = (await response.json()) as WorldAtlasTopology;
         if (isMounted) {
@@ -316,7 +302,7 @@ export function GlobeWireframe({
   }, [autoRotate, autoRotateSpeed, isVisible, isDragging, rotateCities.length]);
 
   const animateRotationTo = useCallback(
-    (target: [number, number], duration = 1400) => {
+    (target: [number, number], duration = 1200) => {
       if (rotationAnimFrame.current) {
         cancelAnimationFrame(rotationAnimFrame.current);
       }
@@ -348,7 +334,7 @@ export function GlobeWireframe({
 
       rotationAnimFrame.current = requestAnimationFrame(animate);
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -362,7 +348,7 @@ export function GlobeWireframe({
       if (coordinates) {
         animateRotationTo(
           [-coordinates[1], -coordinates[0]],
-          rotationSpeed * 0.5
+          rotationSpeed * 0.6,
         );
         setCurrentCityIndex(nextIndex);
       }
@@ -374,7 +360,7 @@ export function GlobeWireframe({
     if (coordinates) {
       animateRotationTo(
         [-coordinates[1], -coordinates[0]],
-        rotationSpeed * 0.5
+        rotationSpeed * 0.6,
       );
     }
 
@@ -423,9 +409,18 @@ export function GlobeWireframe({
     const dx = currentMouse[0] - lastMouse[0];
     const dy = currentMouse[1] - lastMouse[1];
 
+    const t = progress / 100;
+    let sensitivity: number;
+
+    if (variant === "wireframe") {
+      sensitivity = t < 0.5 ? 0.5 : 0.25;
+    } else {
+      sensitivity = 0.5;
+    }
+
     setRotation((prev) => [
-      prev[0] + dx * 0.45,
-      Math.max(-80, Math.min(80, prev[1] - dy * 0.45)),
+      prev[0] + dx * sensitivity,
+      Math.max(-90, Math.min(90, prev[1] - dy * sensitivity)),
     ]);
 
     setLastMouse(currentMouse);
@@ -463,17 +458,17 @@ export function GlobeWireframe({
     } else if (variant === "wireframesolid") {
       finalCountryFill = "none";
       finalStrokeWidth = strokeWidth;
-      finalOpacity = 0.95;
-      renderGraticule = showGraticule;
-      finalGraticuleOpacity = graticuleOpacity;
-      finalSphereOutlineWidth = 1.3;
+      finalOpacity = 1.0;
+      renderGraticule = false;
+      finalGraticuleOpacity = 0;
+      finalSphereOutlineWidth = 1.5;
     } else if (variant === "solid") {
       finalCountryFill = defaultCountryFillColor;
       finalStrokeWidth = strokeWidth * 0.5;
       finalOpacity = 0.3;
       renderGraticule = false;
       finalGraticuleOpacity = 0;
-      finalSphereOutlineWidth = 1.3;
+      finalSphereOutlineWidth = 1.5;
     }
 
     if (defaultBackgroundColor !== "transparent") {
@@ -530,7 +525,7 @@ export function GlobeWireframe({
             .attr("d", graticulePath)
             .attr("fill", "none")
             .attr("stroke", defaultGraticuleColor)
-            .attr("stroke-width", 0.75)
+            .attr("stroke-width", 1)
             .attr("opacity", finalGraticuleOpacity);
         }
       } catch (error) {
@@ -590,7 +585,7 @@ export function GlobeWireframe({
           .attr("fill", "none")
           .attr("stroke", defaultSphereOutlineColor)
           .attr("stroke-width", finalSphereOutlineWidth)
-          .attr("opacity", 0.85);
+          .attr("opacity", variant === "wireframe" ? 1.0 : 0.8);
       }
     } catch (error) {
       console.error("Error creating sphere outline:", error);
@@ -652,7 +647,7 @@ export const FormDots = React.forwardRef<
 >(
   (
     { className, orientation = "horizontal", decorative = true, ...props },
-    ref
+    ref,
   ) => {
     const isHorizontal = orientation === "horizontal";
     return (
@@ -663,7 +658,7 @@ export const FormDots = React.forwardRef<
         className={cn(
           "shrink-0 flex items-center justify-center overflow-hidden",
           isHorizontal ? "w-full" : "h-full",
-          className
+          className,
         )}
         {...props}
       >
@@ -671,10 +666,13 @@ export const FormDots = React.forwardRef<
           className={cn("relative", isHorizontal ? "w-full h-4" : "h-full w-4")}
         >
           <div
-            className={cn("absolute inset-0 bg-repeat text-white/15")}
+            className={cn(
+              "absolute inset-0 bg-repeat",
+              "text-white/20",
+            )}
             style={{
               backgroundImage:
-                "radial-gradient(circle, currentColor 0.9px, transparent 0.9px)",
+                "radial-gradient(circle, currentColor 0.8px, transparent 0.8px)",
               backgroundSize: isHorizontal ? "6px 100%" : "100% 6px",
               maskImage: isHorizontal
                 ? "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)"
@@ -684,7 +682,7 @@ export const FormDots = React.forwardRef<
         </div>
       </SeparatorPrimitive.Root>
     );
-  }
+  },
 );
 FormDots.displayName = "FormDots";
 
@@ -695,17 +693,15 @@ export interface ContactWithGlobeProps {
 }
 
 export function ContactWithGlobe({
-  title = "Have an Idea? Let's Build It.",
-  description = "Whether you are scaling ad campaigns, upgrading digital platforms, or looking for a trusted growth partner, we would love to connect.",
+  title = "Contact us",
+  description = "We are always looking for ways to improve our products and services. Contact us and let us know how we can help you.",
   className,
 }: ContactWithGlobeProps) {
   const [formData, setFormData] = useState({
     name: "",
     company: "",
-    phone: "",
     email: "",
-    service: "",
-    requirement: "",
+    message: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -715,9 +711,7 @@ export function ContactWithGlobe({
   }>({ type: null, text: "" });
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -732,14 +726,6 @@ export function ContactWithGlobe({
       return;
     }
 
-    if (!formData.phone.trim()) {
-      setStatusMessage({
-        type: "error",
-        text: "Please enter your contact phone number.",
-      });
-      return;
-    }
-
     if (
       !formData.email.trim() ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
@@ -751,10 +737,10 @@ export function ContactWithGlobe({
       return;
     }
 
-    if (!formData.requirement.trim()) {
+    if (!formData.message.trim()) {
       setStatusMessage({
         type: "error",
-        text: "Please tell us briefly about your project requirement.",
+        text: "Please enter your message.",
       });
       return;
     }
@@ -767,8 +753,11 @@ export function ContactWithGlobe({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          services: formData.service ? [formData.service] : [],
+          name: formData.name,
+          company: formData.company,
+          email: formData.email,
+          message: formData.message,
+          requirement: formData.message,
         }),
       });
 
@@ -779,22 +768,20 @@ export function ContactWithGlobe({
           type: "success",
           text:
             data.message ||
-            "Thank you! Your inquiry has been received. We will respond within 24 business hours.",
+            "Thank you! Your message has been sent successfully. We will reply promptly.",
         });
         setFormData({
           name: "",
           company: "",
-          phone: "",
           email: "",
-          service: "",
-          requirement: "",
+          message: "",
         });
       } else {
         setStatusMessage({
           type: "error",
           text:
             data.error ||
-            "Something went wrong while sending your inquiry. Please try again.",
+            "Something went wrong while sending your message. Please try again.",
         });
       }
     } catch {
@@ -810,24 +797,20 @@ export function ContactWithGlobe({
   return (
     <section
       className={cn(
-        "relative w-full bg-transparent overflow-hidden py-16 sm:py-24 text-white",
-        className
+        "relative w-full bg-zinc-950 overflow-hidden py-20 text-white",
+        className,
       )}
     >
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header Block */}
-        <div className="flex flex-col items-center text-center gap-4 mb-14 sm:mb-20">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center gap-4 mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.15, ease: smoothEase }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.05] text-white max-w-3xl"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
           >
-            Have an Idea?{" "}
-            <span className="text-[#EE4530] drop-shadow-[0_0_24px_rgba(238,69,48,0.35)]">
-              Let&apos;s Build It.
-            </span>
+            {title}
           </motion.h2>
 
           <motion.p
@@ -835,37 +818,31 @@ export function ContactWithGlobe({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.3, ease: smoothEase }}
-            className="text-base sm:text-lg text-white/70 max-w-xl leading-relaxed"
+            className="text-base text-zinc-400 max-w-md"
           >
             {description}
           </motion.p>
         </div>
 
-        {/* 2-Column Content Layout: Left Globe & Contacts, Right Form */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 max-w-6xl mx-auto items-start">
-          {/* LEFT COLUMN: Narrative, Direct Channels & Rotating Wireframe Globe */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1.0, delay: 0.2, ease: smoothEase }}
-            className="flex flex-col gap-8 lg:pr-4"
+            className="flex flex-col gap-6"
           >
-            <div className="flex flex-col gap-2">
-              <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#EE4530] font-semibold">
-                GLOBAL ENGAGEMENT
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                Get in touch with us
+            <div className="flex flex-col gap-1">
+              <h3 className="text-xl font-semibold text-white">
+                Get in touch
               </h3>
-              <p className="text-sm sm:text-base text-white/60 leading-relaxed max-w-md">
-                Headquartered in Tamil Nadu, India, partnering with ambitious
-                enterprises and fast-scaling brands worldwide.
+              <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
+                Reach out via any channel below. We typically reply within one
+                business day.
               </p>
             </div>
 
-            {/* Direct Contact Links */}
-            <div className="flex flex-col gap-3.5">
+            <div className="flex flex-col gap-3">
               {CONTACT_LINKS.map(({ icon: Icon, label, href }, i) => (
                 <motion.a
                   key={label}
@@ -878,56 +855,45 @@ export function ContactWithGlobe({
                     delay: 0.3 + i * 0.1,
                     ease: smoothEase,
                   }}
-                  className="group flex items-center gap-3.5 w-fit text-sm text-white/70 hover:text-white transition-colors duration-200"
+                  className="group flex items-center gap-3 w-fit text-sm text-zinc-400 hover:text-white transition-colors duration-200"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.1] group-hover:border-[#EE4530]/50 group-hover:bg-[#EE4530]/15 group-hover:shadow-[0_0_16px_rgba(238,69,48,0.3)] flex items-center justify-center shrink-0 transition-all duration-200">
-                    <Icon className="w-4 h-4 text-white/60 group-hover:text-[#EE4530] transition-colors duration-200" />
+                  <div className="w-8 h-8 rounded-lg bg-zinc-800/80 border border-zinc-700 group-hover:border-[#EE4530]/50 group-hover:bg-[#EE4530]/10 flex items-center justify-center shrink-0 transition-all duration-200">
+                    <Icon className="w-3.5 h-3.5 text-zinc-400 group-hover:text-[#EE4530] transition-colors duration-200" />
                   </div>
-                  <span className="font-medium">{label}</span>
+                  {label}
                 </motion.a>
               ))}
             </div>
 
-            {/* Interactive Wireframe Globe Card */}
-            <div className="relative overflow-hidden h-60 sm:h-72 rounded-2xl border border-white/[0.08] bg-[#0c0c0c]/60 backdrop-blur-md p-4 flex items-center justify-center shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
-              <div className="absolute top-3 left-4 z-20 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#EE4530] animate-pulse" />
-                <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/50">
-                  Global Reach // Active Rotation
-                </span>
-              </div>
+            <div className="relative overflow-hidden h-52">
               <GlobeWireframe
-                className="w-full aspect-square max-w-[280px] sm:max-w-[320px] pointer-events-auto"
-                strokeColor="#EE4530"
-                strokeWidth={0.8}
-                graticuleColor="rgba(238, 69, 48, 0.3)"
-                graticuleOpacity={0.2}
-                sphereOutlineColor="#EE4530"
-                sphereOutlineWidth={1.2}
+                className="w-full aspect-square max-w-full absolute top-0 left-0"
                 variant="wireframesolid"
+                strokeColor="#EE4530"
+                graticuleColor="rgba(238, 69, 48, 0.35)"
+                sphereOutlineColor="#EE4530"
                 autoRotate
-                autoRotateSpeed={0.4}
-                rotationSpeed={3200}
+                autoRotateSpeed={0.45}
+                strokeWidth={0.6}
+                graticuleOpacity={0.12}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#000000] via-[#000000]/70 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950 to-transparent" />
             </div>
           </motion.div>
 
-          {/* RIGHT COLUMN: Interactive Form with Adspire Theme */}
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1.0, delay: 0.35, ease: smoothEase }}
-            className="rounded-2xl border border-white/[0.12] bg-[#0c0c0c]/85 backdrop-blur-xl p-6 sm:p-9 flex flex-col gap-5 shadow-[0_24px_50px_rgba(0,0,0,0.85)]"
+            className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 sm:p-8 flex flex-col gap-5"
           >
             <div>
-              <h3 className="text-xl font-bold text-white mb-1">
-                Send us a message
+              <h3 className="text-lg font-semibold text-white mb-0.5">
+                Send a message
               </h3>
-              <p className="text-sm text-white/60">
-                Fill out the details below and our team will get back to you
-                promptly.
+              <p className="text-sm text-zinc-400">
+                Fill out the form and we&apos;ll get back to you promptly.
               </p>
             </div>
 
@@ -955,9 +921,9 @@ export function ContactWithGlobe({
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-mono font-semibold tracking-widest uppercase text-white/50">
-                    Full Name <span className="text-[#EE4530]">*</span>
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
+                    Full Name
                   </label>
                   <input
                     type="text"
@@ -965,12 +931,12 @@ export function ContactWithGlobe({
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="John Doe"
-                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
+                    placeholder="Ahdeetai"
+                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 transition-all duration-200"
                   />
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-mono font-semibold tracking-widest uppercase text-white/50">
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
                     Company
                   </label>
                   <input
@@ -978,113 +944,55 @@ export function ContactWithGlobe({
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    placeholder="Acme Inc."
-                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
+                    placeholder="ScrollX UI"
+                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 transition-all duration-200"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-mono font-semibold tracking-widest uppercase text-white/50">
-                    Email Address <span className="text-[#EE4530]">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="john@example.com"
-                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-mono font-semibold tracking-widest uppercase text-white/50">
-                    Phone Number <span className="text-[#EE4530]">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    placeholder="+91 98765 43210"
-                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-mono font-semibold tracking-widest uppercase text-white/50">
-                  Service Interested In
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
+                  Email Address
                 </label>
-                <div className="relative">
-                  <select
-                    name="service"
-                    value={formData.service}
-                    onChange={handleChange}
-                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200 appearance-none cursor-pointer pr-10"
-                  >
-                    <option value="" className="bg-[#141414] text-white/40">
-                      Select a service or focus area...
-                    </option>
-                    {SERVICE_OPTIONS.map((srv) => (
-                      <option
-                        key={srv}
-                        value={srv}
-                        className="bg-[#1c1c1c] text-white py-1.5"
-                      >
-                        {srv}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/40">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-mono font-semibold tracking-widest uppercase text-white/50">
-                  Project Requirement <span className="text-[#EE4530]">*</span>
-                </label>
-                <textarea
-                  name="requirement"
-                  value={formData.requirement}
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
                   required
-                  placeholder="Tell us about your brand goals, target timeline, or specific challenges..."
+                  placeholder="support@scrollxui.com"
+                  className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 transition-all duration-200"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  placeholder="Type your message here"
                   rows={4}
-                  className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 resize-none transition-all duration-200"
+                  className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 resize-none transition-all duration-200"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-fit h-11 px-8 rounded-xl font-semibold text-sm bg-[#EE4530] hover:bg-[#FF5542] text-white shadow-[0_0_24px_rgba(238,69,48,0.35)] group mt-1"
+                className="w-fit h-11 px-8 rounded-xl font-semibold text-sm bg-white hover:bg-zinc-100 text-zinc-950 group cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Sending Inquiry...
+                    <Loader2 className="w-4 h-4 animate-spin text-zinc-950" />
+                    Sending...
                   </>
                 ) : (
                   <>
-                    Submit Message
+                    Submit
                     <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </>
                 )}

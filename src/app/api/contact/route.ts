@@ -20,24 +20,25 @@ export async function POST(req: Request) {
       );
     }
 
-    // International phone validation: digits, optional +, spaces, hyphens, dots, parentheses, 7-16 digits
-    const digitsOnly = phone ? String(phone).replace(/\D/g, "") : "";
-    if (
-      !phone ||
-      typeof phone !== "string" ||
-      digitsOnly.length < 7 ||
-      digitsOnly.length > 16 ||
-      !/^[0-9+\s\-().]+$/.test(phone.trim())
-    ) {
-      return NextResponse.json(
-        { success: false, error: "Please provide a valid phone number." },
-        { status: 400 }
-      );
+    // Optional phone validation: if provided, validate format
+    if (phone && typeof phone === "string" && phone.trim().length > 0) {
+      const digitsOnly = String(phone).replace(/\D/g, "");
+      if (
+        digitsOnly.length < 7 ||
+        digitsOnly.length > 16 ||
+        !/^[0-9+\s\-().]+$/.test(phone.trim())
+      ) {
+        return NextResponse.json(
+          { success: false, error: "Please provide a valid phone number." },
+          { status: 400 }
+        );
+      }
     }
 
-    if (!requirement || typeof requirement !== "string" || requirement.trim().length === 0) {
+    const messageText = requirement || body.message || "";
+    if (!messageText || typeof messageText !== "string" || messageText.trim().length === 0) {
       return NextResponse.json(
-        { success: false, error: "Please tell us about your project requirements." },
+        { success: false, error: "Please tell us about your project requirements or message." },
         { status: 400 }
       );
     }
@@ -46,10 +47,10 @@ export async function POST(req: Request) {
     const enquiry = {
       name: name.trim(),
       company: company ? String(company).trim() : "",
-      phone: phone.trim(),
+      phone: phone ? phone.trim() : "",
       email: email.trim().toLowerCase(),
       services: Array.isArray(services) ? services : [],
-      requirement: requirement.trim(),
+      requirement: messageText.trim(),
       timestamp: new Date().toISOString(),
     };
 
