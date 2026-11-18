@@ -611,20 +611,6 @@ export function ServicesSection() {
       >
         {/* 1. SECTION HEADING: "WHAT WE DO" with Dynamic Typography & Color */}
         <div className="mb-14 sm:mb-20 lg:mb-24 select-none will-change-transform max-w-[1200px] mx-auto w-full">
-          {/* Section Category Header */}
-          <div className="flex items-center gap-3 mb-4 transition-all duration-500">
-            <span
-              className="w-2.5 h-2.5 rounded-full animate-pulse transition-all duration-500"
-              style={{
-                backgroundColor: currentTheme.accent,
-                boxShadow: `0 0 16px ${currentTheme.accent}`,
-              }}
-            />
-            <span className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.24em] text-white/50">
-              03 // Services & Capabilities
-            </span>
-          </div>
-
           {/* Morphing "WHAT WE DO" Title */}
           <h2
             ref={headingRef}
