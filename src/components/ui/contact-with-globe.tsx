@@ -797,7 +797,7 @@ export function ContactWithGlobe({
   return (
     <section
       className={cn(
-        "relative w-full bg-zinc-950 overflow-hidden py-20 text-white selection:bg-[#EE4530] selection:text-white",
+        "relative w-full bg-[#000000] overflow-hidden py-20 text-white selection:bg-[#EE4530] selection:text-white",
         className,
       )}
     >
@@ -883,7 +883,7 @@ export function ContactWithGlobe({
                 strokeWidth={0.6}
                 graticuleOpacity={0.12}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#000000] to-transparent" />
             </div>
           </motion.div>
 
