@@ -5,21 +5,17 @@ import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
 import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
 
-// Spiral Paths Engine (Rotating Archimedean Spirals in Adspire Flame Vermilion)
+// Spiral Paths (Exact Original Archimedean Cosmic Spiral Engine)
 function SpiralPaths() {
   const spirals = useMemo(() => {
-    return Array.from({ length: 9 }, (_, i) => {
-      const col = i % 3;
-      const row = Math.floor(i / 3);
-      // Evenly distribute 9 spirals across an 800x600 canvas (3x3 grid with subtle organic offsets)
-      const centerX = 160 + col * 240 + ((row % 2 === 0 ? 1 : -1) * 20);
-      const centerY = 130 + row * 170 + ((col % 2 === 0 ? 1 : -1) * 15);
-      const radius = 75 + (i % 4) * 18;
-      const turns = 3.2 + (i % 3) * 0.4;
-      const spinDirection = i % 2 === 0 ? 1 : -1; // Alternate clockwise & counter-clockwise
+    return Array.from({ length: 8 }, (_, i) => {
+      const centerX = 400 + ((i % 4) - 1.5) * 200;
+      const centerY = 300 + Math.floor(i / 4 - 0.5) * 200;
+      const radius = 80 + i * 16;
+      const turns = 3 + i * 0.5;
 
       let path = `M${centerX + radius},${centerY}`;
-      for (let angle = 0; angle <= turns * 360; angle += 5) {
+      for (let angle = 0; angle <= turns * 360; angle += 6) {
         const radian = (angle * Math.PI) / 180;
         const currentRadius = radius * (1 - angle / (turns * 360));
         const x = centerX + currentRadius * Math.cos(radian);
@@ -30,62 +26,36 @@ function SpiralPaths() {
       return {
         id: `spiral-${i}`,
         d: path,
-        centerX,
-        centerY,
-        spinDirection,
-        delay: i * 0.7,
-        duration: 20 + (i % 3) * 6,
+        delay: i * 1.2,
       };
     });
   }, []);
 
   return (
     <svg
-      className="absolute inset-0 w-full h-full opacity-50 text-[#EE4530]"
+      className="absolute inset-0 w-full h-full opacity-45 text-[#EE4530]"
       viewBox="0 0 800 600"
       preserveAspectRatio="xMidYMid slice"
     >
       {spirals.map((spiral) => (
-        <motion.g
+        <motion.path
           key={spiral.id}
-          style={{
-            transformOrigin: `${spiral.centerX}px ${spiral.centerY}px`,
-          }}
+          d={spiral.d}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
           animate={{
-            rotate: [0, 360 * spiral.spinDirection],
+            pathLength: [0, 1, 0],
+            rotate: [0, 360],
           }}
           transition={{
-            duration: spiral.duration,
-            repeat: Infinity,
-            ease: "linear",
+            pathLength: { duration: 12, repeat: Infinity, ease: "easeInOut" },
+            rotate: { duration: 24, repeat: Infinity, ease: "linear" },
+            delay: spiral.delay,
           }}
-        >
-          <motion.path
-            d={spiral.d}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            initial={{ pathLength: 0 }}
-            animate={{
-              pathLength: [0, 1, 0],
-              opacity: [0.2, 0.85, 0.2],
-            }}
-            transition={{
-              pathLength: {
-                duration: 12,
-                repeat: Infinity,
-                ease: "easeInOut",
-              },
-              opacity: {
-                duration: 12,
-                repeat: Infinity,
-                ease: "easeInOut",
-              },
-              delay: spiral.delay,
-            }}
-          />
-        </motion.g>
+        />
       ))}
     </svg>
   );
@@ -115,11 +85,11 @@ export default function ModernBackgroundPaths({
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 50% 40%, rgba(238, 69, 48, 0.14) 0%, rgba(255, 98, 71, 0.05) 45%, rgba(0, 0, 0, 0.95) 75%, #000000 100%)",
+            "radial-gradient(circle at 50% 40%, rgba(238, 69, 48, 0.12) 0%, rgba(255, 98, 71, 0.04) 45%, rgba(0, 0, 0, 0.95) 75%, #000000 100%)",
         }}
       />
 
-      {/* Dynamic Spiral Background Engine (Exclusively Rotating Archimedean Spirals) */}
+      {/* Dynamic Spiral Background Engine (Exact Original Archimedean Motion) */}
       <div className="absolute inset-0 text-[#EE4530] pointer-events-none">
         <SpiralPaths />
       </div>
