@@ -33,7 +33,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const headlineLeftRef = useRef<HTMLDivElement | null>(null);
   const headlineRightRef = useRef<HTMLDivElement | null>(null);
-  const reticleRef = useRef<HTMLDivElement | null>(null);
   const pillDockRef = useRef<HTMLDivElement | null>(null);
   const subtextRef = useRef<HTMLDivElement | null>(null);
   const hasAnimatedRef = useRef(false);
@@ -47,7 +46,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         [
           headlineLeftRef.current,
           headlineRightRef.current,
-          reticleRef.current,
           pillDockRef.current,
           subtextRef.current,
         ],
@@ -69,7 +67,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         [
           headlineLeftRef.current,
           headlineRightRef.current,
-          reticleRef.current,
           pillDockRef.current,
           subtextRef.current,
         ],
@@ -86,12 +83,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
       { opacity: 0, y: 28, filter: "blur(6px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" }
     )
-      .fromTo(
-        reticleRef.current,
-        { opacity: 0, scale: 0.7, rotate: -10 },
-        { opacity: 1, scale: 1, rotate: 0, duration: 0.75, ease: "back.out(1.7)" },
-        "-=0.6"
-      )
       .fromTo(
         headlineRightRef.current,
         { opacity: 0, y: 28, filter: "blur(6px)" },
@@ -144,30 +135,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
             </span>
             <span className="block">SYSTEM</span>
           </h1>
-        </div>
-
-        {/* Center Floating Crosshair Reticle Box in Adspire Vermilion (#EE4530) */}
-        <div
-          ref={reticleRef}
-          className="absolute left-[52%] top-[49%] -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center justify-center w-14 h-14 pointer-events-auto group cursor-crosshair"
-        >
-          {/* Subtle dashed box in Flame Vermilion */}
-          <div className="absolute inset-0 border border-dashed border-[#EE4530]/50 group-hover:border-[#EE4530] transition-colors duration-300 shadow-[0_0_12px_rgba(238,69,48,0.25)]" />
-          {/* 4 Corner Crosshairs (+) in Flame Vermilion */}
-          <span className="absolute -top-2 -left-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
-            +
-          </span>
-          <span className="absolute -top-2 -right-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
-            +
-          </span>
-          <span className="absolute -bottom-2 -left-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
-            +
-          </span>
-          <span className="absolute -bottom-2 -right-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
-            +
-          </span>
-          {/* Subtle glowing center pulse */}
-          <div className="w-1.5 h-1.5 rounded-full bg-[#EE4530] group-hover:scale-150 transition-transform duration-300 shadow-[0_0_8px_#EE4530]" />
         </div>
 
         {/* Bottom-Right Anchor Headline */}
