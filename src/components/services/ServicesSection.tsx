@@ -23,8 +23,6 @@ export interface ServiceTheme {
   headingWeight: number | string;
   headingLetterSpacing: string;
   taglineGradient: string;
-  categoryBadge: string;
-  badgeFont: string;
   atmosphereGlow: string;
 }
 
@@ -156,8 +154,6 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     headingWeight: 800,
     headingLetterSpacing: "-0.045em",
     taglineGradient: "from-[#EE4530] via-[#FF6247] to-[#FFA07A]",
-    categoryBadge: "01 // PERFORMANCE MARKETING",
-    badgeFont: "font-mono tracking-[0.24em]",
     atmosphereGlow: "radial-gradient(circle, rgba(238, 69, 48, 0.16) 0%, transparent 70%)",
   },
   {
@@ -171,8 +167,6 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     headingWeight: 700,
     headingLetterSpacing: "-0.02em",
     taglineGradient: "from-[#FF3366] via-[#FB7185] to-[#FDA4AF]",
-    categoryBadge: "02 // SOCIAL MEDIA & CULTURE",
-    badgeFont: "font-mono tracking-[0.22em]",
     atmosphereGlow: "radial-gradient(circle, rgba(255, 51, 102, 0.16) 0%, transparent 70%)",
   },
   {
@@ -186,8 +180,6 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     headingWeight: 400,
     headingLetterSpacing: "0.01em",
     taglineGradient: "from-[#F59E0B] via-[#FBBF24] to-[#FDE68A]",
-    categoryBadge: "03 // BRANDING & CREATIVE DIRECTION",
-    badgeFont: "font-mono tracking-[0.26em]",
     atmosphereGlow: "radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, transparent 70%)",
   },
   {
@@ -201,8 +193,6 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     headingWeight: 700,
     headingLetterSpacing: "-0.035em",
     taglineGradient: "from-[#00F0FF] via-[#38BDF8] to-[#93C5FD]",
-    categoryBadge: "04 // DIGITAL ARCHITECTURE & WEBGL",
-    badgeFont: "font-mono tracking-[0.24em]",
     atmosphereGlow: "radial-gradient(circle, rgba(0, 240, 255, 0.16) 0%, transparent 70%)",
   },
   {
@@ -216,8 +206,6 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     headingWeight: 700,
     headingLetterSpacing: "-0.03em",
     taglineGradient: "from-[#10B981] via-[#34D399] to-[#6EE7B7]",
-    categoryBadge: "05 // ALGORITHMIC VISIBILITY & SEARCH",
-    badgeFont: "font-mono tracking-[0.24em]",
     atmosphereGlow: "radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, transparent 70%)",
   },
   {
@@ -231,8 +219,6 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     headingWeight: 800,
     headingLetterSpacing: "-0.025em",
     taglineGradient: "from-[#A855F7] via-[#C084FC] to-[#E9D5FF]",
-    categoryBadge: "06 // ARTIFICIAL INTELLIGENCE & AUTOMATION",
-    badgeFont: "font-mono tracking-[0.24em]",
     atmosphereGlow: "radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, transparent 70%)",
   },
 ];
@@ -592,7 +578,7 @@ export function ServicesSection() {
       >
         {/* 1. SECTION HEADING: "WHAT WE DO" with Dynamic Typography & Color */}
         <div className="mb-14 sm:mb-20 lg:mb-24 select-none will-change-transform max-w-[1200px] mx-auto w-full">
-          {/* Active Category Pill */}
+          {/* Section Category Header */}
           <div className="flex items-center gap-3 mb-4 transition-all duration-500">
             <span
               className="w-2.5 h-2.5 rounded-full animate-pulse transition-all duration-500"
@@ -601,11 +587,8 @@ export function ServicesSection() {
                 boxShadow: `0 0 16px ${currentTheme.accent}`,
               }}
             />
-            <span
-              className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.24em] transition-colors duration-500"
-              style={{ color: "rgba(255, 255, 255, 0.75)" }}
-            >
-              {currentTheme.categoryBadge}
+            <span className="text-[11px] sm:text-[12px] uppercase font-mono tracking-[0.24em] text-white/50">
+              03 // Services & Capabilities
             </span>
           </div>
 
@@ -877,24 +860,6 @@ export function ServicesSection() {
                         />
                       )}
 
-                      {/* Service Category & Number Badge */}
-                      <div className="flex items-center gap-2.5 mb-3.5">
-                        <span
-                          className="w-1.5 h-1.5 rounded-full transition-colors duration-500"
-                          style={{
-                            backgroundColor: theme.accent,
-                            boxShadow: `0 0 8px ${theme.accent}`,
-                          }}
-                        />
-                        <span
-                          className="text-[10px] sm:text-[11px] font-mono tracking-[0.22em] uppercase transition-colors duration-500"
-                          style={{
-                            color: isActive ? theme.accent : "rgba(255, 255, 255, 0.5)",
-                          }}
-                        >
-                          {theme.categoryBadge}
-                        </span>
-                      </div>
 
                       {/* Main Service Title with Bespoke Typography */}
                       <h3
