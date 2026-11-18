@@ -5,7 +5,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { effect, frame, init, sampler, storage, surface, target, uniforms } from 'vgpu';
 import type { Gpu, StorageBuffer, Texture } from 'vgpu';
-import { prepareShader } from '@vgpu/wgsl/prepare';
 
 type ChargeBuffer = StorageBuffer & { destroy(): void };
 
@@ -520,7 +519,6 @@ export default function ShapeWaves({
     };
 
     const reportFailure = (error: unknown) => {
-      console.error('ShapeWaves Failure:', error);
       if (disposed || failed) return;
       failed = true;
       if (frameId) cancelAnimationFrame(frameId);
@@ -573,7 +571,6 @@ export default function ShapeWaves({
         });
         const createMaskTexture = (maskWidth: number, maskHeight: number) =>
           activeGpu.device.createTexture({
-            kind: '2d',
             size: [maskWidth, maskHeight],
             format: 'rgba8unorm',
             usage: ['texture_binding', 'copy_dst', 'render_attachment'],
@@ -585,7 +582,7 @@ export default function ShapeWaves({
         initialChargeBuffer.write(charges);
         chargeBuffer = initialChargeBuffer;
 
-        const scene = effect(activeGpu, prepareShader(SCENE_SHADER), {
+        const scene = effect(activeGpu, SCENE_SHADER, {
           label: 'shape-waves-scene',
           set: { params, maskTexture: initialMaskTexture, maskSampler: linearSampler, charges: initialChargeBuffer }
         });
@@ -606,16 +603,16 @@ export default function ShapeWaves({
         });
         const blurParamsX = uniforms(activeGpu, { direction: [0, 0, 4, 1] });
         const blurParamsY = uniforms(activeGpu, { direction: [0, 0, 4, 0] });
-        const blurX = effect(activeGpu, prepareShader(BLUR_SHADER), {
+        const blurX = effect(activeGpu, BLUR_SHADER, {
           label: 'shape-waves-glow-x',
           set: { blur: blurParamsX, sourceTexture: sceneTarget, sourceSampler: linearSampler }
         });
-        const blurY = effect(activeGpu, prepareShader(BLUR_SHADER), {
+        const blurY = effect(activeGpu, BLUR_SHADER, {
           label: 'shape-waves-glow-y',
           set: { blur: blurParamsY, sourceTexture: glowA, sourceSampler: linearSampler }
         });
         const compositeParams = uniforms(activeGpu, { strength: [2, 0, 0, 0] });
-        const composite = effect(activeGpu, prepareShader(COMPOSITE_SHADER), {
+        const composite = effect(activeGpu, COMPOSITE_SHADER, {
           label: 'shape-waves-composite',
           set: { composite: compositeParams, sceneTexture: sceneTarget, glowTexture: glowB, linearSampler }
         });

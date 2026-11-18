@@ -2,201 +2,24 @@
 
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
 
-// Geometric Grid Paths (Deterministic to guarantee zero hydration mismatch)
-function GeometricPaths() {
-  const gridSize = 40;
-  const paths = useMemo(() => {
-    const list: Array<{ id: string; d: string; delay: number }> = [];
-    for (let x = 0; x < 20; x++) {
-      for (let y = 0; y < 12; y++) {
-        // Deterministic pseudo-random distribution
-        if (((x * 7 + y * 13) % 10) > 5) {
-          list.push({
-            id: `grid-${x}-${y}`,
-            d: `M${x * gridSize},${y * gridSize} L${(x + 1) * gridSize},${y * gridSize} L${(x + 1) * gridSize},${(y + 1) * gridSize} L${x * gridSize},${(y + 1) * gridSize} Z`,
-            delay: ((x * 3 + y * 5) % 50) / 10,
-          });
-        }
-      }
-    }
-    return list;
-  }, [gridSize]);
-
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full opacity-40 text-[#EE4530]"
-      viewBox="0 0 800 480"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      {paths.map((path) => (
-        <motion.path
-          key={path.id}
-          d={path.d}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{
-            pathLength: [0, 1, 0],
-            opacity: [0, 0.9, 0],
-            scale: [1, 1.04, 1],
-          }}
-          transition={{
-            duration: 8,
-            delay: path.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </svg>
-  );
-}
-
-// Organic Flow Paths
-function FlowPaths() {
-  const flowPaths = useMemo(() => {
-    return Array.from({ length: 14 }, (_, i) => {
-      const amplitude = 50 + i * 12;
-      const offset = i * 55;
-
-      return {
-        id: `flow-${i}`,
-        d: `M-100,${180 + offset} Q200,${180 + offset - amplitude} 500,${180 + offset} T900,${180 + offset}`,
-        strokeWidth: 1.2 + i * 0.4,
-        opacity: 0.2 + i * 0.06,
-        delay: i * 0.7,
-      };
-    });
-  }, []);
-
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full opacity-50 text-[#EE4530]"
-      viewBox="0 0 800 800"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      {flowPaths.map((path) => (
-        <motion.path
-          key={path.id}
-          d={path.d}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={path.strokeWidth}
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={{
-            pathLength: [0, 1, 0.85, 0],
-            opacity: [0, path.opacity, path.opacity * 0.9, 0],
-          }}
-          transition={{
-            duration: 13,
-            delay: path.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </svg>
-  );
-}
-
-// Neural Network Paths (Deterministic nodes and connections for stable SSR)
-function NeuralPaths() {
-  const { nodes, connections } = useMemo(() => {
-    const nodeCount = 55;
-    const nList: Array<{ id: string; x: number; y: number }> = [];
-
-    // Deterministic golden-ratio distribution
-    for (let i = 0; i < nodeCount; i++) {
-      const x = ((i * 137.5) % 760) + 20;
-      const y = ((i * 223.7 + (i % 5) * 40) % 560) + 20;
-      nList.push({ id: `node-${i}`, x, y });
-    }
-
-    const cList: Array<{ id: string; d: string; delay: number }> = [];
-    nList.forEach((node, i) => {
-      nList.forEach((other, j) => {
-        if (i >= j) return;
-        const dist = Math.sqrt(
-          Math.pow(node.x - other.x, 2) + Math.pow(node.y - other.y, 2)
-        );
-        if (dist < 150 && ((i * 3 + j * 7) % 10 > 2)) {
-          cList.push({
-            id: `conn-${i}-${j}`,
-            d: `M${node.x},${node.y} L${other.x},${other.y}`,
-            delay: ((i + j) % 20) * 0.35,
-          });
-        }
-      });
-    });
-
-    return { nodes: nList, connections: cList };
-  }, []);
-
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full opacity-45 text-[#EE4530]"
-      viewBox="0 0 800 600"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      {connections.map((conn) => (
-        <motion.path
-          key={conn.id}
-          d={conn.d}
-          stroke="currentColor"
-          strokeWidth="1.2"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{
-            pathLength: [0, 1, 0],
-            opacity: [0, 0.95, 0],
-          }}
-          transition={{
-            duration: 6,
-            delay: conn.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-      {nodes.map((node) => (
-        <motion.circle
-          key={node.id}
-          cx={node.x}
-          cy={node.y}
-          r="3"
-          fill="currentColor"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{
-            scale: [0, 1, 1.4, 1],
-            opacity: [0, 0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </svg>
-  );
-}
-
-// Spiral Paths
+// Spiral Paths Engine (Rotating Archimedean Spirals in Adspire Flame Vermilion)
 function SpiralPaths() {
   const spirals = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => {
-      const centerX = 400 + ((i % 4) - 1.5) * 200;
-      const centerY = 300 + Math.floor(i / 4 - 0.5) * 200;
-      const radius = 80 + i * 16;
-      const turns = 3 + i * 0.5;
+    return Array.from({ length: 9 }, (_, i) => {
+      const col = i % 3;
+      const row = Math.floor(i / 3);
+      // Evenly distribute 9 spirals across an 800x600 canvas (3x3 grid with subtle organic offsets)
+      const centerX = 160 + col * 240 + ((row % 2 === 0 ? 1 : -1) * 20);
+      const centerY = 130 + row * 170 + ((col % 2 === 0 ? 1 : -1) * 15);
+      const radius = 75 + (i % 4) * 18;
+      const turns = 3.2 + (i % 3) * 0.4;
+      const spinDirection = i % 2 === 0 ? 1 : -1; // Alternate clockwise & counter-clockwise
 
       let path = `M${centerX + radius},${centerY}`;
-      for (let angle = 0; angle <= turns * 360; angle += 6) {
+      for (let angle = 0; angle <= turns * 360; angle += 5) {
         const radian = (angle * Math.PI) / 180;
         const currentRadius = radius * (1 - angle / (turns * 360));
         const x = centerX + currentRadius * Math.cos(radian);
@@ -207,36 +30,62 @@ function SpiralPaths() {
       return {
         id: `spiral-${i}`,
         d: path,
-        delay: i * 1.2,
+        centerX,
+        centerY,
+        spinDirection,
+        delay: i * 0.7,
+        duration: 20 + (i % 3) * 6,
       };
     });
   }, []);
 
   return (
     <svg
-      className="absolute inset-0 w-full h-full opacity-45 text-[#EE4530]"
+      className="absolute inset-0 w-full h-full opacity-50 text-[#EE4530]"
       viewBox="0 0 800 600"
       preserveAspectRatio="xMidYMid slice"
     >
       {spirals.map((spiral) => (
-        <motion.path
+        <motion.g
           key={spiral.id}
-          d={spiral.d}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
+          style={{
+            transformOrigin: `${spiral.centerX}px ${spiral.centerY}px`,
+          }}
           animate={{
-            pathLength: [0, 1, 0],
-            rotate: [0, 360],
+            rotate: [0, 360 * spiral.spinDirection],
           }}
           transition={{
-            pathLength: { duration: 12, repeat: Infinity, ease: "easeInOut" },
-            rotate: { duration: 24, repeat: Infinity, ease: "linear" },
-            delay: spiral.delay,
+            duration: spiral.duration,
+            repeat: Infinity,
+            ease: "linear",
           }}
-        />
+        >
+          <motion.path
+            d={spiral.d}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{
+              pathLength: [0, 1, 0],
+              opacity: [0.2, 0.85, 0.2],
+            }}
+            transition={{
+              pathLength: {
+                duration: 12,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+              opacity: {
+                duration: 12,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+              delay: spiral.delay,
+            }}
+          />
+        </motion.g>
       ))}
     </svg>
   );
@@ -252,37 +101,12 @@ export interface ModernBackgroundPathsProps {
 
 export default function ModernBackgroundPaths({
   title = "ARCHITECTING DIGITAL ASCENT",
-  badge = "ADDSPIRE MEDIA // GROWTH OPERATING SYSTEM",
   subtitle = "Engineering high-velocity brand narratives, algorithmic acquisition systems, and next-generation creative intelligence for iconic enterprises.",
   ctaText = "Explore Capabilities",
   ctaHref = "#services",
 }: ModernBackgroundPathsProps) {
   const { scrollTo } = useSmoothScroll();
-  const [currentPattern, setCurrentPattern] = useState(0);
-  const patterns = ["neural", "flow", "geometric", "spiral"];
   const words = title.split(" ");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPattern((prev) => (prev + 1) % patterns.length);
-    }, 12000);
-    return () => clearInterval(interval);
-  }, [patterns.length]);
-
-  const renderPattern = () => {
-    switch (currentPattern) {
-      case 0:
-        return <NeuralPaths />;
-      case 1:
-        return <FlowPaths />;
-      case 2:
-        return <GeometricPaths />;
-      case 3:
-        return <SpiralPaths />;
-      default:
-        return <NeuralPaths />;
-    }
-  };
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#000000] text-white select-none">
@@ -291,22 +115,13 @@ export default function ModernBackgroundPaths({
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 50% 40%, rgba(238, 69, 48, 0.12) 0%, rgba(255, 98, 71, 0.04) 45%, rgba(0, 0, 0, 0.95) 75%, #000000 100%)",
+            "radial-gradient(circle at 50% 40%, rgba(238, 69, 48, 0.14) 0%, rgba(255, 98, 71, 0.05) 45%, rgba(0, 0, 0, 0.95) 75%, #000000 100%)",
         }}
       />
 
-      {/* Dynamic Background Patterns (Themed to Adspire Flame Vermilion) */}
+      {/* Dynamic Spiral Background Engine (Exclusively Rotating Archimedean Spirals) */}
       <div className="absolute inset-0 text-[#EE4530] pointer-events-none">
-        <motion.div
-          key={currentPattern}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.8 }}
-          className="w-full h-full"
-        >
-          {renderPattern()}
-        </motion.div>
+        <SpiralPaths />
       </div>
 
       {/* Subtle Top & Bottom Fade Gradients */}
