@@ -26,7 +26,8 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "three": "^0.187.0",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "vgpu": "^0.6.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
