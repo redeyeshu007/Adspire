@@ -149,10 +149,10 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     accentSecondary: "#FF7255",
     rgb: "238, 69, 48",
     glow: "rgba(238, 69, 48, 0.28)",
-    fontFamily: "var(--font-hero-1), var(--font-heading), sans-serif",
+    fontFamily: "var(--font-syne), var(--font-heading), sans-serif",
     headingStyle: "normal",
-    headingWeight: 800,
-    headingLetterSpacing: "-0.045em",
+    headingWeight: 700,
+    headingLetterSpacing: "-0.02em",
     taglineGradient: "from-[#EE4530] via-[#FF6247] to-[#FFA07A]",
     atmosphereGlow: "radial-gradient(circle, rgba(238, 69, 48, 0.16) 0%, transparent 70%)",
   },
@@ -175,10 +175,10 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     accentSecondary: "#FDE68A",
     rgb: "245, 158, 11",
     glow: "rgba(245, 158, 11, 0.28)",
-    fontFamily: "var(--font-hero-2), serif",
-    headingStyle: "italic",
-    headingWeight: 400,
-    headingLetterSpacing: "0.01em",
+    fontFamily: "var(--font-syne), var(--font-heading), sans-serif",
+    headingStyle: "normal",
+    headingWeight: 700,
+    headingLetterSpacing: "-0.02em",
     taglineGradient: "from-[#F59E0B] via-[#FBBF24] to-[#FDE68A]",
     atmosphereGlow: "radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, transparent 70%)",
   },
@@ -188,10 +188,10 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     accentSecondary: "#38BDF8",
     rgb: "0, 240, 255",
     glow: "rgba(0, 240, 255, 0.30)",
-    fontFamily: "var(--font-mono-tech), var(--font-hero-3), monospace",
+    fontFamily: "var(--font-syne), var(--font-heading), sans-serif",
     headingStyle: "normal",
     headingWeight: 700,
-    headingLetterSpacing: "-0.035em",
+    headingLetterSpacing: "-0.02em",
     taglineGradient: "from-[#00F0FF] via-[#38BDF8] to-[#93C5FD]",
     atmosphereGlow: "radial-gradient(circle, rgba(0, 240, 255, 0.16) 0%, transparent 70%)",
   },
@@ -201,10 +201,10 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     accentSecondary: "#34D399",
     rgb: "16, 185, 129",
     glow: "rgba(16, 185, 129, 0.28)",
-    fontFamily: "var(--font-hero-3), var(--font-heading), sans-serif",
+    fontFamily: "var(--font-syne), var(--font-heading), sans-serif",
     headingStyle: "normal",
     headingWeight: 700,
-    headingLetterSpacing: "-0.03em",
+    headingLetterSpacing: "-0.02em",
     taglineGradient: "from-[#10B981] via-[#34D399] to-[#6EE7B7]",
     atmosphereGlow: "radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, transparent 70%)",
   },
@@ -214,10 +214,10 @@ export const SERVICE_THEMES: ServiceTheme[] = [
     accentSecondary: "#C084FC",
     rgb: "168, 85, 247",
     glow: "rgba(168, 85, 247, 0.32)",
-    fontFamily: "var(--font-syne), var(--font-hero-1), sans-serif",
+    fontFamily: "var(--font-syne), var(--font-heading), sans-serif",
     headingStyle: "normal",
-    headingWeight: 800,
-    headingLetterSpacing: "-0.025em",
+    headingWeight: 700,
+    headingLetterSpacing: "-0.02em",
     taglineGradient: "from-[#A855F7] via-[#C084FC] to-[#E9D5FF]",
     atmosphereGlow: "radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, transparent 70%)",
   },
@@ -861,7 +861,7 @@ export function ServicesSection() {
                       )}
 
 
-                      {/* Main Service Title with Bespoke Typography */}
+                      {/* Main Service Title with Syne Typography */}
                       <h3
                         className="text-white leading-[1.08] transition-transform duration-300 group-hover:translate-x-1"
                         style={{
@@ -869,10 +869,7 @@ export function ServicesSection() {
                           fontStyle: theme.headingStyle || "normal",
                           fontWeight: theme.headingWeight,
                           letterSpacing: theme.headingLetterSpacing,
-                          fontSize:
-                            theme.id === "branding-creative"
-                              ? "clamp(28px, 3.2vw, 50px)"
-                              : "clamp(24px, 2.5vw, 42px)",
+                          fontSize: "clamp(24px, 2.5vw, 42px)",
                         }}
                       >
                         {service.title}
