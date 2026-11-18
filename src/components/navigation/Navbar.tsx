@@ -9,7 +9,6 @@ const NAV_ITEMS = [
   { label: "Home", href: "#hero" },
   { label: "About", href: "#about" },
   { label: "Services", href: "#services" },
-  { label: "Our Work", href: "#work" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -134,7 +133,7 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* RIGHT: Desktop Navigation (Home, About, Services, Our Work, Contact) */}
+        {/* RIGHT: Desktop Navigation (Home, About, Services, Contact) */}
         <ul className="hidden lg:flex items-center gap-[22px] xl:gap-[32px] 2xl:gap-[40px]">
           {NAV_ITEMS.map((item) => (
             <li key={item.label}>
