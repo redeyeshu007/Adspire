@@ -63,11 +63,12 @@ export function SmoothScrollProvider({
       autoRaf: false, // Prevents duplicate requestAnimationFrame loops
       smoothWheel: true,
       syncTouch: false,
-      lerp: 0.085, // Silky smooth linear interpolation
-      wheelMultiplier: 0.95, // Refined mouse wheel responsiveness
-      touchMultiplier: 1.5,
+      duration: 1.25, // Silky smooth 1.25s fluid momentum glide
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential deceleration curve (Apple / Studio Freight signature)
+      wheelMultiplier: 1.0, // Natural 1:1 wheel response
+      touchMultiplier: 1.8,
       anchors: true, // Native anchor link scrolling support
-      respectReducedMotion: true, // Automatically disables smoothing when prefers-reduced-motion is active
+      respectReducedMotion: false, // Ensure smooth scroll is always enabled
       autoResize: true,
       ...options,
     });
@@ -117,7 +118,8 @@ export function SmoothScrollProvider({
       scrollTo: (target, scrollOptions) =>
         lenisRef.current?.scrollTo(target, {
           offset: -60,
-          duration: 1.3,
+          duration: 1.4,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           ...scrollOptions,
         }),
       stop: () => lenisRef.current?.stop(),
