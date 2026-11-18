@@ -32,7 +32,7 @@ export const SERVICES_DATA: ServiceItem[] = [
     title: "Performance Marketing",
     tagline: "Turn advertising budgets into business opportunities.",
     description:
-      "Our performance marketing solutions are focused on reaching the right audience, generating quality enquiries and continuously improving campaign performance.",
+      "We run targeted ad campaigns that reach high-intent customers and drive measurable enquiries.",
     itemsLabel: "Services",
     capabilities: [
       "Google Ads",
@@ -50,7 +50,7 @@ export const SERVICES_DATA: ServiceItem[] = [
     title: "Social Media Marketing",
     tagline: "Build a digital presence people remember.",
     description:
-      "We develop social media strategies and creative content that help brands stay relevant, communicate consistently and build stronger relationships with their audiences.",
+      "We create strategic content that keeps your brand relevant, engaging and memorable.",
     itemsLabel: "Services",
     capabilities: [
       "Social Media Strategy",
@@ -69,7 +69,7 @@ export const SERVICES_DATA: ServiceItem[] = [
     title: "Branding & Creative",
     tagline: "Make Your Brand Impossible to Ignore.",
     description:
-      "We create strong visual identities and marketing creatives that help businesses communicate professionally and consistently.",
+      "We craft distinctive visual identities that make your business look professional and credible.",
     itemsLabel: "Services",
     capabilities: [
       "Logo Design",
@@ -90,7 +90,7 @@ export const SERVICES_DATA: ServiceItem[] = [
     title: "Website & Technology",
     tagline: "Your Digital Presence Should Work as Good as It Looks.",
     description:
-      "We design and develop modern, responsive and business-focused digital experiences. Whether you need a company website, landing page or customised digital solution, we combine design and technology to create experiences built around your business goals.",
+      "We build fast, modern and high-converting digital experiences designed for business growth.",
     itemsLabel: "Services",
     capabilities: [
       "Business Websites",
@@ -128,7 +128,7 @@ export const SERVICES_DATA: ServiceItem[] = [
     title: "AI & Automation",
     tagline: "Work Smarter. Respond Faster. Scale Better.",
     description:
-      "We help businesses explore practical automation solutions that reduce repetitive work and improve digital workflows.",
+      "We implement practical automation workflows that reduce repetitive tasks and improve efficiency.",
     itemsLabel: "Solutions",
     capabilities: [
       "Business Workflow Automation",
