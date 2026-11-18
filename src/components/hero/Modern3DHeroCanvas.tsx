@@ -15,12 +15,12 @@ export interface Modern3DHeroCanvasProps {
 }
 
 /**
- * Modern3DHeroCanvas — High-End 3D Ribbed Kinetic Ribbon Wave
+ * Modern3DHeroCanvas — High-End 3D Ribbed Kinetic Ribbon Wave (Adspire Brand Palette)
  *
- * Implements the dark sculptural 3D ribbed contour topography:
- * - Sweeping dual curved parametric ribbon surfaces
- * - Dense horizontal scanline ribs with subtle chromatic dispersion
- * - Deep contrast dark shadows so foreground typography punches out razor-sharp
+ * Implements the dark sculptural 3D ribbed contour topography in Adspire's signature palette:
+ * - Flame Vermilion (#EE4530) & Radiant Coral (#FF7255) edge luminescence
+ * - Dense horizontal scanline ribs over deep obsidian shadows
+ * - Dynamic 3D Flame Vermilion point light tracking mouse cursor
  * - Interactive mouse spring physics (smooth rotation, curvature distortion, depth parallax)
  * - Auto-sleep on scroll for 60fps performance
  */
@@ -59,9 +59,9 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.3;
 
-    // --- 2. CUSTOM SHADER FOR RIBBED / SCANLINE SCULPTED 3D SURFACE ---
+    // --- 2. CUSTOM SHADER FOR RIBBED 3D SURFACE IN ADSPIRE BRAND PALETTE ---
     const ribbonVertexShader = `
       uniform float uTime;
       uniform vec2 uMouse;
@@ -110,38 +110,50 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
 
         // Lighting model
         vec3 viewDir = normalize(vViewPosition);
-        float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.5);
+        float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.4);
 
         vec3 lightDir1 = normalize(vec3(0.5, 0.9, 1.1));
         float diff1 = max(dot(vNormal, lightDir1), 0.0);
-        float spec1 = pow(max(dot(reflect(-lightDir1, vNormal), viewDir), 0.0), 20.0);
+        float spec1 = pow(max(dot(reflect(-lightDir1, vNormal), viewDir), 0.0), 22.0);
 
-        // Dynamic 3D mouse light contribution
+        // Dynamic 3D flame mouse light contribution
         vec3 mouseLightPos = vec3(uMouse.x * 6.0, uMouse.y * 4.0, 3.5);
         vec3 mouseLightDir = normalize(mouseLightPos - vPosition);
-        float mouseDiff = max(dot(vNormal, mouseLightDir), 0.0) * exp(-length(mouseLightPos - vPosition) * 0.18);
+        float mouseDist = length(mouseLightPos - vPosition);
+        float mouseDiff = max(dot(vNormal, mouseLightDir), 0.0) * exp(-mouseDist * 0.16);
 
-        // Chromatic dispersion on the rib edges (Red/Blue channel offset for holographic fringe)
-        float ribR = smoothstep(-0.18, 0.4, sin(ribCoord - 0.25));
-        float ribB = smoothstep(-0.05, 0.5, sin(ribCoord + 0.25));
-        vec3 chromaticStripe = vec3(ribR * 0.78, stripe * 0.72, ribB * 0.92);
+        // Adspire Color Palette:
+        // Flame Vermilion: #EE4530 -> rgb(0.933, 0.271, 0.188)
+        // Warm Radiant Coral: #FF7255 -> rgb(1.0, 0.447, 0.333)
+        // Silver Metallic: rgb(0.85, 0.88, 0.92)
+        vec3 colFlame = vec3(0.933, 0.271, 0.188);
+        vec3 colCoral = vec3(1.0, 0.447, 0.333);
+        vec3 colSilver = vec3(0.82, 0.84, 0.88);
 
-        // Deep dark base tone with metallic silver/chrome highlights
-        vec3 darkBase = vec3(0.008, 0.008, 0.012);
-        vec3 highlightColor = chromaticStripe * (diff1 * 0.85 + spec1 * 1.25 + fresnel * 0.7 + mouseDiff * 0.55);
+        // Edge chromatic dispersion with warm flame fringe
+        float ribR = smoothstep(-0.18, 0.4, sin(ribCoord - 0.2));
+        float ribG = smoothstep(-0.08, 0.48, sin(ribCoord));
+
+        // Blend silver core with flame vermilion & coral rims
+        vec3 ribColor = mix(colSilver * 0.75, colFlame, fresnel * 0.85 + mouseDiff * 0.9);
+        ribColor = mix(ribColor, colCoral, ribR * 0.35);
+
+        // Deep dark base tone with subtle ember warmth in shadows
+        vec3 darkBase = vec3(0.01, 0.004, 0.003);
+        vec3 highlightColor = ribColor * (diff1 * 0.85 + spec1 * 1.35 + fresnel * 0.8 + mouseDiff * 0.9);
 
         vec3 finalColor = mix(darkBase, highlightColor, stripe);
 
-        // Text readability zone: soften ribs in the text areas so bold white text punches through cleanly
+        // Text readability zone: soften ribs in the central area for extreme typography punch
         float centerDist = length(vPosition.xy - vec2(-0.5, 0.0));
         float centerSoftness = smoothstep(1.5, 6.0, centerDist);
-        finalColor *= mix(0.42, 1.0, centerSoftness);
+        finalColor *= mix(0.44, 1.0, centerSoftness);
 
-        // Outer radial vignette to blend seamlessly into pure black
+        // Outer radial vignette to blend seamlessly into pure black (#000000)
         float edgeFade = smoothstep(14.5, 2.5, length(vPosition.xy));
         finalColor *= edgeFade;
 
-        gl_FragColor = vec4(finalColor, 0.92);
+        gl_FragColor = vec4(finalColor, 0.95);
       }
     `;
 
@@ -184,7 +196,6 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
     bgMesh.rotation.set(0.35, 0, 0.08);
     ribbonGroup.add(bgMesh);
 
-    // Notify ready
     if (onLoaded) onLoaded();
 
     // --- 4. MOUSE & PARALLAX TRACKING ---
@@ -260,11 +271,11 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
       if (scrollProgress > 0) {
         ribbonGroup.position.y = scrollProgress * 3.5;
         ribbonGroup.position.z = -scrollProgress * 6.0;
-        renderer.toneMappingExposure = Math.max(0, 1.25 * (1 - scrollProgress * 1.25));
+        renderer.toneMappingExposure = Math.max(0, 1.3 * (1 - scrollProgress * 1.25));
       } else {
         ribbonGroup.position.y = 0;
         ribbonGroup.position.z = 0;
-        renderer.toneMappingExposure = 1.25;
+        renderer.toneMappingExposure = 1.3;
       }
 
       renderer.render(scene, camera);

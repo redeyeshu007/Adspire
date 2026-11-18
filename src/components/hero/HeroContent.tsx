@@ -14,19 +14,19 @@ export interface HeroContentProps {
 }
 
 /**
- * HeroContent — Next-Gen High-Tech Agency Editorial Layout
+ * HeroContent — Next-Gen High-Tech Agency Editorial Layout (Adspire Palette)
  *
- * Implements the exact layout and composition from the reference image:
+ * Implements the reference composition strictly aligned with Adspire's Flame Vermilion (#EE4530) palette:
  * 1. Top-left stepped headline:
  *    THE
- *    FINANCIAL (or DIGITAL GROWTH)
+ *    DIGITAL GROWTH
  *          OPERATING
  *    SYSTEM
- * 2. Center floating target reticle box with 4 corner '+' marks
+ * 2. Center floating target reticle box with 4 corner '+' marks in Flame Vermilion (#EE4530)
  * 3. Bottom-right bold anchor:
- *    FOR CLOUD, (or FOR BRANDS,)
- *    AI, AND DATA. (or AI, AND SCALE.)
- * 4. Bottom-left glowing lilac pill dock with two capsule buttons: "Free Trial" & "Book Demo"
+ *    FOR BRANDS,
+ *    AI, AND SCALE.
+ * 4. Bottom-left glowing Flame Vermilion (#EE4530) pill dock with dual capsule action buttons
  * 5. Bottom-right tech monospace paragraph
  */
 export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) {
@@ -146,28 +146,28 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
           </h1>
         </div>
 
-        {/* Center Floating Crosshair Reticle Box */}
+        {/* Center Floating Crosshair Reticle Box in Adspire Vermilion (#EE4530) */}
         <div
           ref={reticleRef}
           className="absolute left-[52%] top-[49%] -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center justify-center w-14 h-14 pointer-events-auto group cursor-crosshair"
         >
-          {/* Subtle dashed box */}
-          <div className="absolute inset-0 border border-dashed border-[#C084FC]/50 group-hover:border-[#C084FC] transition-colors duration-300 shadow-[0_0_12px_rgba(192,132,252,0.25)]" />
-          {/* 4 Corner Crosshairs (+) */}
-          <span className="absolute -top-2 -left-2 text-[15px] leading-none font-mono text-[#C084FC] font-medium drop-shadow-[0_0_6px_#C084FC]">
+          {/* Subtle dashed box in Flame Vermilion */}
+          <div className="absolute inset-0 border border-dashed border-[#EE4530]/50 group-hover:border-[#EE4530] transition-colors duration-300 shadow-[0_0_12px_rgba(238,69,48,0.25)]" />
+          {/* 4 Corner Crosshairs (+) in Flame Vermilion */}
+          <span className="absolute -top-2 -left-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
             +
           </span>
-          <span className="absolute -top-2 -right-2 text-[15px] leading-none font-mono text-[#C084FC] font-medium drop-shadow-[0_0_6px_#C084FC]">
+          <span className="absolute -top-2 -right-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
             +
           </span>
-          <span className="absolute -bottom-2 -left-2 text-[15px] leading-none font-mono text-[#C084FC] font-medium drop-shadow-[0_0_6px_#C084FC]">
+          <span className="absolute -bottom-2 -left-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
             +
           </span>
-          <span className="absolute -bottom-2 -right-2 text-[15px] leading-none font-mono text-[#C084FC] font-medium drop-shadow-[0_0_6px_#C084FC]">
+          <span className="absolute -bottom-2 -right-2 text-[15px] leading-none font-mono text-[#EE4530] font-medium drop-shadow-[0_0_6px_#EE4530]">
             +
           </span>
           {/* Subtle glowing center pulse */}
-          <div className="w-1.5 h-1.5 rounded-full bg-[#C084FC] group-hover:scale-150 transition-transform duration-300 shadow-[0_0_8px_#C084FC]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#EE4530] group-hover:scale-150 transition-transform duration-300 shadow-[0_0_8px_#EE4530]" />
         </div>
 
         {/* Bottom-Right Anchor Headline */}
@@ -178,24 +178,26 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
           <div className="max-w-[720px]">
             <h2 className="text-[#E2E8F0] uppercase font-extrabold tracking-[-0.03em] leading-[0.93] text-[clamp(36px,6.6vw,84px)] sm:text-5xl md:text-6xl lg:text-[clamp(68px,6.0vw,90px)] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
               <span className="block">FOR BRANDS,</span>
-              <span className="block text-[#CBD5E1]">AI, AND SCALE.</span>
+              <span className="block text-[#CBD5E1]">
+                AI, AND SCALE<span className="text-[#EE4530]">.</span>
+              </span>
             </h2>
           </div>
         </div>
       </div>
 
-      {/* --- BOTTOM REGION: PILL DOCK (LEFT) & MONOSPACE NARRATIVE (RIGHT) --- */}
+      {/* --- BOTTOM REGION: FLAME VERMILION PILL DOCK (LEFT) & MONOSPACE NARRATIVE (RIGHT) --- */}
       <div className="relative w-full flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pt-6 pointer-events-auto">
-        {/* Left: Glowing Rounded Pill Dock with Dual Capsule Buttons */}
+        {/* Left: Glowing Rounded Pill Dock in Adspire Flame Vermilion (#EE4530 / #FF6247) */}
         <div
           ref={pillDockRef}
-          className="inline-flex items-center p-1.5 sm:p-2 rounded-full bg-[#C084FC] shadow-[0_0_28px_rgba(192,132,252,0.55)] transition-transform duration-300 hover:scale-[1.02]"
+          className="inline-flex items-center p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-[#EE4530] to-[#FF6247] shadow-[0_0_30px_rgba(238,69,48,0.55)] transition-transform duration-300 hover:scale-[1.02]"
         >
           <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Pill Button 1 */}
             <a
               href="#contact"
-              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#0D0D11] hover:bg-[#181822] text-[#D8B4FE] hover:text-white font-mono text-[13px] sm:text-[14px] font-medium tracking-tight transition-all duration-200 active:scale-95 shadow-inner"
+              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#0D0403] hover:bg-[#1A0806] text-[#FFA293] hover:text-white font-mono text-[13px] sm:text-[14px] font-medium tracking-tight transition-all duration-200 active:scale-95 shadow-inner"
             >
               Free Trial
             </a>
@@ -203,7 +205,7 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
             {/* Pill Button 2 */}
             <a
               href="#contact"
-              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#0D0D11] hover:bg-[#181822] text-[#D8B4FE] hover:text-white font-mono text-[13px] sm:text-[14px] font-medium tracking-tight transition-all duration-200 active:scale-95 shadow-inner"
+              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#0D0403] hover:bg-[#1A0806] text-[#FFA293] hover:text-white font-mono text-[13px] sm:text-[14px] font-medium tracking-tight transition-all duration-200 active:scale-95 shadow-inner"
             >
               Book Demo
             </a>
