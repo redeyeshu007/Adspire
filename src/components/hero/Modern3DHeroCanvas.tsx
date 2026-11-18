@@ -15,14 +15,14 @@ export interface Modern3DHeroCanvasProps {
 }
 
 /**
- * Modern3DHeroCanvas — Next-Gen Interactive 3D Three.js Hero Experience
+ * Modern3DHeroCanvas — High-End 3D Ribbed Kinetic Ribbon Wave
  *
- * Exclusively enhances the Hero section with:
- * 1. Modern 3D Topological Kinetic Wave Surface in Adspire brand colors (#EE4530 / #FF7255 / #050505)
- * 2. Luminous 3D Floating Typography ("Build Better.", "Reach Further.", "Grow Smarter.") with dynamic specular glints
- * 3. Interactive Cursor Physics: 3D flame point light following cursor, interactive wave ripples, camera parallax tilt
- * 4. Micro-ember particle physics rising through 3D atmospheric fog
- * 5. Automatic sleep when out of viewport for peak 60fps performance
+ * Implements the dark sculptural 3D ribbed contour topography:
+ * - Sweeping dual curved parametric ribbon surfaces
+ * - Dense horizontal scanline ribs with subtle chromatic dispersion
+ * - Deep contrast dark shadows so foreground typography punches out razor-sharp
+ * - Interactive mouse spring physics (smooth rotation, curvature distortion, depth parallax)
+ * - Auto-sleep on scroll for 60fps performance
  */
 export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +33,6 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
 
-    // Accessibility check: reduced motion
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia &&
@@ -41,7 +40,7 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
 
     // --- 1. THREE.JS SCENE SETUP ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000000, 0.035);
+    scene.fog = new THREE.FogExp2(0x000000, 0.045);
 
     const camera = new THREE.PerspectiveCamera(
       45,
@@ -49,7 +48,7 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
       0.1,
       100
     );
-    camera.position.set(0, 0, 10.5);
+    camera.position.set(0, 0, 9.5);
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -62,296 +61,133 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.25;
 
-    // --- 2. LIGHTING SYSTEM ---
-    // Ambient light for base visibility
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
-    scene.add(ambientLight);
+    // --- 2. CUSTOM SHADER FOR RIBBED / SCANLINE SCULPTED 3D SURFACE ---
+    const ribbonVertexShader = `
+      uniform float uTime;
+      uniform vec2 uMouse;
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec3 vViewPosition;
 
-    // Primary Overhead Key Light (Crisp White for typography brilliance)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-    keyLight.position.set(0, 5, 8);
-    scene.add(keyLight);
+      void main() {
+        vUv = uv;
+        vec3 pos = position;
 
-    // Dynamic 3D Cursor Point Light (Flame Vermilion #EE4530)
-    const cursorLight = new THREE.PointLight(0xee4530, 12.0, 22, 1.2);
-    cursorLight.position.set(0, 0, 4.5);
-    scene.add(cursorLight);
+        // Dynamic undulating fluid wave deformation
+        float wave1 = sin(pos.x * 0.55 + uTime * 0.4) * cos(pos.y * 0.45 + uTime * 0.3);
+        float wave2 = sin((pos.x * 0.7 - pos.y * 0.5) * 0.45 - uTime * 0.25) * 0.5;
+        pos.z += (wave1 + wave2) * 0.95;
 
-    // Secondary Accent Rim Light (Warm Coral)
-    const rimLight = new THREE.DirectionalLight(0xff7255, 1.8);
-    rimLight.position.set(-6, 6, 4);
-    scene.add(rimLight);
+        // Interactive mouse gravity pull
+        float distToMouse = length(pos.xy - uMouse * 4.5);
+        pos.z += exp(-distToMouse * 0.3) * 0.8;
 
-    // Fill Light (Soft White)
-    const softFillLight = new THREE.PointLight(0xffffff, 1.8, 16);
-    softFillLight.position.set(5, -4, 4);
-    scene.add(softFillLight);
-
-    // --- 3. MODERN 3D BACKGROUND: TOPOLOGICAL KINETIC PARTICLES ---
-    const gridCols = 90;
-    const gridRows = 65;
-    const numParticles = gridCols * gridRows;
-    const particlePositions = new Float32Array(numParticles * 3);
-    const particleColors = new Float32Array(numParticles * 3);
-    const basePositions = new Float32Array(numParticles * 3);
-
-    const colorDark = new THREE.Color(0x0e0302);
-    const colorDeepFlame = new THREE.Color(0x9e1e0e);
-    const colorFlame = new THREE.Color(0xee4530);
-    const colorCoral = new THREE.Color(0xff8a65);
-    const colorGlowWhite = new THREE.Color(0xffffff);
-
-    let idx = 0;
-    const widthSpan = 30;
-    const heightSpan = 22;
-
-    for (let i = 0; i < gridRows; i++) {
-      for (let j = 0; j < gridCols; j++) {
-        const u = j / (gridCols - 1);
-        const v = i / (gridRows - 1);
-
-        const x = (u - 0.5) * widthSpan;
-        const y = (v - 0.5) * heightSpan - 0.8;
-        const z = -2.6 - Math.sin(u * Math.PI) * 1.9;
-
-        particlePositions[idx * 3] = x;
-        particlePositions[idx * 3 + 1] = y;
-        particlePositions[idx * 3 + 2] = z;
-
-        basePositions[idx * 3] = x;
-        basePositions[idx * 3 + 1] = y;
-        basePositions[idx * 3 + 2] = z;
-
-        // Radial color mix towards flame accent center
-        const distFromCenter = Math.sqrt(x * x + (y + 1.2) * (y + 1.2)) / 11;
-        const mixColor = new THREE.Color().copy(colorDark).lerp(colorDeepFlame, Math.max(0, 1 - distFromCenter * 0.75));
-        if (distFromCenter < 0.65) {
-          mixColor.lerp(colorFlame, 0.55);
-        }
-        if (Math.random() > 0.88) {
-          mixColor.lerp(colorCoral, 0.7);
-        }
-        if (Math.random() > 0.985) {
-          mixColor.lerp(colorGlowWhite, 0.85);
-        }
-
-        particleColors[idx * 3] = mixColor.r;
-        particleColors[idx * 3 + 1] = mixColor.g;
-        particleColors[idx * 3 + 2] = mixColor.b;
-
-        idx++;
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        vViewPosition = -mvPosition.xyz;
+        vPosition = (modelMatrix * vec4(pos, 1.0)).xyz;
+        vNormal = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * mvPosition;
       }
-    }
+    `;
 
-    const particleGeometry = new THREE.BufferGeometry();
-    particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
-    particleGeometry.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
+    const ribbonFragmentShader = `
+      uniform float uTime;
+      uniform vec2 uMouse;
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec3 vViewPosition;
 
-    // Particle sprite texture (soft circular glow with flame core)
-    const particleCanvas = document.createElement("canvas");
-    particleCanvas.width = 64;
-    particleCanvas.height = 64;
-    const pctx = particleCanvas.getContext("2d");
-    if (pctx) {
-      const grad = pctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      grad.addColorStop(0, "rgba(255, 255, 255, 1)");
-      grad.addColorStop(0.28, "rgba(238, 69, 48, 0.95)");
-      grad.addColorStop(0.65, "rgba(238, 69, 48, 0.3)");
-      grad.addColorStop(1, "rgba(0, 0, 0, 0)");
-      pctx.fillStyle = grad;
-      pctx.fillRect(0, 0, 64, 64);
-    }
-    const particleTexture = new THREE.CanvasTexture(particleCanvas);
+      void main() {
+        // High-density procedural horizontal scanline ribs
+        float ribFrequency = 58.0;
+        float ribCoord = (vPosition.y * 2.0 + sin(vPosition.x * 0.75) * 0.4) * ribFrequency;
 
-    const particleMaterial = new THREE.PointsMaterial({
-      size: 0.18,
-      map: particleTexture,
-      transparent: true,
-      vertexColors: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
+        float rib = sin(ribCoord);
+        // Anti-aliased stripe profile
+        float stripe = smoothstep(-0.1, 0.45, rib);
 
-    const particles = new THREE.Points(particleGeometry, particleMaterial);
-    scene.add(particles);
+        // Lighting model
+        vec3 viewDir = normalize(vViewPosition);
+        float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.5);
 
-    // Floating Cyber-Embers (90 sparks)
-    const emberCount = 95;
-    const emberGeo = new THREE.BufferGeometry();
-    const emberPositions = new Float32Array(emberCount * 3);
-    const emberVelocities: Array<{ x: number; y: number; z: number }> = [];
+        vec3 lightDir1 = normalize(vec3(0.5, 0.9, 1.1));
+        float diff1 = max(dot(vNormal, lightDir1), 0.0);
+        float spec1 = pow(max(dot(reflect(-lightDir1, vNormal), viewDir), 0.0), 20.0);
 
-    for (let e = 0; e < emberCount; e++) {
-      emberPositions[e * 3] = (Math.random() - 0.5) * 20;
-      emberPositions[e * 3 + 1] = (Math.random() - 0.5) * 15;
-      emberPositions[e * 3 + 2] = (Math.random() - 0.5) * 8 + 1.2;
-      emberVelocities.push({
-        x: (Math.random() - 0.5) * 0.0035,
-        y: Math.random() * 0.0055 + 0.0035,
-        z: (Math.random() - 0.5) * 0.0035,
-      });
-    }
+        // Dynamic 3D mouse light contribution
+        vec3 mouseLightPos = vec3(uMouse.x * 6.0, uMouse.y * 4.0, 3.5);
+        vec3 mouseLightDir = normalize(mouseLightPos - vPosition);
+        float mouseDiff = max(dot(vNormal, mouseLightDir), 0.0) * exp(-length(mouseLightPos - vPosition) * 0.18);
 
-    emberGeo.setAttribute("position", new THREE.BufferAttribute(emberPositions, 3));
-    const emberMat = new THREE.PointsMaterial({
-      size: 0.14,
-      color: 0xff7255,
-      map: particleTexture,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      opacity: 0.9,
-      depthWrite: false,
-    });
-    const emberPoints = new THREE.Points(emberGeo, emberMat);
-    scene.add(emberPoints);
+        // Chromatic dispersion on the rib edges (Red/Blue channel offset for holographic fringe)
+        float ribR = smoothstep(-0.18, 0.4, sin(ribCoord - 0.25));
+        float ribB = smoothstep(-0.05, 0.5, sin(ribCoord + 0.25));
+        vec3 chromaticStripe = vec3(ribR * 0.78, stripe * 0.72, ribB * 0.92);
 
-    // --- 4. 3D FLOATING TYPOGRAPHY SYSTEM ---
-    const textGroup = new THREE.Group();
-    scene.add(textGroup);
+        // Deep dark base tone with metallic silver/chrome highlights
+        vec3 darkBase = vec3(0.008, 0.008, 0.012);
+        vec3 highlightColor = chromaticStripe * (diff1 * 0.85 + spec1 * 1.25 + fresnel * 0.7 + mouseDiff * 0.55);
 
-    interface TextLineConfig {
-      text: string;
-      fontVar: string;
-      fallbackFont: string;
-      fontStyle?: string;
-      fontWeight: string;
-      color: string;
-      accentPeriod?: boolean;
-      yRatio: number; // Vertical offset relative to 3D view height
-      zOffset: number; // 3D depth layer
-      meshWidth: number;
-      meshHeight: number;
-    }
+        vec3 finalColor = mix(darkBase, highlightColor, stripe);
 
-    const LINES_CONFIG: TextLineConfig[] = [
-      {
-        text: "Build Better.",
-        fontVar: "--font-hero-1",
-        fallbackFont: "'Plus Jakarta Sans', sans-serif",
-        fontStyle: "normal",
-        fontWeight: "800",
-        color: "#FFFFFF",
-        yRatio: 0.13,
-        zOffset: 0.15,
-        meshWidth: 8.5,
-        meshHeight: 1.45,
-      },
-      {
-        text: "Reach Further.",
-        fontVar: "--font-hero-2",
-        fallbackFont: "'Instrument Serif', Georgia, serif",
-        fontStyle: "italic",
-        fontWeight: "400",
-        color: "#FFFFFF",
-        yRatio: -0.005,
-        zOffset: 0.4,
-        meshWidth: 8.5,
-        meshHeight: 1.45,
-      },
-      {
-        text: "Grow Smarter",
-        fontVar: "--font-hero-3",
-        fallbackFont: "'Space Grotesk', sans-serif",
-        fontStyle: "normal",
-        fontWeight: "700",
-        color: "#FFFFFF",
-        accentPeriod: true,
-        yRatio: -0.14,
-        zOffset: 0.65,
-        meshWidth: 8.5,
-        meshHeight: 1.45,
-      },
-    ];
+        // Text readability zone: soften ribs in the text areas so bold white text punches through cleanly
+        float centerDist = length(vPosition.xy - vec2(-0.5, 0.0));
+        float centerSoftness = smoothstep(1.5, 6.0, centerDist);
+        finalColor *= mix(0.42, 1.0, centerSoftness);
 
-    const textMeshes: THREE.Mesh[] = [];
-    const textTextures: THREE.CanvasTexture[] = [];
+        // Outer radial vignette to blend seamlessly into pure black
+        float edgeFade = smoothstep(14.5, 2.5, length(vPosition.xy));
+        finalColor *= edgeFade;
 
-    const renderTextToCanvas = (cfg: TextLineConfig, c: HTMLCanvasElement) => {
-      c.width = 2048;
-      c.height = 360;
-      const ctx = c.getContext("2d");
-      if (!ctx) return;
-
-      ctx.clearRect(0, 0, c.width, c.height);
-
-      // Determine computed font family
-      let resolvedFont = cfg.fallbackFont;
-      if (typeof window !== "undefined") {
-        const computed = getComputedStyle(document.body).getPropertyValue(cfg.fontVar).trim();
-        if (computed) {
-          resolvedFont = `${computed}, ${cfg.fallbackFont}`;
-        }
+        gl_FragColor = vec4(finalColor, 0.92);
       }
+    `;
 
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "left";
-      ctx.font = `${cfg.fontStyle || "normal"} ${cfg.fontWeight} 150px ${resolvedFont}`;
-
-      // Subtle atmospheric edge glow
-      ctx.shadowColor = "rgba(238, 69, 48, 0.45)";
-      ctx.shadowBlur = 24;
-
-      ctx.fillStyle = cfg.color;
-      const startX = 35;
-      const centerY = c.height / 2;
-      ctx.fillText(cfg.text, startX, centerY);
-
-      // Dedicated flame accent period on Line 3
-      if (cfg.accentPeriod) {
-        const textWidth = ctx.measureText(cfg.text).width;
-        ctx.shadowColor = "#EE4530";
-        ctx.shadowBlur = 36;
-        ctx.fillStyle = "#EE4530";
-        ctx.fillText(".", startX + textWidth - 8, centerY);
-      }
+    const uniforms = {
+      uTime: { value: 0 },
+      uMouse: { value: new THREE.Vector2(0, 0) },
     };
 
-    LINES_CONFIG.forEach((cfg) => {
-      const c = document.createElement("canvas");
-      renderTextToCanvas(cfg, c);
-
-      const tex = new THREE.CanvasTexture(c);
-      tex.minFilter = THREE.LinearFilter;
-      tex.magFilter = THREE.LinearFilter;
-      tex.generateMipmaps = false;
-      textTextures.push(tex);
-
-      const geom = new THREE.PlaneGeometry(cfg.meshWidth, cfg.meshHeight);
-      // Luminous high-contrast material that catches lights beautifully
-      const mat = new THREE.MeshStandardMaterial({
-        map: tex,
-        transparent: true,
-        roughness: 0.15,
-        metalness: 0.4,
-        emissive: 0x2a0b06,
-        emissiveIntensity: 0.45,
-        depthTest: true,
-        depthWrite: false,
-      });
-
-      const mesh = new THREE.Mesh(geom, mat);
-      mesh.position.set(0, 0, cfg.zOffset);
-      textGroup.add(mesh);
-      textMeshes.push(mesh);
+    const ribbonMaterial = new THREE.ShaderMaterial({
+      vertexShader: ribbonVertexShader,
+      fragmentShader: ribbonFragmentShader,
+      uniforms,
+      wireframe: false,
+      side: THREE.DoubleSide,
+      transparent: true,
     });
 
-    // Re-render textures once web fonts have fully loaded
-    if (typeof document !== "undefined" && document.fonts) {
-      document.fonts.ready.then(() => {
-        textMeshes.forEach((mesh, idx) => {
-          const cfg = LINES_CONFIG[idx];
-          const tex = textTextures[idx];
-          if (tex && tex.image) {
-            renderTextToCanvas(cfg, tex.image as HTMLCanvasElement);
-            tex.needsUpdate = true;
-          }
-        });
-      });
-    }
+    // --- 3. SCULPTED RIBBON GEOMETRIES (LEFT & RIGHT SWEEPS) ---
+    const ribbonGroup = new THREE.Group();
+    scene.add(ribbonGroup);
 
+    // Left sweeping curved ribbon surface
+    const leftGeometry = new THREE.PlaneGeometry(17, 20, 130, 130);
+    const leftMesh = new THREE.Mesh(leftGeometry, ribbonMaterial);
+    leftMesh.position.set(-6.5, 0.8, -2.8);
+    leftMesh.rotation.set(0.25, 0.75, -0.2);
+    ribbonGroup.add(leftMesh);
+
+    // Right sweeping curved ribbon surface
+    const rightGeometry = new THREE.PlaneGeometry(16, 19, 130, 130);
+    const rightMesh = new THREE.Mesh(rightGeometry, ribbonMaterial);
+    rightMesh.position.set(7.0, -0.6, -3.2);
+    rightMesh.rotation.set(-0.25, -0.75, 0.28);
+    ribbonGroup.add(rightMesh);
+
+    // Background depth ribbon creating tunnel / layered horizon
+    const bgGeometry = new THREE.PlaneGeometry(26, 20, 110, 110);
+    const bgMesh = new THREE.Mesh(bgGeometry, ribbonMaterial);
+    bgMesh.position.set(0, 3.2, -7.0);
+    bgMesh.rotation.set(0.35, 0, 0.08);
+    ribbonGroup.add(bgMesh);
+
+    // Notify ready
     if (onLoaded) onLoaded();
 
-    // --- 5. INTERACTION & MOUSE PHYSICS ---
+    // --- 4. MOUSE & PARALLAX TRACKING ---
     const mouse = {
       x: 0,
       y: 0,
@@ -369,7 +205,7 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
 
     window.addEventListener("mousemove", handlePointerMove, { passive: true });
 
-    // --- 6. SCROLL DISSOLVE TRIGGER ---
+    // --- 5. SCROLL DISSOLVE TRIGGER ---
     let scrollProgress = 0;
     const scrollTrigger = ScrollTrigger.create({
       trigger: container,
@@ -381,7 +217,7 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
       },
     });
 
-    // --- 7. ANIMATION RAF LOOP ---
+    // --- 6. ANIMATION RAF LOOP ---
     let rafId = 0;
     let clock = new THREE.Clock();
     let isVisible = true;
@@ -403,185 +239,75 @@ export function Modern3DHeroCanvas({ className = "", onLoaded }: Modern3DHeroCan
       const elapsedTime = clock.getElapsedTime();
 
       // Smooth mouse spring physics
-      const springRate = prefersReducedMotion ? 0.02 : 0.06;
+      const springRate = prefersReducedMotion ? 0.02 : 0.055;
       mouse.x += (mouse.targetX - mouse.x) * springRate;
       mouse.y += (mouse.targetY - mouse.y) * springRate;
 
-      // Dynamic 3D Cursor Light Position
-      cursorLight.position.x = mouse.x * 6.5;
-      cursorLight.position.y = mouse.y * 4.5;
-      cursorLight.position.z = 4.2 + Math.sin(elapsedTime * 1.5) * 0.4;
+      // Update shader uniforms
+      uniforms.uTime.value = elapsedTime;
+      uniforms.uMouse.value.set(mouse.x, mouse.y);
 
-      // Subtle 3D Camera Tilt
-      camera.position.x = mouse.x * 0.45;
-      camera.position.y = mouse.y * 0.35;
+      // Camera parallax depth tilt
+      camera.position.x = mouse.x * 0.6;
+      camera.position.y = mouse.y * 0.4;
       camera.lookAt(0, 0, 0);
 
-      // 3D Typography Interactive Parallax & Float
-      textGroup.rotation.y = mouse.x * 0.08;
-      textGroup.rotation.x = -mouse.y * 0.06;
+      // Ribbon group organic rotation
+      ribbonGroup.rotation.y = mouse.x * 0.07 + Math.sin(elapsedTime * 0.2) * 0.03;
+      ribbonGroup.rotation.x = -mouse.y * 0.05;
 
-      // Floating gentle wave on each 3D text line
-      textMeshes.forEach((mesh, mIdx) => {
-        const floatWave = Math.sin(elapsedTime * 1.3 + mIdx * 0.75) * 0.04;
-        mesh.position.y = mesh.userData.baseY + floatWave;
-        // Parallax depth amplification across Z layers
-        mesh.position.x = mesh.userData.baseX + mouse.x * (0.09 + mIdx * 0.07);
-      });
-
-      // Scroll Dissolve: Move 3D text upward and fade out as user scrolls into Section 02
+      // Scroll Dissolve
       if (scrollProgress > 0) {
-        textGroup.position.y = scrollProgress * 4.2;
-        textGroup.position.z = scrollProgress * 2.2;
-        const textOpacity = Math.max(0, 1 - scrollProgress * 1.35);
-        textMeshes.forEach((mesh) => {
-          (mesh.material as THREE.MeshStandardMaterial).opacity = textOpacity;
-        });
-
-        // Background particles dissolve into depth
-        particles.position.z = -scrollProgress * 5.5;
-        particleMaterial.opacity = Math.max(0, 1 - scrollProgress * 1.15);
+        ribbonGroup.position.y = scrollProgress * 3.5;
+        ribbonGroup.position.z = -scrollProgress * 6.0;
+        renderer.toneMappingExposure = Math.max(0, 1.25 * (1 - scrollProgress * 1.25));
       } else {
-        textGroup.position.y = 0;
-        textGroup.position.z = 0;
-        textMeshes.forEach((mesh) => {
-          (mesh.material as THREE.MeshStandardMaterial).opacity = 1;
-        });
-        particles.position.z = 0;
-        particleMaterial.opacity = 1;
+        ribbonGroup.position.y = 0;
+        ribbonGroup.position.z = 0;
+        renderer.toneMappingExposure = 1.25;
       }
-
-      // Update 3D Background Wave Geometry
-      const posAttr = particleGeometry.attributes.position as THREE.BufferAttribute;
-      const posArray = posAttr.array as Float32Array;
-
-      let pIdx = 0;
-      const waveSpeed = prefersReducedMotion ? 0.2 : 0.85;
-
-      for (let i = 0; i < gridRows; i++) {
-        for (let j = 0; j < gridCols; j++) {
-          const u = j / (gridCols - 1);
-          const v = i / (gridRows - 1);
-
-          const bx = basePositions[pIdx * 3];
-          const by = basePositions[pIdx * 3 + 1];
-          const bz = basePositions[pIdx * 3 + 2];
-
-          // Kinetic wave interference
-          const wave1 = Math.sin(u * 7.5 + elapsedTime * waveSpeed) * 0.52;
-          const wave2 = Math.cos(v * 6.0 + elapsedTime * waveSpeed * 0.8) * 0.38;
-          const wave3 = Math.sin((u + v) * 5.2 - elapsedTime * waveSpeed * 0.6) * 0.28;
-
-          // Interactive Cursor Repulsion / Ripple
-          const dx = bx - mouse.x * 6;
-          const dy = by - mouse.y * 4;
-          const distSq = dx * dx + dy * dy;
-          const mouseRipple = Math.exp(-distSq / 14) * 1.25;
-
-          posArray[pIdx * 3 + 2] = bz + wave1 + wave2 + wave3 + mouseRipple;
-
-          pIdx++;
-        }
-      }
-      posAttr.needsUpdate = true;
-
-      // Floating Ember Physics
-      const emberPosAttr = emberGeo.attributes.position as THREE.BufferAttribute;
-      const emberPosArray = emberPosAttr.array as Float32Array;
-
-      for (let e = 0; e < emberCount; e++) {
-        const vel = emberVelocities[e];
-        emberPosArray[e * 3 + 1] += vel.y;
-        emberPosArray[e * 3] += vel.x + Math.sin(elapsedTime + e) * 0.002;
-
-        if (emberPosArray[e * 3 + 1] > 7.5) {
-          emberPosArray[e * 3 + 1] = -7.5;
-          emberPosArray[e * 3] = (Math.random() - 0.5) * 20;
-        }
-      }
-      emberPosAttr.needsUpdate = true;
 
       renderer.render(scene, camera);
     };
 
     animate();
 
-    // --- 8. RESPONSIVE POSITIONING & RESIZE LISTENER ---
-    const updateLayout = () => {
+    // --- 7. RESIZE LISTENER ---
+    const handleResize = () => {
       if (!container) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
       camera.aspect = w / h;
 
-      // Calculate camera visible bounds in 3D world units at text depth (z ~ 0.4)
-      const targetZ = 0.4;
-      const vFOV = (camera.fov * Math.PI) / 180;
-      const visibleHeight = 2 * Math.tan(vFOV / 2) * (camera.position.z - targetZ);
-      const visibleWidth = visibleHeight * camera.aspect;
-
-      // Responsive scale factors
-      let scale = 1.0;
-      if (w < 640) {
-        scale = 0.52;
-      } else if (w < 768) {
-        scale = 0.64;
-      } else if (w < 1024) {
-        scale = 0.78;
-      } else if (w < 1440) {
-        scale = 0.92;
+      if (w < 768) {
+        camera.position.z = 12.0;
+        leftMesh.position.set(-4.5, 1.2, -3.2);
+        rightMesh.position.set(4.8, -1.5, -3.8);
+      } else {
+        camera.position.z = 9.5;
+        leftMesh.position.set(-6.5, 0.8, -2.8);
+        rightMesh.position.set(7.0, -0.6, -3.2);
       }
-
-      // Responsive left margin matching editorial grid (clamp 24px - 160px)
-      const marginPx = Math.min(Math.max(w * 0.088, 24), 160);
-      const marginRatio = marginPx / w;
-      const leftEdgeX = -visibleWidth / 2;
-      const targetStartX = leftEdgeX + visibleWidth * marginRatio;
-
-      textMeshes.forEach((mesh, mIdx) => {
-        const cfg = LINES_CONFIG[mIdx];
-        mesh.scale.set(scale, scale, 1);
-
-        // Position mesh so the left edge of the text aligns with targetStartX
-        const effectiveWidth = cfg.meshWidth * scale;
-        const textOffsetInMesh = effectiveWidth * (35 / 2048);
-        const meshCenterX = targetStartX - textOffsetInMesh + effectiveWidth / 2;
-
-        const meshCenterY = visibleHeight * cfg.yRatio;
-
-        mesh.userData.baseX = meshCenterX;
-        mesh.userData.baseY = meshCenterY;
-        mesh.position.set(meshCenterX, meshCenterY, cfg.zOffset);
-      });
 
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
 
-    updateLayout();
-    window.addEventListener("resize", updateLayout, { passive: true });
+    handleResize();
+    window.addEventListener("resize", handleResize, { passive: true });
 
-    // --- 9. CLEANUP ---
+    // --- 8. CLEANUP ---
     return () => {
       cancelAnimationFrame(rafId);
       observer.disconnect();
       scrollTrigger.kill();
       window.removeEventListener("mousemove", handlePointerMove);
-      window.removeEventListener("resize", updateLayout);
+      window.removeEventListener("resize", handleResize);
 
-      particleGeometry.dispose();
-      particleMaterial.dispose();
-      particleTexture.dispose();
-
-      emberGeo.dispose();
-      emberMat.dispose();
-
-      textMeshes.forEach((mesh) => {
-        mesh.geometry.dispose();
-        const mat = mesh.material as THREE.MeshStandardMaterial;
-        if (mat.map) mat.map.dispose();
-        mat.dispose();
-      });
-
+      leftGeometry.dispose();
+      rightGeometry.dispose();
+      bgGeometry.dispose();
+      ribbonMaterial.dispose();
       renderer.dispose();
     };
   }, [onLoaded]);
