@@ -32,6 +32,7 @@ export interface HeroContentProps {
 export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const headlineLeftRef = useRef<HTMLDivElement | null>(null);
+  const ctaRef = useRef<HTMLDivElement | null>(null);
   const headlineRightRef = useRef<HTMLDivElement | null>(null);
   const subtextRef = useRef<HTMLDivElement | null>(null);
   const hasAnimatedRef = useRef(false);
@@ -44,6 +45,7 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
       gsap.set(
         [
           headlineLeftRef.current,
+          ctaRef.current,
           headlineRightRef.current,
           subtextRef.current,
         ],
@@ -64,6 +66,7 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
       gsap.set(
         [
           headlineLeftRef.current,
+          ctaRef.current,
           headlineRightRef.current,
           subtextRef.current,
         ],
@@ -80,6 +83,12 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
       { opacity: 0, y: 28, filter: "blur(6px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" }
     )
+      .fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 18, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: "power2.out" },
+        "-=0.45"
+      )
       .fromTo(
         headlineRightRef.current,
         { opacity: 0, y: 28, filter: "blur(6px)" },
@@ -132,6 +141,25 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
             </span>
             <span className="block">SYSTEM</span>
           </h1>
+
+          {/* Schedule a Meeting CTA Button */}
+          <div ref={ctaRef} className="mt-6 sm:mt-8 pointer-events-auto">
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#EE4530] hover:bg-[#FF553E] text-white font-semibold text-[13px] sm:text-[15px] tracking-tight shadow-[0_0_24px_rgba(238,69,48,0.45)] hover:shadow-[0_0_36px_rgba(238,69,48,0.75)] transition-all duration-300 hover:scale-[1.03] active:scale-95 group"
+            >
+              <span>Schedule a Meeting</span>
+              <svg
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.4}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
         </div>
 
         {/* Bottom-Right Anchor Headline */}
