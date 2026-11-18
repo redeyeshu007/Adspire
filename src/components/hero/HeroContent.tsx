@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { BrandSculpture3D } from "./BrandSculpture3D";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -23,18 +22,15 @@ export interface HeroContentProps {
  *    DIGITAL GROWTH
  *          OPERATING
  *    SYSTEM
- * 2. Center floating target reticle box with 4 corner '+' marks in Flame Vermilion (#EE4530)
- * 3. Bottom-right bold anchor:
+ * 2. Bottom-right bold anchor:
  *    FOR BRANDS,
  *    AI, AND SCALE.
- * 4. Bottom-left glowing Flame Vermilion (#EE4530) pill dock with dual capsule action buttons
- * 5. Bottom-right tech monospace paragraph
+ * 3. Bottom-right tech monospace paragraph
  */
 export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const headlineLeftRef = useRef<HTMLDivElement | null>(null);
   const headlineRightRef = useRef<HTMLDivElement | null>(null);
-  const sculptureRef = useRef<HTMLDivElement | null>(null);
   const subtextRef = useRef<HTMLDivElement | null>(null);
   const hasAnimatedRef = useRef(false);
 
@@ -47,7 +43,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         [
           headlineLeftRef.current,
           headlineRightRef.current,
-          sculptureRef.current,
           subtextRef.current,
         ],
         { opacity: 0, y: 24 }
@@ -68,7 +63,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         [
           headlineLeftRef.current,
           headlineRightRef.current,
-          sculptureRef.current,
           subtextRef.current,
         ],
         { opacity: 1, y: 0 }
@@ -84,12 +78,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
       { opacity: 0, y: 28, filter: "blur(6px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" }
     )
-      .fromTo(
-        sculptureRef.current,
-        { opacity: 0, scale: 0.82 },
-        { opacity: 1, scale: 1, duration: 1.1, ease: "power3.out" },
-        "-=0.6"
-      )
       .fromTo(
         headlineRightRef.current,
         { opacity: 0, y: 28, filter: "blur(6px)" },
@@ -129,7 +117,7 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
       ref={containerRef}
       className="relative z-20 w-full min-h-[100dvh] flex flex-col justify-between pt-24 sm:pt-28 pb-8 sm:pb-12 px-6 sm:px-12 md:px-16 lg:px-20 pointer-events-none select-none"
     >
-      {/* --- TOP / MIDDLE REGION: ASYMMETRIC HEADLINE + FLOATING RETICLE --- */}
+      {/* --- TOP / MIDDLE REGION: ASYMMETRIC HEADLINE --- */}
       <div className="relative w-full flex-1 flex flex-col justify-center my-auto">
         {/* Top-Left Stepped Headline */}
         <div ref={headlineLeftRef} className="max-w-[900px] text-left">
@@ -142,14 +130,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
             </span>
             <span className="block">SYSTEM</span>
           </h1>
-        </div>
-
-        {/* Upper-Right Space: 3D Floating Broadcast TV Screen Showing Brand Promotions */}
-        <div
-          ref={sculptureRef}
-          className="absolute right-0 sm:right-2 md:right-6 lg:right-10 top-0 sm:-top-2 md:-top-4 w-[280px] h-[210px] sm:w-[360px] sm:h-[270px] md:w-[440px] md:h-[320px] lg:w-[500px] lg:h-[360px] pointer-events-auto z-10 hidden sm:block"
-        >
-          <BrandSculpture3D />
         </div>
 
         {/* Bottom-Right Anchor Headline */}
