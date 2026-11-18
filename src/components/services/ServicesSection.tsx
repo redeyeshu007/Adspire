@@ -247,9 +247,12 @@ export function ServicesSection() {
 
   // Active service index highlighted during scroll
   const [activeNodeIndex, setActiveNodeIndex] = useState<number>(0);
+  const activeIndexRef = useRef<number>(0);
 
   // Current active theme
   const currentTheme = SERVICE_THEMES[activeNodeIndex] || SERVICE_THEMES[0];
+  const currentThemeRef = useRef(currentTheme);
+  currentThemeRef.current = currentTheme;
 
   // Dynamic Theme Synchronization: Update :root variables for the entire website
   useEffect(() => {
@@ -263,52 +266,47 @@ export function ServicesSection() {
   }, [currentTheme]);
 
   // When leaving the Services section, revert smoothly to the brand flame color
+  // Keep dependency array empty so it doesn't kill and recreate the trigger on every service change!
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+
+    const resetTheme = () => {
+      const root = document.documentElement;
+      root.style.setProperty("--theme-accent", "#EE4530");
+      root.style.setProperty("--theme-accent-rgb", "238, 69, 48");
+      root.style.setProperty("--theme-accent-glow", "rgba(238, 69, 48, 0.25)");
+      root.style.setProperty("--theme-accent-secondary", "#FF6B4A");
+      root.style.setProperty("--theme-heading-font", "var(--font-heading)");
+    };
+
+    const restoreTheme = () => {
+      const root = document.documentElement;
+      const theme = currentThemeRef.current;
+      root.style.setProperty("--theme-accent", theme.accent);
+      root.style.setProperty("--theme-accent-rgb", theme.rgb);
+      root.style.setProperty("--theme-accent-glow", theme.glow);
+      root.style.setProperty("--theme-accent-secondary", theme.accentSecondary);
+      root.style.setProperty("--theme-heading-font", theme.fontFamily);
+    };
 
     const trigger = ScrollTrigger.create({
       trigger: section,
       start: "top 70%",
       end: "bottom 30%",
-      onLeave: () => {
-        const root = document.documentElement;
-        root.style.setProperty("--theme-accent", "#EE4530");
-        root.style.setProperty("--theme-accent-rgb", "238, 69, 48");
-        root.style.setProperty("--theme-accent-glow", "rgba(238, 69, 48, 0.25)");
-        root.style.setProperty("--theme-accent-secondary", "#FF6B4A");
-        root.style.setProperty("--theme-heading-font", "var(--font-heading)");
-      },
-      onLeaveBack: () => {
-        const root = document.documentElement;
-        root.style.setProperty("--theme-accent", "#EE4530");
-        root.style.setProperty("--theme-accent-rgb", "238, 69, 48");
-        root.style.setProperty("--theme-accent-glow", "rgba(238, 69, 48, 0.25)");
-        root.style.setProperty("--theme-accent-secondary", "#FF6B4A");
-        root.style.setProperty("--theme-heading-font", "var(--font-heading)");
-      },
-      onEnter: () => {
-        const root = document.documentElement;
-        root.style.setProperty("--theme-accent", currentTheme.accent);
-        root.style.setProperty("--theme-accent-rgb", currentTheme.rgb);
-        root.style.setProperty("--theme-accent-glow", currentTheme.glow);
-        root.style.setProperty("--theme-accent-secondary", currentTheme.accentSecondary);
-        root.style.setProperty("--theme-heading-font", currentTheme.fontFamily);
-      },
-      onEnterBack: () => {
-        const root = document.documentElement;
-        root.style.setProperty("--theme-accent", currentTheme.accent);
-        root.style.setProperty("--theme-accent-rgb", currentTheme.rgb);
-        root.style.setProperty("--theme-accent-glow", currentTheme.glow);
-        root.style.setProperty("--theme-accent-secondary", currentTheme.accentSecondary);
-        root.style.setProperty("--theme-heading-font", currentTheme.fontFamily);
-      },
+      onLeave: resetTheme,
+      onLeaveBack: resetTheme,
+      onEnter: restoreTheme,
+      onEnterBack: restoreTheme,
     });
 
     return () => {
       trigger.kill();
     };
-  }, [currentTheme]);
+  }, []);
+
+  const lastDimensionsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
+  const lastPathRef = useRef<string>("");
 
   // Dynamically compute curved SVG path intersecting all timeline nodes
   const updateTimelinePath = useCallback(() => {
@@ -316,11 +314,17 @@ export function ServicesSection() {
     if (!container) return;
 
     const containerRect = container.getBoundingClientRect();
-    const cWidth = containerRect.width;
-    const cHeight = containerRect.height;
+    const cWidth = Math.round(containerRect.width);
+    const cHeight = Math.round(containerRect.height);
     if (cWidth <= 0 || cHeight <= 0) return;
 
-    setContainerDimensions({ width: cWidth, height: cHeight });
+    if (
+      cWidth !== lastDimensionsRef.current.width ||
+      cHeight !== lastDimensionsRef.current.height
+    ) {
+      lastDimensionsRef.current = { width: cWidth, height: cHeight };
+      setContainerDimensions({ width: cWidth, height: cHeight });
+    }
 
     const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
     const points: Array<{ x: number; y: number }> = [];
@@ -371,25 +375,40 @@ export function ServicesSection() {
     const exitWave = isDesktop ? 50 : 12;
     pathStr += ` C ${lastPoint.x + exitWave} ${lastPoint.y + (endY - lastPoint.y) * 0.42}, ${lastPoint.x} ${endY * 0.96}, ${lastPoint.x} ${endY}`;
 
-    setSvgPathData(pathStr);
+    if (pathStr !== lastPathRef.current) {
+      lastPathRef.current = pathStr;
+      setSvgPathData(pathStr);
+    }
   }, []);
 
-  // Recalculate SVG path on mount, resize, and DOM layout changes
+  // Recalculate SVG path on mount and resize with requestAnimationFrame throttling
   useEffect(() => {
     updateTimelinePath();
 
     const container = timelineContainerRef.current;
     if (!container || typeof ResizeObserver === "undefined") return;
 
+    let rAFId: number;
     const observer = new ResizeObserver(() => {
-      updateTimelinePath();
+      cancelAnimationFrame(rAFId);
+      rAFId = requestAnimationFrame(() => {
+        updateTimelinePath();
+      });
     });
     observer.observe(container);
 
-    window.addEventListener("resize", updateTimelinePath);
+    const handleResize = () => {
+      cancelAnimationFrame(rAFId);
+      rAFId = requestAnimationFrame(() => {
+        updateTimelinePath();
+      });
+    };
+
+    window.addEventListener("resize", handleResize, { passive: true });
     return () => {
+      cancelAnimationFrame(rAFId);
       observer.disconnect();
-      window.removeEventListener("resize", updateTimelinePath);
+      window.removeEventListener("resize", handleResize);
     };
   }, [updateTimelinePath]);
 
@@ -472,11 +491,13 @@ export function ServicesSection() {
         const connector = connectorsRef.current[idx];
         const isLeft = idx % 2 === 0;
 
-        // Card initial state: slide in subtly from its side
+        // Card initial state: slide in subtly from its side with hardware acceleration
         if (card) {
           gsap.set(card, {
             opacity: 0,
-            x: isLeft ? -40 : 40,
+            x: isLeft ? -30 : 30,
+            willChange: "transform, opacity",
+            force3D: true,
           });
         }
 
@@ -485,17 +506,17 @@ export function ServicesSection() {
           gsap.set(connector, {
             scaleX: 0,
             transformOrigin: isLeft ? "right center" : "left center",
+            willChange: "transform",
+            force3D: true,
           });
         }
 
-        // Timeline for the card entrance
+        // Timeline for the card entrance (visual reveal)
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: "top 78%",
+            start: "top 80%",
             toggleActions: "play reverse play reverse",
-            onEnter: () => setActiveNodeIndex(idx),
-            onEnterBack: () => setActiveNodeIndex(idx),
           },
         });
 
@@ -503,7 +524,7 @@ export function ServicesSection() {
         if (connector) {
           tl.to(connector, {
             scaleX: 1,
-            duration: 0.45,
+            duration: 0.38,
             ease: "power2.out",
           });
         }
@@ -515,20 +536,30 @@ export function ServicesSection() {
             {
               opacity: 1,
               x: 0,
-              duration: 0.7,
+              duration: 0.55,
               ease: "power3.out",
             },
-            connector ? "-=0.25" : 0
+            connector ? "-=0.2" : 0
           );
         }
 
-        // Dedicated viewport center observer for smooth theme transitions during active reading
+        // Single dedicated viewport observer to activate service color and typography without redundant re-renders
         ScrollTrigger.create({
           trigger: row,
-          start: "top 62%",
-          end: "bottom 38%",
-          onEnter: () => setActiveNodeIndex(idx),
-          onEnterBack: () => setActiveNodeIndex(idx),
+          start: "top 60%",
+          end: "bottom 40%",
+          onEnter: () => {
+            if (activeIndexRef.current !== idx) {
+              activeIndexRef.current = idx;
+              setActiveNodeIndex(idx);
+            }
+          },
+          onEnterBack: () => {
+            if (activeIndexRef.current !== idx) {
+              activeIndexRef.current = idx;
+              setActiveNodeIndex(idx);
+            }
+          },
         });
       });
 
@@ -545,7 +576,7 @@ export function ServicesSection() {
       ref={sectionRef}
       id="services"
       aria-label="What We Do — Interactive Curved Timeline Experience"
-      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[var(--theme-accent)] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px] transition-colors duration-700"
+      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[var(--theme-accent)] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px] transition-colors duration-500"
     >
       {/* Target anchor for 'Our Work' navigation */}
       <div
@@ -553,16 +584,18 @@ export function ServicesSection() {
         className="absolute top-0 left-0 w-full h-0 pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px]"
       />
 
-      {/* Dynamic Ambient Color Aura floating behind the active service */}
+      {/* Dynamic Ambient Color Aura floating behind active service (Zero-reflow GPU transform) */}
       <div
-        className="absolute inset-0 pointer-events-none z-0 overflow-hidden transition-opacity duration-700"
+        className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
+        style={{ contain: "strict" }}
       >
         <div
-          className="absolute w-[600px] sm:w-[900px] h-[600px] sm:h-[900px] rounded-full blur-[160px] sm:blur-[220px] pointer-events-none transition-all duration-700 ease-out -translate-x-1/2 -translate-y-1/2"
+          className="absolute w-[500px] sm:w-[750px] h-[500px] sm:h-[750px] rounded-full blur-[80px] sm:blur-[110px] pointer-events-none transition-transform duration-500 ease-out will-change-transform"
           style={{
             left: "50%",
-            top: `${(activeNodeIndex + 0.6) * (100 / SERVICES_DATA.length)}%`,
+            top: 0,
+            transform: `translate3d(-50%, ${(activeNodeIndex + 0.5) * (containerDimensions.height / SERVICES_DATA.length) - 250}px, 0)`,
             background: currentTheme.atmosphereGlow,
           }}
         />
@@ -672,19 +705,6 @@ export function ServicesSection() {
                 <stop offset="100%" stopColor="rgba(255,255,255,0)" />
               </linearGradient>
 
-              {/* Ultra-Soft Atmospheric Diffusion Filter */}
-              <filter id="ultraSoftGlow" x="-50%" y="-20%" width="200%" height="140%">
-                <feGaussianBlur stdDeviation="9" result="blur" />
-              </filter>
-
-              {/* Core Luminous Bloom Filter */}
-              <filter id="activeTimelineGlow" x="-30%" y="-20%" width="160%" height="140%">
-                <feGaussianBlur stdDeviation="3.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
 
             {/* Base Inactive Curved Timeline (Neutral Dark with Soft Fade Ends) */}
@@ -699,30 +719,40 @@ export function ServicesSection() {
               />
             )}
 
-            {/* LAYER 1: Ultra-Soft Blended Atmospheric Aura Curve (Wide Feathered Glow) */}
+            {/* LAYER 1: Wide Atmospheric Vector Glow (0ms GPU Filter Overhead) */}
+            {svgPathData && (
+              <path
+                d={svgPathData}
+                stroke="url(#timelineColorBlend)"
+                strokeWidth="16"
+                strokeLinecap="round"
+                fill="none"
+                opacity="0.14"
+              />
+            )}
+
+            {/* LAYER 2: Middle Luminous Ribbon */}
             {svgPathData && (
               <path
                 ref={activeGlowCurveRef}
                 d={svgPathData}
                 stroke="url(#timelineColorBlend)"
-                strokeWidth="14"
+                strokeWidth="7"
                 strokeLinecap="round"
                 fill="none"
-                opacity="0.32"
-                filter="url(#ultraSoftGlow)"
+                opacity="0.45"
               />
             )}
 
-            {/* LAYER 2: Active Scroll-Driven Core Curved Timeline (Vibrant Blended Ribbon) */}
+            {/* LAYER 3: Active Scroll-Driven Core Curved Timeline (Vibrant Blended Ribbon) */}
             {svgPathData && (
               <path
                 ref={activeCurveRef}
                 d={svgPathData}
                 stroke="url(#timelineColorBlend)"
-                strokeWidth="2.8"
+                strokeWidth="2.5"
                 strokeLinecap="round"
                 fill="none"
-                filter="url(#activeTimelineGlow)"
               />
             )}
           </svg>
@@ -838,21 +868,21 @@ export function ServicesSection() {
                   >
                     {/* Modern Editorial Card Shell with Custom Theme & Typography */}
                     <div
-                      className="group relative rounded-2xl p-6 sm:p-8 lg:p-9 transition-all duration-500 backdrop-blur-xl border overflow-hidden"
+                      className="group relative rounded-2xl p-6 sm:p-8 lg:p-9 transition-colors duration-300 backdrop-blur-md border overflow-hidden will-change-transform"
                       style={{
-                        backgroundColor: isActive ? "#0e0e0e" : "rgba(10, 10, 10, 0.8)",
+                        backgroundColor: isActive ? "#0e0e0e" : "rgba(10, 10, 10, 0.92)",
                         borderColor: isActive
                           ? `rgba(${theme.rgb}, 0.45)`
                           : "rgba(255, 255, 255, 0.08)",
                         boxShadow: isActive
-                          ? `0 16px 48px rgba(0,0,0,0.85), 0 0 32px ${theme.glow}`
-                          : "0 10px 30px rgba(0,0,0,0.5)",
+                          ? `0 16px 44px rgba(0,0,0,0.85), 0 0 28px ${theme.glow}`
+                          : "0 10px 24px rgba(0,0,0,0.5)",
                       }}
                     >
                       {/* Ambient radial inner aura on active card */}
                       {isActive && (
                         <div
-                          className="absolute -top-[30%] -right-[30%] w-[320px] h-[320px] rounded-full pointer-events-none blur-[90px] opacity-35 transition-opacity duration-700"
+                          className="absolute -top-[30%] -right-[30%] w-[240px] h-[240px] rounded-full pointer-events-none blur-[50px] opacity-25 transition-opacity duration-500 will-change-transform"
                           style={{
                             background: theme.accent,
                           }}

@@ -86,6 +86,7 @@ export function PersistentBackground() {
         // 2. STAGE MANAGEMENT & OPACITY HANDOFF
         // Stage 01: Pure AcidSquares (p <= 0.01)
         if (p <= 0.01) {
+          acidWrapper.style.visibility = "visible";
           gsap.set(acidWrapper, { opacity: 1, scale: 1.015 });
           gsap.set(morphWrapper, { opacity: 0 });
           gsap.set(cursorGridWrapper, { opacity: 0 });
@@ -93,6 +94,7 @@ export function PersistentBackground() {
         }
         // Stage 02 - 05: Pixel Morph Transition (0.01 < p < 0.98)
         else if (p < 0.98) {
+          acidWrapper.style.visibility = "visible";
           // Transition canvas takes visual precedence
           gsap.set(morphWrapper, { opacity: 1 });
 
@@ -111,6 +113,7 @@ export function PersistentBackground() {
         }
         // Stage 06: Pure CursorGrid Active (p >= 0.98)
         else {
+          acidWrapper.style.visibility = "hidden";
           gsap.set(acidWrapper, { opacity: 0 });
           gsap.set(morphWrapper, { opacity: 0 });
           gsap.set(cursorGridWrapper, { opacity: 1 });

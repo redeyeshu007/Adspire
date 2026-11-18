@@ -92,8 +92,8 @@ export function SmoothScrollProvider({
     };
     gsap.ticker.add(handleTicker);
 
-    // Disable GSAP lag smoothing to eliminate visual desync between Lenis and GSAP
-    gsap.ticker.lagSmoothing(0);
+    // Enable balanced lag smoothing to prevent stuttering/jumping during frame drops
+    gsap.ticker.lagSmoothing(500, 33);
 
     // Initial ScrollTrigger synchronization
     ScrollTrigger.refresh();
