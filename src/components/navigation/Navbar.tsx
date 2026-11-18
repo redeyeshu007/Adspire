@@ -74,8 +74,8 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 w-full z-50 pointer-events-auto bg-transparent border-b border-transparent">
       <nav
-        className={`w-full flex items-center justify-between pb-4 transition-[padding] duration-300 ${
-          scrolled ? "pt-5 sm:pt-6" : "pt-[42px] sm:pt-[46px]"
+        className={`w-full flex items-center justify-between pb-3 transition-[padding] duration-300 ${
+          scrolled ? "pt-3.5 sm:pt-4" : "pt-6 sm:pt-7"
         }`}
         style={{
           paddingLeft: "clamp(24px, 8.8vw, 160px)",
