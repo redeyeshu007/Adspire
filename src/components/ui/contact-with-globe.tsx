@@ -797,20 +797,23 @@ export function ContactWithGlobe({
   return (
     <section
       className={cn(
-        "relative w-full bg-zinc-950 overflow-hidden py-20 text-white",
+        "relative w-full bg-zinc-950 overflow-hidden py-20 text-white selection:bg-[#EE4530] selection:text-white",
         className,
       )}
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex flex-col items-center text-center gap-4 mb-12">
+        <div className="flex flex-col items-center text-center gap-4 mb-14">
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.15, ease: smoothEase }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-3xl leading-[1.08]"
           >
-            {title}
+            Have an Idea?{" "}
+            <span className="text-[#EE4530] drop-shadow-[0_0_24px_rgba(238,69,48,0.35)]">
+              Let&apos;s Build It.
+            </span>
           </motion.h2>
 
           <motion.p
@@ -818,7 +821,7 @@ export function ContactWithGlobe({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.3, ease: smoothEase }}
-            className="text-base text-zinc-400 max-w-md"
+            className="text-base text-zinc-400 max-w-lg leading-relaxed"
           >
             {description}
           </motion.p>
@@ -832,9 +835,12 @@ export function ContactWithGlobe({
             transition={{ duration: 1.0, delay: 0.2, ease: smoothEase }}
             className="flex flex-col gap-6"
           >
-            <div className="flex flex-col gap-1">
-              <h3 className="text-xl font-semibold text-white">
-                Get in touch
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#EE4530] font-semibold">
+                DIRECT CHANNELS
+              </span>
+              <h3 className="text-2xl font-bold text-white tracking-tight">
+                Get in touch with us
               </h3>
               <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
                 Reach out via any channel below. We typically reply within one
@@ -855,17 +861,23 @@ export function ContactWithGlobe({
                     delay: 0.3 + i * 0.1,
                     ease: smoothEase,
                   }}
-                  className="group flex items-center gap-3 w-fit text-sm text-zinc-400 hover:text-white transition-colors duration-200"
+                  className="group flex items-center gap-3.5 w-fit text-sm text-zinc-300 hover:text-white transition-colors duration-200"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-zinc-800/80 border border-zinc-700 group-hover:border-[#EE4530]/50 group-hover:bg-[#EE4530]/10 flex items-center justify-center shrink-0 transition-all duration-200">
-                    <Icon className="w-3.5 h-3.5 text-zinc-400 group-hover:text-[#EE4530] transition-colors duration-200" />
+                  <div className="w-9 h-9 rounded-xl bg-[#EE4530]/10 border border-[#EE4530]/25 group-hover:border-[#EE4530]/60 group-hover:bg-[#EE4530]/20 group-hover:shadow-[0_0_16px_rgba(238,69,48,0.35)] flex items-center justify-center shrink-0 transition-all duration-200">
+                    <Icon className="w-4 h-4 text-[#EE4530] transition-colors duration-200" />
                   </div>
-                  {label}
+                  <span className="font-medium">{label}</span>
                 </motion.a>
               ))}
             </div>
 
-            <div className="relative overflow-hidden h-52">
+            <div className="relative overflow-hidden h-56 rounded-2xl border border-white/[0.08] bg-[#0c0c0c]/80 backdrop-blur-md p-4 flex items-center justify-center shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
+              <div className="absolute top-3 left-4 z-20 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#EE4530] animate-pulse" />
+                <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/50">
+                  Global Reach // Active Rotation
+                </span>
+              </div>
               <GlobeWireframe
                 className="w-full aspect-square max-w-full absolute top-0 left-0"
                 variant="wireframesolid"
@@ -874,10 +886,10 @@ export function ContactWithGlobe({
                 sphereOutlineColor="#EE4530"
                 autoRotate
                 autoRotateSpeed={0.45}
-                strokeWidth={0.6}
-                graticuleOpacity={0.12}
+                strokeWidth={0.7}
+                graticuleOpacity={0.15}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-transparent" />
             </div>
           </motion.div>
 
@@ -886,10 +898,10 @@ export function ContactWithGlobe({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1.0, delay: 0.35, ease: smoothEase }}
-            className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 sm:p-8 flex flex-col gap-5"
+            className="rounded-2xl border border-white/[0.12] bg-[#0c0c0c]/90 backdrop-blur-xl p-6 sm:p-8 flex flex-col gap-5 shadow-[0_24px_50px_rgba(0,0,0,0.85),0_0_36px_rgba(238,69,48,0.06)]"
           >
             <div>
-              <h3 className="text-lg font-semibold text-white mb-0.5">
+              <h3 className="text-xl font-bold text-white mb-1">
                 Send a message
               </h3>
               <p className="text-sm text-zinc-400">
@@ -921,9 +933,9 @@ export function ContactWithGlobe({
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
-                    Full Name
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 font-mono">
+                    Full Name <span className="text-[#EE4530]">*</span>
                   </label>
                   <input
                     type="text"
@@ -931,12 +943,12 @@ export function ContactWithGlobe({
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="Ahdeetai"
-                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 transition-all duration-200"
+                    placeholder="Your Name"
+                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
                   />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 font-mono">
                     Company
                   </label>
                   <input
@@ -944,15 +956,15 @@ export function ContactWithGlobe({
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    placeholder="ScrollX UI"
-                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 transition-all duration-200"
+                    placeholder="Company or Brand"
+                    className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
-                  Email Address
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 font-mono">
+                  Email Address <span className="text-[#EE4530]">*</span>
                 </label>
                 <input
                   type="email"
@@ -960,39 +972,39 @@ export function ContactWithGlobe({
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  placeholder="support@scrollxui.com"
-                  className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 transition-all duration-200"
+                  placeholder="contact@yourbusiness.com"
+                  className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 transition-all duration-200"
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400">
-                  Message
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold tracking-widest uppercase text-zinc-400 font-mono">
+                  Message <span className="text-[#EE4530]">*</span>
                 </label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  placeholder="Type your message here"
+                  placeholder="Tell us about your brand goals, target timeline, or what you'd like to build..."
                   rows={4}
-                  className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/10 resize-none transition-all duration-200"
+                  className="w-full bg-[#141414] border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#EE4530] focus:ring-2 focus:ring-[#EE4530]/20 resize-none transition-all duration-200"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-fit h-11 px-8 rounded-xl font-semibold text-sm bg-white hover:bg-zinc-100 text-zinc-950 group cursor-pointer"
+                className="w-fit h-11 px-8 rounded-xl font-semibold text-sm bg-[#EE4530] hover:bg-[#FF5542] text-white shadow-[0_0_24px_rgba(238,69,48,0.35)] hover:shadow-[0_0_36px_rgba(238,69,48,0.5)] group cursor-pointer transition-all duration-300 mt-1"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin text-zinc-950" />
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
                     Sending...
                   </>
                 ) : (
                   <>
-                    Submit
+                    Submit Message
                     <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </>
                 )}
