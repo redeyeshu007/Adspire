@@ -311,37 +311,6 @@ export default function ModernBackgroundPaths({
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black via-transparent to-black/70" />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/80 via-transparent to-black/60" />
 
-      {/* Pattern Indicator Pills (Interactive Switcher) */}
-      <div
-        className="absolute top-24 sm:top-28 right-6 sm:right-10 flex items-center gap-2 z-20 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10"
-        title="Interactive pattern selector"
-      >
-        <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase hidden sm:inline mr-1">
-          Pattern
-        </span>
-        {patterns.map((name, i) => (
-          <button
-            key={name}
-            onClick={() => setCurrentPattern(i)}
-            aria-label={`Switch to ${name} pattern`}
-            className="cursor-pointer p-1 group transition-all"
-          >
-            <motion.div
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                i === currentPattern
-                  ? "bg-[#EE4530] shadow-[0_0_10px_#EE4530]"
-                  : "bg-neutral-700 hover:bg-neutral-500"
-              }`}
-              animate={{
-                scale: i === currentPattern ? 1.3 : 1,
-                opacity: i === currentPattern ? 1 : 0.6,
-              }}
-              transition={{ duration: 0.25 }}
-            />
-          </button>
-        ))}
-      </div>
-
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 md:px-6 text-center pt-20 sm:pt-24 pb-12">
         <motion.div
@@ -350,21 +319,6 @@ export default function ModernBackgroundPaths({
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="max-w-5xl mx-auto flex flex-col items-center"
         >
-          {/* Eyebrow Badge */}
-          {badge && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="mb-6 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EE4530]/10 border border-[#EE4530]/30 backdrop-blur-md"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#EE4530] animate-pulse" />
-              <span className="text-xs font-mono tracking-widest text-[#FFA293] uppercase">
-                {badge}
-              </span>
-            </motion.div>
-          )}
-
           {/* Main Title with Spring Letter-by-Letter Typography */}
           <div className="mb-6 sm:mb-8">
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 tracking-tighter leading-[0.95] flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2">
@@ -457,20 +411,6 @@ export default function ModernBackgroundPaths({
                 </motion.span>
               </Button>
             </div>
-          </motion.div>
-
-          {/* Pattern Architecture Tagline */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4, duration: 0.9 }}
-            className="mt-10 sm:mt-12 text-xs sm:text-sm text-neutral-400 font-mono tracking-widest uppercase flex items-center gap-2"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#EE4530]" />
-            Architecture:{" "}
-            <span className="text-[#EE4530] font-semibold">
-              {patterns[currentPattern]} Engine
-            </span>
           </motion.div>
         </motion.div>
       </div>

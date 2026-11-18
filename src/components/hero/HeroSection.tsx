@@ -24,7 +24,6 @@ export function HeroSection({}: HeroSectionProps) {
     >
       <ModernBackgroundPaths
         title="ARCHITECTING DIGITAL ASCENT"
-        badge="ADDSPIRE MEDIA // GROWTH OPERATING SYSTEM"
         subtitle="Engineering high-velocity brand narratives, algorithmic acquisition systems, and next-generation creative intelligence for iconic enterprises."
         ctaText="Explore Capabilities"
         ctaHref="#services"
