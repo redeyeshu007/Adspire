@@ -690,14 +690,12 @@ FormDots.displayName = "FormDots";
 
 export interface ContactWithGlobeProps {
   title?: string;
-  subtitle?: string;
   description?: string;
   className?: string;
 }
 
 export function ContactWithGlobe({
   title = "Have an Idea? Let's Build It.",
-  subtitle = "04 // CONTACT",
   description = "Whether you are scaling ad campaigns, upgrading digital platforms, or looking for a trusted growth partner, we would love to connect.",
   className,
 }: ContactWithGlobeProps) {
@@ -817,21 +815,8 @@ export function ContactWithGlobe({
       )}
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header Block with Brand Accent Pill */}
+        {/* Header Block */}
         <div className="flex flex-col items-center text-center gap-4 mb-14 sm:mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: smoothEase }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EE4530]/10 border border-[#EE4530]/30 shadow-[0_0_16px_rgba(238,69,48,0.2)]"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#EE4530] animate-pulse" />
-            <span className="text-xs sm:text-sm text-[#EE4530] font-mono tracking-[0.2em] font-medium uppercase">
-              {subtitle}
-            </span>
-          </motion.div>
-
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
