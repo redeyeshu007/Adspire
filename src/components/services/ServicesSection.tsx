@@ -347,8 +347,12 @@ export function ServicesSection() {
     let pathStr = `M ${startX} ${startY}`;
 
     // Soft blended entrance curve approaching the first node with a gentle reverse bend
-    const introWave = isDesktop ? -45 : -10;
-    pathStr += ` C ${startX + introWave} ${points[0].y * 0.35}, ${points[0].x + introWave * 0.5} ${points[0].y * 0.72}, ${points[0].x} ${points[0].y}`;
+    if (isDesktop) {
+      const introWave = -45;
+      pathStr += ` C ${startX + introWave} ${points[0].y * 0.35}, ${points[0].x + introWave * 0.5} ${points[0].y * 0.72}, ${points[0].x} ${points[0].y}`;
+    } else {
+      pathStr += ` C ${startX} ${points[0].y * 0.35}, ${points[0].x} ${points[0].y * 0.72}, ${points[0].x} ${points[0].y}`;
+    }
 
     // Graceful alternating undulating curves between consecutive nodes with pronounced organic bends
     for (let i = 0; i < points.length - 1; i++) {
@@ -357,22 +361,28 @@ export function ServicesSection() {
       const dy = pNext.y - pCurrent.y;
       const isEven = i % 2 === 0;
 
-      // Generous organic bend swinging harmoniously towards each card
-      // Desktop: 92px pronounced flowing wave. Mobile: 24px clean wave.
-      const waveOffset = isDesktop ? (isEven ? 92 : -92) : (isEven ? 24 : -24);
-
-      const cp1x = pCurrent.x + waveOffset;
-      const cp1y = pCurrent.y + dy * 0.44;
-      const cp2x = pNext.x - waveOffset;
-      const cp2y = pNext.y - dy * 0.44;
-
-      pathStr += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pNext.x} ${pNext.y}`;
+      if (isDesktop) {
+        // Desktop: 92px pronounced flowing wave swinging harmoniously towards each card
+        const waveOffset = isEven ? 92 : -92;
+        const cp1x = pCurrent.x + waveOffset;
+        const cp1y = pCurrent.y + dy * 0.44;
+        const cp2x = pNext.x - waveOffset;
+        const cp2y = pNext.y - dy * 0.44;
+        pathStr += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pNext.x} ${pNext.y}`;
+      } else {
+        // Mobile: Dramatic organic flowing S-curve sweeping between left and right alternating nodes
+        const cp1x = pCurrent.x;
+        const cp1y = pCurrent.y + dy * 0.48;
+        const cp2x = pNext.x;
+        const cp2y = pNext.y - dy * 0.48;
+        pathStr += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pNext.x} ${pNext.y}`;
+      }
     }
 
     // Elegant runout curve from last node downwards with a soft matching blend
     const lastPoint = points[points.length - 1];
     const endY = cHeight;
-    const exitWave = isDesktop ? 50 : 12;
+    const exitWave = isDesktop ? 50 : 0;
     pathStr += ` C ${lastPoint.x + exitWave} ${lastPoint.y + (endY - lastPoint.y) * 0.42}, ${lastPoint.x} ${endY * 0.96}, ${lastPoint.x} ${endY}`;
 
     if (pathStr !== lastPathRef.current) {
@@ -490,12 +500,14 @@ export function ServicesSection() {
         const card = cardsRef.current[idx];
         const connector = connectorsRef.current[idx];
         const isLeft = idx % 2 === 0;
+        const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
+        const isCardOnLeft = isDesktop ? isLeft : !isLeft;
 
         // Card initial state: slide in subtly from its side with hardware acceleration
         if (card) {
           gsap.set(card, {
             opacity: 0,
-            x: isLeft ? -30 : 30,
+            x: isCardOnLeft ? -25 : 25,
             willChange: "transform, opacity",
             force3D: true,
           });
@@ -503,9 +515,13 @@ export function ServicesSection() {
 
         // Connector initial state
         if (connector) {
+          const transformOrigin = isDesktop
+            ? (isLeft ? "right center" : "left center")
+            : (isLeft ? "left center" : "right center");
+
           gsap.set(connector, {
             scaleX: 0,
-            transformOrigin: isLeft ? "right center" : "left center",
+            transformOrigin,
             willChange: "transform",
             force3D: true,
           });
@@ -758,7 +774,7 @@ export function ServicesSection() {
                     rowsRef.current[index] = el;
                   }}
                   className={`relative w-full flex items-center ${
-                    /* Desktop: alternating left/right grid; Mobile: single-sided on right of track */
+                    /* Desktop: alternating left/right grid; Mobile: alternating left/right grid */
                     "lg:justify-between flex-row"
                   }`}
                 >
@@ -768,8 +784,10 @@ export function ServicesSection() {
                       nodesRef.current[index] = el;
                     }}
                     className={`absolute z-30 transition-all duration-500 ease-out flex items-center justify-center ${
-                      /* Position: left: 20px on mobile, left: 50% on desktop */
-                      "left-[20px] sm:left-[32px] lg:left-1/2 -translate-x-1/2"
+                      /* Position: alternating left/right on mobile, centered on desktop */
+                      isEven
+                        ? "left-[14px] sm:left-[24px] lg:left-1/2 -translate-x-1/2"
+                        : "right-[14px] sm:right-[24px] lg:left-1/2 lg:right-auto translate-x-1/2 lg:-translate-x-1/2"
                     }`}
                   >
                     {/* Outer Node Halo Ring with Dynamic Color */}
@@ -811,30 +829,21 @@ export function ServicesSection() {
                     </div>
                   </div>
 
-                  {/* HORIZONTAL CONNECTOR LINE (Desktop) */}
+                  {/* UNIFIED HORIZONTAL CONNECTOR LINE (Desktop & Mobile) */}
                   <div
                     ref={(el) => {
                       connectorsRef.current[index] = el;
                     }}
-                    className={`hidden lg:block absolute top-1/2 -translate-y-1/2 h-[1px] z-20 pointer-events-none transition-all duration-500 ${
+                    className={`absolute top-1/2 -translate-y-1/2 h-[1px] z-20 pointer-events-none transition-all duration-500 ${
                       isEven
-                        ? "right-1/2 w-[48px] xl:w-[64px]"
-                        : "left-1/2 w-[48px] xl:w-[64px]"
+                        ? "left-[28px] sm:left-[38px] w-[14px] sm:w-[18px] lg:left-auto lg:right-1/2 lg:w-[48px] xl:w-[64px]"
+                        : "right-[28px] sm:right-[38px] w-[14px] sm:w-[18px] lg:right-auto lg:left-1/2 lg:w-[48px] xl:w-[64px]"
                     }`}
                     style={{
                       background: isActive
-                        ? `linear-gradient(to ${isEven ? "left" : "right"}, ${theme.accent}, rgba(${theme.rgb}, 0.25))`
+                        ? `linear-gradient(to ${isEven ? "right" : "left"}, ${theme.accent}, rgba(${theme.rgb}, 0.25))`
                         : "rgba(255, 255, 255, 0.12)",
-                      boxShadow: isActive ? `0 0 16px ${theme.glow}` : "none",
-                    }}
-                  />
-
-                  {/* Horizontal Connector Line (Mobile) */}
-                  <div
-                    className="lg:hidden absolute top-1/2 -translate-y-1/2 left-[32px] sm:left-[44px] w-[20px] sm:w-[28px] h-[1px] z-20 pointer-events-none transition-all duration-500"
-                    style={{
-                      background: isActive ? theme.accent : "rgba(255, 255, 255, 0.15)",
-                      boxShadow: isActive ? `0 0 8px ${theme.glow}` : "none",
+                      boxShadow: isActive ? `0 0 12px ${theme.glow}` : "none",
                     }}
                   />
 
@@ -843,13 +852,11 @@ export function ServicesSection() {
                     ref={(el) => {
                       cardsRef.current[index] = el;
                     }}
-                    className={`relative z-20 w-full transition-all duration-300 ${
-                      /* Mobile: pushed to right with margin */
-                      "pl-14 sm:pl-20 lg:pl-0 " +
-                      /* Desktop: Left card takes left half, Right card takes right half */
-                      (isEven
-                        ? "lg:mr-auto lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]"
-                        : "lg:ml-auto lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]")
+                    className={`relative z-20 transition-all duration-300 ${
+                      /* Mobile & Desktop alternating widths & margins */
+                      isEven
+                        ? "w-[calc(100%-44px)] sm:w-[calc(100%-56px)] ml-auto mr-0 lg:mr-auto lg:ml-0 lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]"
+                        : "w-[calc(100%-44px)] sm:w-[calc(100%-56px)] mr-auto ml-0 lg:ml-auto lg:mr-0 lg:w-[calc(50%-48px)] xl:lg:w-[calc(50%-64px)]"
                     }`}
                   >
                     {/* Modern Editorial Card Shell with Custom Theme & Typography */}
