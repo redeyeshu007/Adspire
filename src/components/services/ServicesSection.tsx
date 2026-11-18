@@ -307,6 +307,7 @@ export function ServicesSection() {
 
   const lastDimensionsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
   const lastPathRef = useRef<string>("");
+  const lastWindowWidthRef = useRef<number>(0);
 
   // Dynamically compute curved SVG path intersecting all timeline nodes
   const updateTimelinePath = useCallback(() => {
@@ -318,9 +319,10 @@ export function ServicesSection() {
     const cHeight = Math.round(containerRect.height);
     if (cWidth <= 0 || cHeight <= 0) return;
 
+    // Guard against mobile address bar micro-height resize thrashing during scroll
     if (
       cWidth !== lastDimensionsRef.current.width ||
-      cHeight !== lastDimensionsRef.current.height
+      Math.abs(cHeight - lastDimensionsRef.current.height) > 60
     ) {
       lastDimensionsRef.current = { width: cWidth, height: cHeight };
       setContainerDimensions({ width: cWidth, height: cHeight });
@@ -408,6 +410,11 @@ export function ServicesSection() {
     observer.observe(container);
 
     const handleResize = () => {
+      // Guard against mobile address bar collapse/expand firing resize during touch scroll
+      const currentWidth = window.innerWidth;
+      if (Math.abs(currentWidth - lastWindowWidthRef.current) < 5) return;
+      lastWindowWidthRef.current = currentWidth;
+
       cancelAnimationFrame(rAFId);
       rAFId = requestAnimationFrame(() => {
         updateTimelinePath();
@@ -592,7 +599,7 @@ export function ServicesSection() {
       ref={sectionRef}
       id="services"
       aria-label="What We Do — Interactive Curved Timeline Experience"
-      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[var(--theme-accent)] selection:text-white overflow-hidden pointer-events-none scroll-mt-[100px] sm:scroll-mt-[120px] transition-colors duration-500"
+      className="relative z-10 w-full min-h-screen bg-[#000000] text-white selection:bg-[var(--theme-accent)] selection:text-white overflow-hidden pointer-events-auto touch-pan-y scroll-mt-[80px] sm:scroll-mt-[100px] transition-colors duration-500"
     >
       {/* Target anchor for 'Our Work' navigation */}
       <div

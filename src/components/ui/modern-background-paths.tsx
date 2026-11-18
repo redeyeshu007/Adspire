@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useMemo } from "react";
+import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
 
 // Geometric Grid Paths (Deterministic to guarantee zero hydration mismatch)
 function GeometricPaths() {
@@ -256,6 +257,7 @@ export default function ModernBackgroundPaths({
   ctaText = "Explore Capabilities",
   ctaHref = "#services",
 }: ModernBackgroundPathsProps) {
+  const { scrollTo } = useSmoothScroll();
   const [currentPattern, setCurrentPattern] = useState(0);
   const patterns = ["neural", "flow", "geometric", "spiral"];
   const words = title.split(" ");
@@ -377,9 +379,13 @@ export default function ModernBackgroundPaths({
                 variant="ghost"
                 size="lg"
                 onClick={() => {
-                  const target = document.querySelector(ctaHref);
-                  if (target) {
-                    target.scrollIntoView({ behavior: "smooth" });
+                  if (scrollTo) {
+                    scrollTo(ctaHref, { offset: -50, duration: 1.3 });
+                  } else {
+                    const target = document.querySelector(ctaHref);
+                    if (target) {
+                      target.scrollIntoView({ behavior: "smooth" });
+                    }
                   }
                 }}
                 className="relative rounded-[14.5px] px-8 sm:px-12 py-6 sm:py-7 text-base sm:text-lg font-semibold bg-black/90 hover:bg-black/70 text-white transition-all duration-300 group-hover:-translate-y-0.5 border-0 backdrop-blur-md cursor-pointer"

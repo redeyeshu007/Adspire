@@ -62,11 +62,13 @@ export function SmoothScrollProvider({
     const lenis = new Lenis({
       autoRaf: false, // Prevents duplicate requestAnimationFrame loops
       smoothWheel: true,
-      syncTouch: false,
-      duration: 1.25, // Silky smooth 1.25s fluid momentum glide
+      syncTouch: true, // Enables silky smooth touch momentum glide on mobile
+      syncTouchLerp: 0.08, // Fine-tuned touch interpolation
+      touchInertiaExponent: 1.6, // Natural organic touch deceleration
+      duration: 1.2, // Silky smooth 1.2s fluid momentum glide
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential deceleration curve (Apple / Studio Freight signature)
       wheelMultiplier: 1.0, // Natural 1:1 wheel response
-      touchMultiplier: 1.8,
+      touchMultiplier: 1.5, // Responsive 1.5x touch tracking
       anchors: true, // Native anchor link scrolling support
       respectReducedMotion: false, // Ensure smooth scroll is always enabled
       autoResize: true,
