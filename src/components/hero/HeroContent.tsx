@@ -33,7 +33,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const headlineLeftRef = useRef<HTMLDivElement | null>(null);
   const headlineRightRef = useRef<HTMLDivElement | null>(null);
-  const pillDockRef = useRef<HTMLDivElement | null>(null);
   const subtextRef = useRef<HTMLDivElement | null>(null);
   const hasAnimatedRef = useRef(false);
 
@@ -46,7 +45,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         [
           headlineLeftRef.current,
           headlineRightRef.current,
-          pillDockRef.current,
           subtextRef.current,
         ],
         { opacity: 0, y: 24 }
@@ -67,7 +65,6 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         [
           headlineLeftRef.current,
           headlineRightRef.current,
-          pillDockRef.current,
           subtextRef.current,
         ],
         { opacity: 1, y: 0 }
@@ -90,9 +87,9 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         "-=0.55"
       )
       .fromTo(
-        [pillDockRef.current, subtextRef.current],
+        subtextRef.current,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.75, stagger: 0.12, ease: "power2.out" },
+        { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" },
         "-=0.4"
       );
 
@@ -153,32 +150,8 @@ export function HeroContent({ delay = 0.2, autoPlay = true }: HeroContentProps) 
         </div>
       </div>
 
-      {/* --- BOTTOM REGION: FLAME VERMILION PILL DOCK (LEFT) & MONOSPACE NARRATIVE (RIGHT) --- */}
-      <div className="relative w-full flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pt-6 pointer-events-auto">
-        {/* Left: Glowing Rounded Pill Dock in Adspire Flame Vermilion (#EE4530 / #FF6247) */}
-        <div
-          ref={pillDockRef}
-          className="inline-flex items-center p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-[#EE4530] to-[#FF6247] shadow-[0_0_30px_rgba(238,69,48,0.55)] transition-transform duration-300 hover:scale-[1.02]"
-        >
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Pill Button 1 */}
-            <a
-              href="#contact"
-              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#0D0403] hover:bg-[#1A0806] text-[#FFA293] hover:text-white font-mono text-[13px] sm:text-[14px] font-medium tracking-tight transition-all duration-200 active:scale-95 shadow-inner"
-            >
-              Free Trial
-            </a>
-
-            {/* Pill Button 2 */}
-            <a
-              href="#contact"
-              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#0D0403] hover:bg-[#1A0806] text-[#FFA293] hover:text-white font-mono text-[13px] sm:text-[14px] font-medium tracking-tight transition-all duration-200 active:scale-95 shadow-inner"
-            >
-              Book Demo
-            </a>
-          </div>
-        </div>
-
+      {/* --- BOTTOM REGION: MONOSPACE NARRATIVE (RIGHT) --- */}
+      <div className="relative w-full flex justify-end pt-6 pointer-events-auto">
         {/* Right: Tech Monospace Description */}
         <div
           ref={subtextRef}
