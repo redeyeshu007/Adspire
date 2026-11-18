@@ -871,13 +871,7 @@ export function ContactWithGlobe({
               ))}
             </div>
 
-            <div className="relative overflow-hidden h-56 rounded-2xl border border-white/[0.08] bg-[#0c0c0c]/80 backdrop-blur-md p-4 flex items-center justify-center shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
-              <div className="absolute top-3 left-4 z-20 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#EE4530] animate-pulse" />
-                <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/50">
-                  Global Reach // Active Rotation
-                </span>
-              </div>
+            <div className="relative overflow-hidden h-52">
               <GlobeWireframe
                 className="w-full aspect-square max-w-full absolute top-0 left-0"
                 variant="wireframesolid"
@@ -886,10 +880,10 @@ export function ContactWithGlobe({
                 sphereOutlineColor="#EE4530"
                 autoRotate
                 autoRotateSpeed={0.45}
-                strokeWidth={0.7}
-                graticuleOpacity={0.15}
+                strokeWidth={0.6}
+                graticuleOpacity={0.12}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-zinc-950 to-transparent" />
             </div>
           </motion.div>
 
